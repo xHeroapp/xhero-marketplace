@@ -1,0 +1,24 @@
+/* Custom styles */
+.btn-custom {
+  background-color: #625afa; /* your color */
+  color: white; /* text color */
+}
+
+.btn-custom:hover {
+  background-color: #6f67fa;
+  color: white;
+}
+
+.btn-custom-alternate {
+  background-color: white; /* your color */
+  color: #625afa; /* text color */
+}
+.btn-custom-alternate:hover {
+  background-color: white; /* your color */
+  color: #625afa; /* text color */
+}
+
+.btn-custom-alternate:disabled {
+  background-color: rgb(235, 235, 235); /* your color */
+  color: #625afa; /* text color */
+}
