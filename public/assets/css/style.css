@@ -1710,7 +1710,7 @@ textarea:invalid {
   border-radius: 50%;
 }
 .sidenav-profile .user-profile img {
-  border-radius: 50%;
+  border-radius: 100%;
 }
 .sidenav-profile .user-profile .user-designation {
   position: absolute;

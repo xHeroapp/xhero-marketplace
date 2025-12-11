@@ -3,6 +3,7 @@ import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 import React from "react";
 import UserAvatar from "../ui/UserAvatar";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const Offcanvas = ({ handleShow, show }: any) => {
   const { user } = useAuthStore();
@@ -26,14 +27,24 @@ const Offcanvas = ({ handleShow, show }: any) => {
         <div className="offcanvas-body">
           <div className="sidenav-profile">
             <div className="user-profile">
-              <img src="/assets/img/bg-img/9.jpg" alt="" />
+              <img
+                src={
+                  user && user.avatar_url
+                    ? user.avatar_url
+                    : `/assets/img/core-img/user-profile-male.jpg`
+                }
+                alt=""
+              />
             </div>
             <div className="user-info">
               <h5 className="user-name mb-1 text-white">
                 {user ? user.full_name : "User"}
               </h5>
               <p className="available-balance text-white">
-                Current Balance $<span className="counter">99</span>
+                Current Balance{" "}
+                <span className="counter">
+                  {formatCurrency(user.points_balance)}
+                </span>
               </p>
             </div>
           </div>
