@@ -40,12 +40,14 @@ const Offcanvas = ({ handleShow, show }: any) => {
               <h5 className="user-name mb-1 text-white">
                 {user ? user.full_name : "User"}
               </h5>
-              <p className="available-balance text-white">
-                Current Balance{" "}
-                <span className="counter">
-                  {formatCurrency(user.points_balance)}
-                </span>
-              </p>
+              {user && (
+                <p className="available-balance text-white">
+                  Current Balance{" "}
+                  <span className="counter">
+                    {formatCurrency(user.points_balance)}
+                  </span>
+                </p>
+              )}
             </div>
           </div>
 

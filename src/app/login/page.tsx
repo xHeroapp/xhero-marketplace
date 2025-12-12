@@ -1,12 +1,22 @@
 import Login from "@/components/Login";
-import React from "react";
+import React, { Suspense } from "react";
 
 const index = () => {
-	return (
-		<>
-			<Login />
-		</>
-	);
+  return (
+    <>
+      <Suspense
+        fallback={
+          <div className="login-wrapper d-flex align-items-center justify-content-center text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        }
+      >
+        <Login />
+      </Suspense>
+    </>
+  );
 };
 
 export default index;
