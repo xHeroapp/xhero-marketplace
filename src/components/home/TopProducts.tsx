@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "@/redux/features/cartSlice";
 import { useGetTopProducts } from "@/queries/products.queries";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
+import { formatCurrency } from "@/utils/formatCurrency";
 const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const TopProducts = () => {
@@ -20,6 +21,105 @@ const TopProducts = () => {
   //   data fetching
   const GetTopProducts = useGetTopProducts();
 
+  // Loading state
+  if (GetTopProducts.isLoading) {
+    return (
+      <div className="top-products-area py-3">
+        <div className="container">
+          <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
+            <h6>Top Products</h6>
+            <Link className="btn btn-sm btn-light" href="/shop-grid">
+              View all<i className="ms-1 ti ti-arrow-right"></i>
+            </Link>
+          </div>
+          <div className="row g-3">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="col-6 col-md-4 col-lg-3">
+                <div className="card product-card">
+                  <div className="card-body">
+                    <div className="placeholder-glow">
+                      <div
+                        className="product-thumbnail d-block bg-secondary rounded mb-2"
+                        style={{ height: "150px" }}
+                      ></div>
+                      <span className="placeholder col-8 d-block mb-2"></span>
+                      <span className="placeholder col-6 d-block mb-2"></span>
+                      <span className="placeholder col-12 btn btn-primary"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (GetTopProducts.isError) {
+    return (
+      <div className="top-products-area py-3">
+        <div className="container">
+          <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
+            <h6>Top Products</h6>
+            <Link className="btn btn-sm btn-light" href="/shop-grid">
+              View all<i className="ms-1 ti ti-arrow-right"></i>
+            </Link>
+          </div>
+          <div className="card border-danger">
+            <div className="card-body text-center py-5">
+              <i
+                className="ti ti-alert-circle text-danger"
+                style={{ fontSize: "3rem" }}
+              ></i>
+              <h5 className="mt-3 mb-2">Unable to Load Products</h5>
+              <p className="text-muted mb-3">
+                {GetTopProducts.error?.message ||
+                  "Something went wrong while fetching products."}
+              </p>
+              <button
+                onClick={() => GetTopProducts.refetch()}
+                className="btn btn-danger"
+              >
+                <i className="ti ti-refresh me-2"></i>Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (!GetTopProducts.data || GetTopProducts.data.length === 0) {
+    return (
+      <div className="top-products-area py-3">
+        <div className="container">
+          <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
+            <h6>Top Products</h6>
+            <Link className="btn btn-sm btn-light" href="/shop-grid">
+              View all<i className="ms-1 ti ti-arrow-right"></i>
+            </Link>
+          </div>
+          <div className="card">
+            <div className="card-body text-center py-5">
+              <i
+                className="ti ti-package text-muted"
+                style={{ fontSize: "3rem" }}
+              ></i>
+              <h5 className="mt-3 mb-2">No Products Available</h5>
+              <p className="text-muted mb-0">
+                Check back later for our top products.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Success state with data
   return (
     <>
       <div className="top-products-area py-3">
@@ -30,21 +130,12 @@ const TopProducts = () => {
               View all<i className="ms-1 ti ti-arrow-right"></i>
             </Link>
           </div>
-          <div className="row g-2">
+          <div className="row g-3">
             {GetTopProducts.data &&
               GetTopProducts.data.map((item, i) => (
-                <div key={i} className="col-6 col-md-4">
+                <div key={i} className="col-6 col-md-4 col-lg-3">
                   <div className="card product-card">
                     <div className="card-body">
-                      {/* removed badges */}
-                      {/* <span
-											className={`badge rounded-pill badge-${item.badge_color}`}
-										>
-											{item.badge_text}
-										</span> */}
-                      <a className="wishlist-btn" href="#">
-                        <i className="ti ti-heart"></i>
-                      </a>
                       <Link
                         className="product-thumbnail d-block"
                         href={`/single-product/${item.vendor_products_view.product_id}`}
@@ -52,42 +143,27 @@ const TopProducts = () => {
                         <ImageWithFallback
                           src={item.vendor_products_view.image_url}
                           alt={item.vendor_products_view.product_name}
-                          // className="w-full h-[500px] object-cover"
                         />
-                        {/* <img className="mb-2" src={item.vendor_products_view.image_url} alt="" /> */}
-                        {i === 0 || i === 3 ? (
-                          <ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
-                            <MyTimer />
-                          </ul>
-                        ) : null}
                       </Link>
 
                       <Link
-                        className="product-title"
+                        className="product-title d-block"
                         href={`/single-product/${item.vendor_products_view.product_id}`}
                       >
                         {item.vendor_products_view.product_name}
                       </Link>
 
-                      <p className="sale-price">
-                        $ {item.new_price}
-                        <span>$ {item.old_price}</span>
+                      <p className="sale-price mb-0">
+                        {formatCurrency(item.vendor_products_view.price)}
                       </p>
 
-                      <div className="product-rating">
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                      </div>
-                      <a
-                        className="btn btn-primary btn-sm"
+                      <button
+                        className="btn btn-primary btn-add-cart mt-2"
                         onClick={() => handleAddToCart(item)}
-                        style={{ cursor: "pointer" }}
+                        disabled={GetTopProducts.isFetching}
                       >
                         <i className="ti ti-plus"></i>
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>

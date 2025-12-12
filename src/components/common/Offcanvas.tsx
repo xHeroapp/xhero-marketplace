@@ -61,7 +61,7 @@ const Offcanvas = ({ handleShow, show }: any) => {
                 Notifications<span className="ms-1 badge badge-warning">3</span>
               </Link>
             </li>
-            <li className="suha-dropdown-menu">
+            {/* <li className="suha-dropdown-menu">
               <a href="#">
                 <i className="ti ti-building-store"></i>Shop Pages
               </a>
@@ -82,12 +82,12 @@ const Offcanvas = ({ handleShow, show }: any) => {
                   <Link href="/flash-sale">Flash Sale</Link>
                 </li>
               </ul>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <Link href="/pages">
                 <i className="ti ti-notebook"></i>All Pages
               </Link>
-            </li>
+            </li> */}
             <li className="suha-dropdown-menu">
               <Link href="/wishlist-grid">
                 <i className="ti ti-heart"></i>My Wishlist

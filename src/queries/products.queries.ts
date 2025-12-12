@@ -45,3 +45,18 @@ export const useGetTopProducts = () => {
     },
   });
 };
+
+// Get Weekly best seller products
+export const useGetWeeklyProducts = () => {
+  return useQuery({
+    queryKey: ["get-weekly-products"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("weekly_products")
+        .select("*, vendor_products_view(*)");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+};

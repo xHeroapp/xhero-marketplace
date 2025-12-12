@@ -16,28 +16,29 @@ import Collections from "./home/Collections";
 import { ToastContainer } from "react-toastify";
 
 const Home = () => {
-	return (
-		<>
-			<Header />
-			<Alert />
-			<div className="page-content-wrapper">
-				<Search />
-				<HeroSlider />
-				<ProductCatagories />
-				<FlashSale />
-				<DarkLight />
-				<TopProducts />
-				<CtaArea />
-				<WeeklyBestSellers />
-				<DiscountCouponCard />
-				<FeaturedProducts />
-				<Collections />
-			</div>
-			<Footer />
-			<ToastContainer position="top-right" />
-
-		</>
-	);
+  return (
+    <>
+      <Header />
+      <Alert />
+      <div className="page-content-wrapper">
+        <Search />
+        <HeroSlider />
+        <ProductCatagories />
+        <FlashSale />
+        {/* Dark  mode not needed for now */}
+        {/* <DarkLight /> */}
+        <TopProducts />
+        <CtaArea />
+        <WeeklyBestSellers />
+        <DiscountCouponCard />
+        <FeaturedProducts />
+        {/* Removed collections for now as it is not needed */}
+        {/* <Collections /> */}
+      </div>
+      <Footer />
+      <ToastContainer position="top-right" />
+    </>
+  );
 };
 
 export default Home;
