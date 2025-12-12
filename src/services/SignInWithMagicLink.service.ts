@@ -3,7 +3,7 @@ import { axiosInstance } from "@/config/axios";
 export const SignInWithMagicLink = async (email) => {
   const SITE_URL =
     process.env.NODE_ENV === "production"
-      ? "http://marketplace.getxhero.com/auth/callback" // change to xhero live url
+      ? "https://marketplace.getxhero.com/auth/callback" // change to xhero live url
       : "http://localhost:3000/auth/callback";
   try {
     const response = await axiosInstance.post("/sign-in-magic-link", {
