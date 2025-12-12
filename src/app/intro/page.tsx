@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-const index = () => {
+const Intro = () => {
   return (
     <>
       <div className="intro-wrapper d-flex align-items-center justify-content-center text-center">
@@ -10,6 +10,7 @@ const index = () => {
             className="big-logo"
             src="/assets/img/logo/Logo-full.webp"
             alt=""
+            width={"200px"}
           />
         </div>
       </div>
@@ -22,4 +23,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Intro;

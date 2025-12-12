@@ -58,8 +58,9 @@ const Login = () => {
             <div className="col-10 col-lg-8">
               <img
                 className="big-logo"
-                src="img/core-img/logo-white.png"
+                src="assets/img/logo/Logo-full-white.webp"
                 alt=""
+                width={"150px"}
               />
 
               <div className="register-form mt-5">
