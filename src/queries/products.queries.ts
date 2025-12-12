@@ -1,5 +1,5 @@
 import { supabase } from "@/supabase-client";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 export const useGetProductCategories = () => {
   return useQuery({
@@ -57,6 +57,58 @@ export const useGetWeeklyProducts = () => {
 
       if (error) throw error;
       return data;
+    },
+  });
+};
+
+// get all products
+export const useGetProductItems = (filters = {}, limit: number) => {
+  const { search, category, price } = filters;
+
+  return useInfiniteQuery({
+    queryKey: [
+      "get-reward-product-items",
+      search,
+      category ?? null,
+      price ?? null,
+    ],
+    queryFn: async ({ pageParam = 0 }) => {
+      const currentPage = typeof pageParam === "number" ? pageParam : 0;
+      const from = currentPage * limit;
+      const to = from + limit - 1;
+
+      let query = supabase
+        .from("vendor_products_view")
+        .select("*", { count: "exact" })
+        .range(from, to);
+
+      // Search filter
+      if (search && search.trim() !== "") {
+        query = query.or(
+          `product_name.ilike.%${search}%,vendor_name.ilike.%${search}%`
+        );
+      }
+      // Category filter
+      if (category && category.trim() !== "") {
+        query = query.eq("category_name", category);
+      }
+      // Price filter
+      if (price) {
+        const { from: priceFrom, to: priceTo } = price;
+        if (priceFrom != null) query = query.gte("price", priceFrom);
+        if (priceTo != null) query = query.lte("price", priceTo);
+      }
+
+      const { data, count, error } = await query;
+      if (error) throw error;
+
+      return { items: data ?? [], total: count ?? 0, currentPage }; // or whatever shape you prefer
+    },
+    initialPageParam: 0, // <--- important
+    getNextPageParam: (lastPage, allPages) => {
+      return (lastPage.items?.length ?? 0) === limit
+        ? allPages.length
+        : undefined;
     },
   });
 };

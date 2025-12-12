@@ -3346,6 +3346,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 .product-catagories a {
   padding: 0.425rem 0.5rem;
   background-color: #ffffff;
+  height: 50px;
   border-radius: 0.5rem;
   color: #020310;
   font-size: 0.75rem;
