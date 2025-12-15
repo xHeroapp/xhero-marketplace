@@ -18,6 +18,7 @@ const CartArea = () => {
     getTotalPrice,
     decrementQuantity,
     incrementQuantity,
+    removeProductFromCart,
   } = useCartStore();
   const productItem = Object.values(productsInCart);
   // const productItem = useSelector((state: any) => state.cart.cart);
@@ -61,7 +62,7 @@ const CartArea = () => {
                               className="remove-product"
                               style={{ cursor: "pointer" }}
                               onClick={() =>
-                                dispatch(remove_cart_product(product))
+                                removeProductFromCart(product.product_id)
                               }
                             >
                               <i className="ti ti-x"></i>
@@ -79,7 +80,9 @@ const CartArea = () => {
                               href="/single-product"
                             >
                               {product.product_name}
-                              <span className="mt-1">$ {product.price}</span>
+                              <span className="mt-1">
+                                {formatCurrency(product.price)}
+                              </span>
                             </Link>
                           </td>
                           <td>
