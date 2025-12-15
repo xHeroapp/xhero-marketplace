@@ -38,7 +38,23 @@ export async function middleware(req: NextRequest) {
   // Public routes
   const publicRoutes = [
     "/login",
+    "/forgot-password",
+    "/forgot-password-success",
     "/auth/callback",
+    "/home",
+    "/about-us",
+    "/category",
+    "/sub-category",
+    "/privacy-policy",
+    "/product",
+    "/featured-products",
+    "/vendors",
+    "/vendor-shop",
+    "/shop-grid",
+    "/flash-sale",
+    "/language",
+    "/offline",
+    "/settings",
     // "/auth/forgot-password",
     // "/auth/reset-password",
   ];
@@ -52,9 +68,9 @@ export async function middleware(req: NextRequest) {
   }
 
   //   we would remove the home page protection since users can login as guests
-  if (session && isPublicRoute) {
-    return NextResponse.redirect(new URL("/home", req.url));
-  }
+  // if (session && isPublicRoute) {
+  //   return NextResponse.redirect(new URL("/home", req.url));
+  // }
 
   // Role-based redirects is not needed for now
   //   if (session) {
