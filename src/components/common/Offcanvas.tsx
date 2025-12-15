@@ -109,6 +109,11 @@ const Offcanvas = ({ handleShow, show }: any) => {
               </Link>
             </li>
             <li>
+              <Link href="/vendors">
+                <i className="ti ti-shopping-bag"></i>Vendors
+              </Link>
+            </li>
+            <li>
               <Link href="/intro">
                 <i className="ti ti-logout"></i>Sign Out
               </Link>

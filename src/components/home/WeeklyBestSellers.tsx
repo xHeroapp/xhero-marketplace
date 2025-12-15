@@ -133,7 +133,7 @@ const WeeklyBestSellers = () => {
                       <div className="product-thumbnail-side">
                         <Link
                           className="product-thumbnail d-block"
-                          href={`/single-product/${item.vendor_products_view.product_id}`}
+                          href={`/product/${item.vendor_products_view.vendor_product_id}`}
                         >
                           <ImageWithFallback
                             src={item.vendor_products_view.image_url}
@@ -148,7 +148,7 @@ const WeeklyBestSellers = () => {
                       <div className="product-description">
                         <Link
                           className="product-title d-block"
-                          href={`/single-product/${item.vendor_products_view.product_id}`}
+                          href={`/product/${item.vendor_products_view.vendor_product_id}`}
                         >
                           {item.vendor_products_view.product_name}
                         </Link>

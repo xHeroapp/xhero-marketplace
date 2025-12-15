@@ -274,7 +274,7 @@ const ShopGrid = () => {
                       </a> */}
                         <Link
                           className="product-thumbnail d-block"
-                          href={`/single-product/${product.vendor_product_id}`}
+                          href={`/product/${product.vendor_product_id}`}
                         >
                           <ImageWithFallback
                             src={product.image_url}
@@ -289,7 +289,7 @@ const ShopGrid = () => {
                         </Link>
                         <Link
                           className="product-title"
-                          href={`/single-product/${product.vendor_product_id}`}
+                          href={`/product/${product.vendor_product_id}`}
                         >
                           {product.product_name}
                         </Link>

@@ -138,7 +138,7 @@ const TopProducts = () => {
                     <div className="card-body">
                       <Link
                         className="product-thumbnail d-block"
-                        href={`/single-product/${item.vendor_products_view.product_id}`}
+                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
                       >
                         <ImageWithFallback
                           src={item.vendor_products_view.image_url}
@@ -148,7 +148,7 @@ const TopProducts = () => {
 
                       <Link
                         className="product-title d-block"
-                        href={`/single-product/${item.vendor_products_view.product_id}`}
+                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
                       >
                         {item.vendor_products_view.product_name}
                       </Link>
