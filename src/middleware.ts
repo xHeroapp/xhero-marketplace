@@ -46,6 +46,7 @@ export async function middleware(req: NextRequest) {
     "/category",
     "/sub-category",
     "/privacy-policy",
+    "/cart",
     "/product",
     "/featured-products",
     "/vendors",
