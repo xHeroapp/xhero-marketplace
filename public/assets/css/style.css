@@ -1769,7 +1769,31 @@ textarea:invalid {
   border-radius: 0.5rem;
   margin-bottom: 0.25rem;
 }
+.sidenav-nav li button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #ffffff;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.25rem;
+}
 .sidenav-nav li a i {
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  display: inline-block;
+  font-size: 1rem;
+  color: #ffffff;
+  width: 1.5rem;
+}
+.sidenav-nav li button i {
   -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
   display: inline-block;
@@ -1780,7 +1804,13 @@ textarea:invalid {
 .sidenav-nav li a:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
+.sidenav-nav li button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
 .sidenav-nav li:last-child a {
+  margin-bottom: 0;
+}
+.sidenav-nav li:last-child button {
   margin-bottom: 0;
 }
 

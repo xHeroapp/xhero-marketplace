@@ -4,9 +4,23 @@ import Link from "next/link";
 import React from "react";
 import UserAvatar from "../ui/UserAvatar";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Logout } from "@/queries/auth.queries";
 
 const Offcanvas = ({ handleShow, show }: any) => {
-  const { user } = useAuthStore();
+  const router = useRouter();
+  const { user, setUser } = useAuthStore();
+
+  async function handleLogOut() {
+    try {
+      await Logout();
+      setUser(null);
+      router.push("/login");
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <>
@@ -114,9 +128,15 @@ const Offcanvas = ({ handleShow, show }: any) => {
               </Link>
             </li>
             <li>
-              <Link href="/intro">
-                <i className="ti ti-logout"></i>Sign Out
-              </Link>
+              {user ? (
+                <button className="btn text-white " onClick={handleLogOut}>
+                  <i className="ti ti-logout"></i>Sign Out
+                </button>
+              ) : (
+                <Link href="/login">
+                  <i className="ti ti-login"></i>Sign In
+                </Link>
+              )}
             </li>
           </ul>
         </div>

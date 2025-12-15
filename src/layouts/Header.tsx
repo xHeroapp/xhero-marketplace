@@ -10,11 +10,15 @@ const Header = () => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(!show);
 
+  const { loadCart } = useCartStore();
+
   const { user } = useAuthStore();
   const { productsInCart } = useCartStore();
 
   useEffect(() => {
-    console.log(user);
+    if (user?.id) {
+      loadCart(user.id);
+    }
   }, [user]);
 
   return (

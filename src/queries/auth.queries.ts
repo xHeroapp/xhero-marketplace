@@ -1,6 +1,7 @@
 import { SignInWithMagicLink } from "@/services/SignInWithMagicLink.service";
 import { supabase } from "@/supabase-client";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useLogin = () => {
   return useMutation({
@@ -24,4 +25,15 @@ export const useLogin = () => {
       return data;
     },
   });
+};
+
+// Log out
+export const Logout = async () => {
+  const SignOut = await supabase.auth.signOut();
+  if (SignOut.error) {
+    toast.error(`Error while trying to sign out, ${SignOut.error}`);
+    throw SignOut.error;
+  } else {
+    toast.success(`Signed Out`);
+  }
 };
