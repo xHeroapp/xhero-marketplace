@@ -26,7 +26,7 @@ const Home = () => {
         <ProductCatagories />
         <FlashSale />
         {/* Dark  mode not needed for now */}
-        {/* <DarkLight /> */}
+        <DarkLight />
         <TopProducts />
         <CtaArea />
         <WeeklyBestSellers />

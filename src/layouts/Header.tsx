@@ -2,6 +2,7 @@
 import Offcanvas from "@/components/common/Offcanvas";
 import UserAvatar from "@/components/ui/UserAvatar";
 import { useAuthStore } from "@/store/authStore";
+import useCartStore from "@/store/cartStore";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -10,6 +11,7 @@ const Header = () => {
   const handleShow = () => setShow(!show);
 
   const { user } = useAuthStore();
+  const { productsInCart } = useCartStore();
 
   useEffect(() => {
     console.log(user);
@@ -34,7 +36,7 @@ const Header = () => {
             <div className="cart-icon-wrap">
               <Link href="/cart">
                 <i className="ti ti-basket-bolt"></i>
-                <span>13</span>
+                <span>{Object.values(productsInCart).length}</span>
               </Link>
             </div>
 

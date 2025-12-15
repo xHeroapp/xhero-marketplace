@@ -10,12 +10,17 @@ import { addToCart } from "@/redux/features/cartSlice";
 import { useGetTopProducts } from "@/queries/products.queries";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
+import useCartStore from "@/store/cartStore";
+import { toast } from "sonner";
 const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const TopProducts = () => {
   const dispatch = useDispatch();
+
+  const { addProductToCart } = useCartStore();
+
   const handleAddToCart = (item: any) => {
-    dispatch(addToCart(item));
+    addProductToCart(item);
   };
 
   //   data fetching
@@ -159,7 +164,9 @@ const TopProducts = () => {
 
                       <button
                         className="btn btn-primary btn-add-cart mt-2"
-                        onClick={() => handleAddToCart(item)}
+                        onClick={() =>
+                          handleAddToCart(item.vendor_products_view)
+                        }
                         disabled={GetTopProducts.isFetching}
                       >
                         <i className="ti ti-plus"></i>

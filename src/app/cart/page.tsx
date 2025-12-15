@@ -2,15 +2,15 @@ import Cart from "@/components/Cart";
 import React from "react";
 
 export const metadata = {
-	title: "Suha Cart - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Cart",
 };
 
 const index = () => {
-	return (
-		<>
-			<Cart />
-		</>
-	);
+  return (
+    <>
+      <Cart />
+    </>
+  );
 };
 
 export default index;

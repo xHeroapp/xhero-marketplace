@@ -56,11 +56,21 @@ export const useGetVendor = (id) => {
 };
 
 // Get Vendor Product items
-export const useGetProductItems = (filters = {}, vendor_id: string) => {
-  const { search, limti, category, price } = filters;
+export const useGetVendorProductItems = (
+  filters = {},
+  vendor_id: string,
+  options
+) => {
+  const { search, limit, category, price } = filters;
 
   return useInfiniteQuery({
-    queryKey: ["get-vendor-products", search, category ?? null, price ?? null],
+    queryKey: [
+      "get-vendor-products",
+      search,
+      category ?? null,
+      price ?? null,
+      vendor_id,
+    ],
     queryFn: async ({ pageParam = 0 }) => {
       const currentPage = typeof pageParam === "number" ? pageParam : 0;
       const from = currentPage * limit;
@@ -69,7 +79,7 @@ export const useGetProductItems = (filters = {}, vendor_id: string) => {
       let query = supabase
         .from("vendor_products_view")
         .select("*", { count: "exact" })
-        .eq("vendor_product-id", vendor_id)
+        .eq("vendor_id", vendor_id)
         .range(from, to);
 
       // Search filter
@@ -98,5 +108,6 @@ export const useGetProductItems = (filters = {}, vendor_id: string) => {
         ? allPages.length
         : undefined;
     },
+    ...options,
   });
 };

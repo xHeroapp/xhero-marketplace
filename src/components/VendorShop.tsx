@@ -6,8 +6,16 @@ import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetVendor } from "@/queries/vendors.queries";
+import {
+  useGetVendor,
+  useGetVendorProductItems,
+} from "@/queries/vendors.queries";
 import { PageSuspense } from "./reuseable/PageSuspense";
+import { useFilters } from "@/hooks/useFilters";
+import ImageWithFallback from "./reuseable/ImageWithFallback";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
@@ -15,10 +23,18 @@ const VendorShop = ({ initialData }) => {
   if (typeof window !== "undefined") {
     require("bootstrap/dist/js/bootstrap");
   }
+  const router = useRouter();
+
+  const Filters = useFilters();
 
   const QueryOptions = { enabled: !!initialData };
   const queryClient = useQueryClient();
   const VendorQuery = useGetVendor(initialData.vendor_id);
+  const VendorProductsQuery = useGetVendorProductItems(
+    Filters,
+    initialData.vendor_id,
+    QueryOptions
+  );
 
   useEffect(() => {
     if (initialData) {
@@ -34,6 +50,10 @@ const VendorShop = ({ initialData }) => {
     console.log(initialData);
   }, [initialData]);
 
+  //   flat map the items in the pages
+  const vendors =
+    VendorProductsQuery.data?.pages.flatMap((page) => page.items) ?? [];
+
   if (!initialData || VendorQuery.isPending) {
     return <PageSuspense />;
   }
@@ -45,11 +65,10 @@ const VendorShop = ({ initialData }) => {
         <div
           className="vendor-details-wrap bg-img bg-overlay py-4"
           style={{
-            backgroundImage: `${
-              VendorQuery.data.banner_url
-                ? VendorQuery.data.banner_url
-                : "/assets/img/vendor/vendor-banner.png"
-            }`,
+            backgroundImage: `url(${
+              VendorQuery.data.banner_url ||
+              "/assets/img/vendor/vendor-banner.png"
+            })`,
           }}
         >
           <div className="container">
@@ -57,11 +76,10 @@ const VendorShop = ({ initialData }) => {
               <div className="vendor-profile shadow me-3">
                 <figure className="m-0">
                   <img
-                    src={`${
-                      VendorQuery.data.avatar_url
-                        ? VendorQuery.data.avatar_url
-                        : "/assets/img/vendor/vendor-banner.png"
-                    }`}
+                    src={
+                      VendorQuery.data.avatar_url ||
+                      "/assets/img/vendor/vendor-avatar.png"
+                    }
                     alt=""
                   />
                 </figure>
@@ -72,16 +90,26 @@ const VendorShop = ({ initialData }) => {
                   {VendorQuery.data.vendor_name}
                 </h6>
                 <p className="mb-1 text-white">
-                  <i className="ti ti-map-pin me-1"></i>Dhaka, Bangladesh
+                  <i className="ti ti-mail me-1"></i>
+                  {VendorQuery.data.email}
                 </p>
-                <div className="ratings lh-1">
+                <p className="mb-1 text-white">
+                  <i className="ti ti-phone me-1"></i>
+                  {VendorQuery.data.phone}
+                </p>
+                <p className="mb-1 text-white">
+                  <i className="ti ti-map-pin me-1"></i>
+                  {VendorQuery.data.address}
+                </p>
+                {/* removed vendor rating for now */}
+                {/* <div className="ratings lh-1">
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <span className="text-white">(99% Positive Seller)</span>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -96,13 +124,13 @@ const VendorShop = ({ initialData }) => {
                 <div className="icon">
                   <i className="ti ti-basket"></i>
                 </div>
-                <span>100+ Items</span>
+                <span>{vendors && vendors.length} Items</span>
               </div>
               <div className="single-basic-info">
                 <div className="icon">
                   <i className="ti ti-ship"></i>
                 </div>
-                <span>98% Ship On Time</span>
+                <span>Ships On Time</span>
               </div>
             </div>
           </div>
@@ -111,7 +139,8 @@ const VendorShop = ({ initialData }) => {
         <div className="vendor-tabs">
           <div className="container">
             <ul className="nav nav-tabs mb-3" id="vendorTab" role="tablist">
-              <li className="nav-item" role="presentation">
+              {/* removed About for now */}
+              {/* <li className="nav-item" role="presentation">
                 <button
                   className="nav-link"
                   id="home-tab"
@@ -124,7 +153,7 @@ const VendorShop = ({ initialData }) => {
                 >
                   About
                 </button>
-              </li>
+              </li> */}
               <li className="nav-item" role="presentation">
                 <button
                   className="nav-link active"
@@ -139,7 +168,8 @@ const VendorShop = ({ initialData }) => {
                   Products
                 </button>
               </li>
-              <li className="nav-item" role="presentation">
+              {/* removed reviews for now */}
+              {/* <li className="nav-item" role="presentation">
                 <button
                   className="nav-link"
                   id="reviews-tab"
@@ -152,12 +182,14 @@ const VendorShop = ({ initialData }) => {
                 >
                   Reviews
                 </button>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
+
         <div className="tab-content" id="vendorTabContent">
-          <div
+          {/* removed about tab content for now */}
+          {/* <div
             className="tab-pane fade"
             id="home"
             role="tabpanel"
@@ -218,7 +250,7 @@ const VendorShop = ({ initialData }) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           <div
             className="tab-pane fade show active"
             id="products"
@@ -226,55 +258,170 @@ const VendorShop = ({ initialData }) => {
             aria-labelledby="products-tab"
           >
             <div className="container">
-              <div className="row g-2 rtl-flex-d-row-r">
-                {top_product.map((item, i) => (
-                  <div key={i} className="col-6 col-md-4">
-                    <div className="card product-card">
-                      <div className="card-body">
-                        <span
-                          className={`badge rounded-pill badge-${item.badge_color}`}
-                        >
-                          {item.badge_text}
-                        </span>
-                        <a className="wishlist-btn" href="#">
-                          <i className="ti ti-heart"></i>
-                        </a>
-                        <Link
-                          className="product-thumbnail d-block"
-                          href="/single-product"
-                        >
-                          <img className="mb-2" src={item.img} alt="" />
-                          {i === 0 || i === 3 ? (
-                            <ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
-                              <MyTimer />
-                            </ul>
-                          ) : null}
-                        </Link>
-                        <Link className="product-title" href="/single-product">
-                          {item.title}
-                        </Link>
-                        <p className="sale-price">
-                          $ {item.new_price}
-                          <span>$ {item.old_price}</span>
-                        </p>
-                        <div className="product-rating">
-                          <i className="ti ti-star-filled"></i>
-                          <i className="ti ti-star-filled"></i>
-                          <i className="ti ti-star-filled"></i>
-                          <i className="ti ti-star-filled"></i>
-                          <i className="ti ti-star-filled"></i>
+              {/* Loading State */}
+              {VendorProductsQuery.isLoading && (
+                <div className="row g-2 rtl-flex-d-row-r">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="col-6 col-md-4 col-lg-3">
+                      <div className="card product-card">
+                        <div className="card-body">
+                          <div
+                            className="product-thumbnail d-block bg-light rounded mb-2"
+                            style={{ height: "200px" }}
+                          >
+                            <div className="d-flex align-items-center justify-content-center h-100">
+                              <div
+                                className="spinner-border text-primary"
+                                role="status"
+                              >
+                                <span className="visually-hidden">
+                                  Loading...
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="bg-light rounded mb-2"
+                            style={{ height: "20px" }}
+                          ></div>
+                          <div
+                            className="bg-light rounded mb-2"
+                            style={{ height: "16px", width: "60%" }}
+                          ></div>
+                          <div
+                            className="bg-light rounded"
+                            style={{ height: "36px" }}
+                          ></div>
                         </div>
-                        <a className="btn btn-primary btn-sm" href="#">
-                          <i className="ti ti-plus"></i>
-                        </a>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Error State */}
+              {VendorProductsQuery.isError && (
+                <div className="card">
+                  <div className="card-body text-center py-5">
+                    <div className="mb-3">
+                      <i
+                        className="ti ti-alert-circle text-danger"
+                        style={{ fontSize: "48px" }}
+                      ></i>
+                    </div>
+                    <h5 className="mb-2">Oops! Something went wrong</h5>
+                    <p className="text-muted mb-3">
+                      We couldn't load the products. Please try again.
+                    </p>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => VendorProductsQuery.refetch()}
+                    >
+                      <i className="ti ti-refresh me-1"></i>
+                      Try Again
+                    </button>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
+
+              {/* Empty State */}
+              {!VendorProductsQuery.isLoading &&
+                !VendorProductsQuery.isError &&
+                vendors.length === 0 && (
+                  <div className="card">
+                    <div className="card-body text-center py-5">
+                      <div className="mb-3">
+                        <i
+                          className="ti ti-package-off"
+                          style={{ fontSize: "64px" }}
+                        ></i>
+                      </div>
+                      <h5 className="mb-2">No Products Available</h5>
+                      <p className="mb-3">
+                        This vendor doesn't have any products listed at the
+                        moment.
+                        <br />
+                        Please check back later.
+                      </p>
+                      <button
+                        onClick={() => router.back()}
+                        className="btn btn-outline-primary"
+                      >
+                        <i className="ti ti-arrow-left me-1"></i>
+                        Browse Other Vendors
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              {/* Products Grid */}
+              {!VendorProductsQuery.isLoading &&
+                !VendorProductsQuery.isError &&
+                vendors.length > 0 && (
+                  <div className="row g-2 rtl-flex-d-row-r">
+                    {vendors.map((item, i) => (
+                      <div key={i} className="col-6 col-md-4 col-lg-3">
+                        <div className="card product-card">
+                          <div className="card-body">
+                            <Link
+                              className="product-thumbnail d-block"
+                              href={`/product/${item.vendor_product_id}`}
+                            >
+                              <ImageWithFallback
+                                src={item.image_url}
+                                alt={item.product_name}
+                              />
+                            </Link>
+
+                            <Link
+                              className="product-title d-block"
+                              href={`/product/${item.vendor_product_id}`}
+                            >
+                              {item.product_name}
+                            </Link>
+
+                            <p className="sale-price mb-0">
+                              {formatCurrency(item.price)}
+                            </p>
+
+                            <button
+                              className="btn btn-primary btn-add-cart mt-2"
+                              // onClick={() => handleAddToCart(item)}
+                              disabled={VendorProductsQuery.isFetching}
+                            >
+                              {VendorProductsQuery.isFetching ? (
+                                <span
+                                  className="spinner-border spinner-border-sm"
+                                  role="status"
+                                  aria-hidden="true"
+                                ></span>
+                              ) : (
+                                <i className="ti ti-plus"></i>
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              {/* Load More Indicator */}
+              {VendorProductsQuery.isFetchingNextPage && (
+                <div className="text-center py-4">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading more...</span>
+                  </div>
+                  <p className="text-muted mt-2 mb-0">
+                    Loading more products...
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-          <div
+
+          {/* Removed reviews tab content for now */}
+          {/* <div
             className="tab-pane fade"
             id="reviews"
             role="tabpanel"
@@ -438,7 +585,7 @@ const VendorShop = ({ initialData }) => {
                 </form>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
