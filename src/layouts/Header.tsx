@@ -10,10 +10,9 @@ const Header = () => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(!show);
 
-  const { loadCart } = useCartStore();
+  const { loadCart, cart } = useCartStore();
 
   const { user } = useAuthStore();
-  const { productsInCart } = useCartStore();
 
   useEffect(() => {
     if (user?.id) {
@@ -40,7 +39,7 @@ const Header = () => {
             <div className="cart-icon-wrap">
               <Link href="/cart">
                 <i className="ti ti-basket-bolt"></i>
-                <span>{Object.values(productsInCart).length}</span>
+                <span>{Object.values(cart).length}</span>
               </Link>
             </div>
 

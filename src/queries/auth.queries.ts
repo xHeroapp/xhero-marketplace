@@ -37,3 +37,23 @@ export const Logout = async () => {
     toast.success(`Signed Out`);
   }
 };
+
+// Update user information
+export const UpdateProfile = () => {
+  return useMutation({
+    mutationFn: async (user_data) => {
+      const { user_id, ...rest } = user_data;
+      console.log(rest);
+      console.log(user_id);
+
+      const { data, error } = await supabase
+        .from("employees")
+        .update(rest)
+        .eq("id", user_id);
+
+      if (error) throw error;
+
+      return data;
+    },
+  });
+};

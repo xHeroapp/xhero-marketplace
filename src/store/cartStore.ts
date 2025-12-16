@@ -1,87 +1,120 @@
 import { toast } from "sonner";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 const useCartStore = create((set, get) => ({
-  // The cart items stored as an object for fast updates
-  productsInCart: {},
+  cart: {},
 
-  // Load cart for a user
+  /* ---------------- LOAD & SAVE ---------------- */
+
   loadCart: (userId) => {
-    const storedCart = localStorage.getItem(`${userId}-cart-storage`);
-    set({
-      productsInCart: storedCart ? JSON.parse(storedCart) : {},
-    });
+    const storedCart = localStorage.getItem(`${userId}-cart`);
+    set({ cart: storedCart ? JSON.parse(storedCart) : {} });
   },
 
-  // Persist cart manually
   persistCart: (userId) => {
-    localStorage.setItem(
-      `cart-${userId}`,
-      JSON.stringify(get().productsInCart)
-    );
+    localStorage.setItem(`${userId}-cart`, JSON.stringify(get().cart));
   },
 
-  // Add a product to the cart (or increment if exists)
-  addProductToCart: (product, quantity = 1) => {
-    const cart = { ...get().productsInCart };
+  /* ---------------- ADD PRODUCT ---------------- */
 
-    if (cart[product.product_id]) {
-      cart[product.product_id].quantity += quantity;
+  addProductToCart: (product, vendor, userId, quantity = 1) => {
+    const cart = { ...get().cart };
+    const vendorId = vendor.vendor_id;
+    const productId = product.product_id;
+
+    if (!cart[vendorId]) {
+      cart[vendorId] = {
+        vendor,
+        items: {},
+      };
+    }
+
+    if (cart[vendorId].items[productId]) {
+      cart[vendorId].items[productId].quantity += quantity;
     } else {
-      cart[product.product_id] = { ...product, quantity };
+      cart[vendorId].items[productId] = {
+        ...product,
+        quantity,
+      };
     }
 
-    set({ productsInCart: cart });
+    set({ cart });
     get().persistCart(userId);
-    toast.success("Product Added to cart");
+    toast.success("Product added to cart");
   },
 
-  // Remove a product completely
-  removeProductFromCart: (productId) => {
-    const cart = { ...get().productsInCart };
-    delete cart[productId];
-    set({ productsInCart: cart });
-  },
+  /* ---------------- REMOVE PRODUCT ---------------- */
 
-  // Increment quantity
-  incrementQuantity: (productId) => {
-    const cart = { ...get().productsInCart };
-    if (cart[productId]) {
-      cart[productId].quantity += 1;
-      set({ productsInCart: cart });
+  removeProductFromCart: (vendorId, productId, userId) => {
+    const cart = { ...get().cart };
+
+    if (!cart[vendorId]) return;
+
+    delete cart[vendorId].items[productId];
+
+    // If vendor has no items left, remove vendor
+    if (Object.keys(cart[vendorId].items).length === 0) {
+      delete cart[vendorId];
     }
+
+    set({ cart });
+    get().persistCart(userId);
   },
 
-  // Decrement quantity
-  decrementQuantity: (productId) => {
-    const cart = { ...get().productsInCart };
-    if (cart[productId]) {
-      if (cart[productId].quantity > 1) {
-        cart[productId].quantity -= 1;
-      } else {
-        delete cart[productId]; // remove if quantity reaches 0
-      }
-      set({ productsInCart: cart });
+  /* ---------------- QUANTITY ---------------- */
+
+  incrementQuantity: (vendorId, productId, userId) => {
+    const cart = { ...get().cart };
+
+    cart[vendorId].items[productId].quantity += 1;
+
+    set({ cart });
+    get().persistCart(userId);
+  },
+
+  decrementQuantity: (vendorId, productId, userId) => {
+    const cart = { ...get().cart };
+    const item = cart[vendorId].items[productId];
+
+    if (item.quantity > 1) {
+      item.quantity -= 1;
+    } else {
+      delete cart[vendorId].items[productId];
     }
+
+    if (Object.keys(cart[vendorId].items).length === 0) {
+      delete cart[vendorId];
+    }
+
+    set({ cart });
+    get().persistCart(userId);
   },
 
-  // Clear entire cart
-  clearCart: () => set({ productsInCart: {} }),
+  /* ---------------- CLEAR ---------------- */
 
-  // Get total items in cart
-  getTotalItems: () =>
-    Object.values(get().productsInCart).reduce(
-      (acc, item) => acc + item.quantity,
-      0
-    ),
+  clearVendorCart: (vendorId, userId) => {
+    const cart = { ...get().cart };
+    delete cart[vendorId];
+    set({ cart });
+    get().persistCart(userId);
+  },
 
-  // Get total price of cart
-  getTotalPrice: () =>
-    Object.values(get().productsInCart).reduce(
+  clearCart: (userId) => {
+    set({ cart: {} });
+    localStorage.removeItem(`${userId}-cart`);
+  },
+
+  /* ---------------- TOTALS ---------------- */
+
+  getVendorTotal: (vendorId) => {
+    const vendorCart = get().cart[vendorId];
+    if (!vendorCart) return 0;
+
+    return Object.values(vendorCart.items).reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
-    ),
+    );
+  },
 }));
 
 export default useCartStore;

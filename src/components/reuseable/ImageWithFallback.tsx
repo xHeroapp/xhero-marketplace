@@ -6,6 +6,15 @@ export default function ImageWithFallback({
   fallback = "/assets/img/product/product_fallback.png",
   alt = "",
   className = "",
+  width,
+  height,
+}: {
+  src: string;
+  fallback?: string;
+  alt: string;
+  className?: string;
+  width?: string | number;
+  height?: string | number;
 }) {
   const [imgSrc, setImgSrc] = useState(fallback);
 
@@ -30,6 +39,8 @@ export default function ImageWithFallback({
       onError={handleError}
       // onLoad={handleError}
       loading="lazy"
+      width={width && width}
+      height={height && height}
     />
   );
 }

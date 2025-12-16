@@ -1,210 +1,308 @@
 "use client";
 import Link from "next/link";
-import UseCartInfo from "@/hooks/UseCartInfo";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  decrease_quantity,
-  remove_cart_product,
-} from "@/redux/features/cartSlice";
+import React, { useEffect } from "react";
 import useCartStore from "@/store/cartStore";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
 
 const CartArea = () => {
+  // router
+  const router = useRouter();
   const {
-    productsInCart,
-    getTotalPrice,
+    cart,
+    getVendorTotal,
     decrementQuantity,
     incrementQuantity,
     removeProductFromCart,
+    clearVendorCart,
   } = useCartStore();
-  const productItem = Object.values(productsInCart);
-  // const productItem = useSelector((state: any) => state.cart.cart);
-  const dispatch = useDispatch();
-  const { total } = UseCartInfo();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle the form submission here
-  };
+  // Get userId from your auth system
+  const { user } = useAuthStore();
+  const userId = user.id;
 
   useEffect(() => {
-    console.log(productItem);
-    console.log(getTotalPrice());
-  }, [productItem]);
+    console.log("Cart state:", cart);
+  }, [cart]);
 
-  // handle shipping cost
-  const [shipCost, setShipCost] = useState<number>(0);
-  const handleShippingCost = (value: any) => {
-    if (value === "free") {
-      setShipCost(0);
-    } else {
-      setShipCost(value);
-    }
-  };
+  // Convert cart object to array of vendors
+  const vendorCarts = Object.entries(cart).map(([vendorId, vendorData]) => ({
+    vendorId,
+    vendor: vendorData.vendor,
+    items: Object.values(vendorData.items),
+    total: getVendorTotal(vendorId),
+  }));
+
+  const hasItems = vendorCarts.length > 0;
 
   return (
     <>
       <div className="page-content-wrapper">
         <div className="container">
-          <div className="cart-wrapper-area py-3">
-            <div className="cart-table card mb-3">
-              <div className="table-responsive card-body">
-                <table className="table mb-0">
-                  <tbody>
-                    {productItem &&
-                      productItem.map((product: any) => (
-                        <tr key={product.product_id}>
-                          <th scope="row">
-                            <a
-                              className="remove-product"
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                removeProductFromCart(product.product_id)
-                              }
-                            >
-                              <i className="ti ti-x"></i>
-                            </a>
-                          </th>
-                          <td>
-                            <ImageWithFallback
-                              src={product.image_url}
-                              alt={product.product_name}
-                            />
-                          </td>
-                          <td className="text-center">
-                            <Link
-                              className="product-title"
-                              href="/single-product"
-                            >
-                              {product.product_name}
-                              <span className="mt-1">
-                                {formatCurrency(product.price)}
-                              </span>
-                            </Link>
-                          </td>
-                          <td>
-                            <td className="tp-cart-quantity d-flex justify-content-end">
-                              <div className="tp-product-quantity p-relative mt-10 mb-10">
-                                <span
-                                  style={{ cursor: "pointer" }}
-                                  className="tp-cart-minus"
-                                  onClick={() =>
-                                    decrementQuantity(product.product_id)
-                                  }
-                                >
-                                  -
-                                </span>
-                                <input
-                                  className="tp-cart-input"
-                                  type="text"
-                                  onChange={handleSubmit}
-                                  value={product.quantity}
-                                  readOnly
-                                />
-                                <span
-                                  style={{ cursor: "pointer" }}
-                                  className="tp-cart-plus"
-                                  onClick={() =>
-                                    incrementQuantity(product.product_id)
-                                  }
-                                >
-                                  +
-                                </span>
-                              </div>
-                            </td>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+          {/* Header */}
+          <div className="d-flex justify-content-between align-items-center py-3">
+            <h5 className="mb-0">Orders</h5>
+            {hasItems && (
+              <button
+                className="btn btn-sm btn-outline-danger"
+                onClick={() => {
+                  if (confirm("Clear entire cart?")) {
+                    vendorCarts.forEach(({ vendorId }) =>
+                      clearVendorCart(vendorId, userId)
+                    );
+                  }
+                }}
+              >
+                Clear Cart
+              </button>
+            )}
+          </div>
+
+          {/* Tabs */}
+          <div className="card mb-3">
+            <div className="card-body p-2">
+              <div className="d-flex">
+                <button className="btn btn-dark flex-fill rounded-pill me-2">
+                  My Cart
+                </button>
+                <button className="btn btn-light flex-fill rounded-pill me-2">
+                  Ongoing
+                </button>
+                <button className="btn btn-light flex-fill rounded-pill">
+                  Completed
+                </button>
               </div>
             </div>
+          </div>
 
-            <div className="card cart-amount-area">
+          {/* Empty state */}
+          {!hasItems && (
+            <div className="card text-center py-5">
               <div className="card-body">
-                <div className="tp-cart-subtotal d-flex justify-content-between">
-                  <h5>Subtotal</h5>
-                  <h5>{formatCurrency(getTotalPrice())}</h5>
-                </div>
-
-                <div className="shipping-method-choose mb-3">
-                  <div className="card shipping-method-choose-title-card">
-                    <div className="card-body">
-                      <h6 className="text-center mb-0">Shipping Method</h6>
-                    </div>
-                  </div>
-                  <div className="card shipping-method-choose-card">
-                    <div className="card-body" style={{ paddingLeft: "0" }}>
-                      <div className="shipping-method-choose">
-                        <ul className="ps-0">
-                          <li>
-                            <input
-                              id="flat_rate"
-                              type="radio"
-                              name="shipping"
-                            />
-                            <label
-                              htmlFor="flat_rate"
-                              onClick={() => handleShippingCost(20)}
-                            >
-                              Flat rate: <span>$20.00</span>
-                            </label>
-
-                            <div className="check"></div>
-                          </li>
-                          <li>
-                            <input
-                              id="local_pickup"
-                              type="radio"
-                              name="shipping"
-                            />
-                            <label
-                              htmlFor="local_pickup"
-                              onClick={() => handleShippingCost(25)}
-                            >
-                              Local pickup: <span> $25.00</span>
-                            </label>
-                            <div className="check"></div>
-                          </li>
-                          <li>
-                            <input
-                              id="free_shipping"
-                              type="radio"
-                              name="shipping"
-                            />
-                            <label
-                              htmlFor="free_shipping"
-                              onClick={() => handleShippingCost("free")}
-                            >
-                              Free shipping
-                            </label>
-                            <div className="check"></div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="tp-cart-subtotal d-flex justify-content-between">
-                  <h5>Total</h5>
-                  <h5>{formatCurrency(getTotalPrice())}</h5>
-                  {/* <h5>$ {total + shipCost}</h5> */}
-                </div>
-
-                <Link className="btn btn-primary" href="/checkout">
-                  Checkout Now
+                <i className="ti ti-shopping-cart display-4 text-muted mb-3"></i>
+                <h5 className="mb-2">Your cart is empty</h5>
+                <p className="text-muted mb-4">
+                  Add items to get started with your order
+                </p>
+                <Link href="/shop" className="btn btn-primary">
+                  Start Shopping
                 </Link>
               </div>
             </div>
+          )}
+
+          {/* Vendor carts */}
+          <div className="cart-wrapper-area pb-3">
+            {vendorCarts.map(({ vendorId, vendor, items, total }) => (
+              <div key={vendorId} className="vendor-cart-card card mb-3">
+                <div className="card-body">
+                  {/* Vendor header */}
+                  <div className="d-flex align-items-center justify-content-between mb-3">
+                    <div className="d-flex align-items-center">
+                      <div className="vendor-icon me-2">
+                        {vendor.vendor_img ? (
+                          <img
+                            src={vendor.vendor_img}
+                            alt={vendor.vendor_name}
+                            width="40"
+                            height="40"
+                            className="rounded"
+                          />
+                        ) : (
+                          <div
+                            className="bg-light rounded d-flex align-items-center justify-content-center"
+                            style={{ width: 40, height: 40 }}
+                          >
+                            <i className="ti ti-building-store"></i>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <h6 className="mb-0">{vendor.vendor_name}</h6>
+                        <small className="text-muted">
+                          {items.length} Item{items.length !== 1 ? "s" : ""} •{" "}
+                          {formatCurrency(total)}
+                        </small>
+                      </div>
+                    </div>
+                    <button
+                      className="btn btn-sm"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target={`#vendor-${vendorId}`}
+                    >
+                      <span className="view-selection-text">
+                        View Selection
+                      </span>
+                      <i className="ti ti-chevron-down ms-1"></i>
+                    </button>
+                  </div>
+
+                  {/* Delivery address */}
+                  <div className="delivery-info d-flex align-items-start mb-3 p-2 bg-light rounded">
+                    <i className="ti ti-map-pin me-2 mt-1"></i>
+                    <small>
+                      Delivering to{" "}
+                      {vendor.deliveryAddress || "Default Address"}
+                    </small>
+                  </div>
+
+                  {/* Collapsible items */}
+                  <div className="collapse" id={`vendor-${vendorId}`}>
+                    <div className="items-list mb-3">
+                      {items.map((product) => (
+                        <div
+                          key={product.product_id}
+                          className="cart-item d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom"
+                        >
+                          <div className="d-flex align-items-center flex-grow-1">
+                            <ImageWithFallback
+                              src={product.image_url}
+                              alt={product.product_name}
+                              width={50}
+                              height={50}
+                              className="rounded me-3s"
+                            />
+                            <div className="flex-grow-1">
+                              <p className="mb-0 fw-medium">
+                                {product.product_name}
+                              </p>
+                              <small className="text-muted">
+                                {formatCurrency(product.price)}
+                              </small>
+                            </div>
+                          </div>
+
+                          <div className="d-flex align-items-center">
+                            {/* Quantity controls */}
+                            <div className="quantity-controls d-flex align-items-center me-2">
+                              <button
+                                className="btn btn-sm btn-outline-secondary"
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  padding: 0,
+                                  borderRadius: "50%",
+                                }}
+                                onClick={() =>
+                                  decrementQuantity(
+                                    vendorId,
+                                    product.product_id,
+                                    userId
+                                  )
+                                }
+                              >
+                                -
+                              </button>
+                              <span className="mx-2 fw-medium">
+                                {product.quantity}
+                              </span>
+                              <button
+                                className="btn btn-sm btn-outline-secondary"
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  padding: 0,
+                                  borderRadius: "50%",
+                                }}
+                                onClick={() =>
+                                  incrementQuantity(
+                                    vendorId,
+                                    product.product_id,
+                                    userId
+                                  )
+                                }
+                              >
+                                +
+                              </button>
+                            </div>
+
+                            {/* Remove button */}
+                            <button
+                              className="btn btn-sm btn-link text-danger p-0"
+                              onClick={() =>
+                                removeProductFromCart(
+                                  vendorId,
+                                  product.product_id,
+                                  userId
+                                )
+                              }
+                              style={{ fontSize: "1.2rem" }}
+                            >
+                              <i className="ti ti-x"></i>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Checkout button for this vendor */}
+                  <button
+                    className="btn btn-primary w-100 mb-2"
+                    onClick={() => {
+                      // Navigate to checkout with this vendor
+                      router.push(`/checkout?vendor=${vendorId}`);
+                    }}
+                  >
+                    Checkout
+                  </button>
+
+                  {/* Clear selection */}
+                  <button
+                    className="btn btn-link w-100 text-success p-0"
+                    onClick={() => {
+                      clearVendorCart(vendorId, userId);
+                    }}
+                  >
+                    Clear Selection
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       <div className="internet-connection-status" id="internetStatus"></div>
+
+      <style jsx>{`
+        .vendor-cart-card {
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .view-selection-text {
+          font-size: 0.875rem;
+        }
+
+        .cart-item:last-child {
+          border-bottom: none !important;
+        }
+
+        .quantity-controls button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .delivery-info {
+          font-size: 0.875rem;
+        }
+
+        @media (max-width: 576px) {
+          .cart-item {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .quantity-controls {
+            margin-top: 10px;
+          }
+        }
+      `}</style>
     </>
   );
 };

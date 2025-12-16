@@ -10,21 +10,12 @@ import { ToastContainer } from "react-toastify";
 import useCartStore from "@/store/cartStore";
 
 const Cart = () => {
-  const {
-    productsInCart,
-    addProductToCart,
-    removeProductFromCart,
-    incrementQuantity,
-    decrementQuantity,
-    clearCart,
-    getTotalItems,
-    getTotalPrice,
-  } = useCartStore();
+  const { cart } = useCartStore();
 
   const productItem = useSelector((state: any) => state.cart.cart);
   let content = null;
-  if (Object.values(productsInCart).length === 0) content = <EmptyBag />;
-  if (Object.values(productsInCart).length > 0) content = <CartArea />;
+  if (Object.values(cart).length === 0) content = <EmptyBag />;
+  if (Object.values(cart).length > 0) content = <CartArea />;
 
   return (
     <>

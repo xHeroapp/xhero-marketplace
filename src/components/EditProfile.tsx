@@ -1,113 +1,219 @@
 "use client";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
-import React from "react";
+import { useAuthStore } from "@/store/authStore";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import {
+  EditProfileFormData,
+  editProfileSchema,
+} from "@/schema/editProfileSchema";
+import { UpdateProfile } from "@/queries/auth.queries";
+import ImageWithFallback from "./reuseable/ImageWithFallback";
 
 const EditProfile = () => {
-	return (
-		<>
-			<HeaderTwo links="profile" title="Edit Profile" />
+  const { user } = useAuthStore();
 
-			<div className="page-content-wrapper">
-				<div className="container">
-					<div className="profile-wrapper-area py-3">
-						<div className="card user-info-card">
-							<div className="card-body p-4 d-flex align-items-center">
-								<div className="user-profile me-3">
-									<img src="/assets/img/bg-img/9.jpg" alt="" />
-									<div className="change-user-thumb">
-										<form onSubmit={(e) => e.preventDefault()}>
-											<input className="form-control-file" type="file" />
-											<button>
-												<i className="ti ti-pencil"></i>
-											</button>
-										</form>
-									</div>
-								</div>
-								<div className="user-info">
-									<p className="mb-0 text-white">@designing-world</p>
-									<h5 className="mb-0 text-white">Suha Jannat</h5>
-								</div>
-							</div>
-						</div>
+  const UpdateProfileQuery = UpdateProfile();
 
-						<div className="card user-data-card">
-							<div className="card-body">
-								<form action="" method="">
-									<div className="mb-3">
-										<div className="title mb-2">
-											<i className="ti ti-at"></i>
-											<span>Username</span>
-										</div>
-										<input
-											className="form-control"
-											type="text"
-											value="designing-world"
-										/>
-									</div>
-									<div className="mb-3">
-										<div className="title mb-2">
-											<i className="ti ti-user"></i>
-											<span>Full Name</span>
-										</div>
-										<input
-											className="form-control"
-											type="text"
-											value="Suha Jannat"
-											disabled
-										/>
-									</div>
-									<div className="mb-3">
-										<div className="title mb-2">
-											<i className="ti ti-phone"></i>
-											<span>Phone</span>
-										</div>
-										<input
-											className="form-control"
-											type="text"
-											value="+880 000 111 222"
-										/>
-									</div>
-									<div className="mb-3">
-										<div className="title mb-2">
-											<i className="ti ti-mail"></i>
-											<span>Email Address</span>
-										</div>
-										<input
-											className="form-control"
-											type="email"
-											value="care@example.com"
-										/>
-									</div>
-									<div className="mb-3">
-										<div className="title mb-2">
-											<i className="ti ti-location"></i>
-											<span>Shipping Address</span>
-										</div>
-										<input
-											className="form-control"
-											type="text"
-											value="28/C Green Road, BD"
-										/>
-									</div>
-									<button
-										className="btn btn-primary btn-lg w-100"
-										type="submit"
-									>
-										Save All Changes
-									</button>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<EditProfileFormData>({
+    resolver: zodResolver(editProfileSchema),
+    defaultValues: {
+      full_name: "",
+      phone: "",
+      email: "",
+      delivery_address: "",
+    },
+  });
 
-			<div className="internet-connection-status" id="internetStatus"></div>
+  // Load user data when component mounts
+  useEffect(() => {
+    if (user) {
+      reset({
+        full_name: user.full_name || "Suha Jannat",
+        phone: user.phone || "+880 000 111 222",
+        email: user.email || "care@example.com",
+        delivery_address: user.delivery_address || "",
+      });
+    }
+  }, [user, reset]);
 
-			<Footer />
-		</>
-	);
+  // Form submission handler
+  const onSubmit = async (data: EditProfileFormData) => {
+    const user_data = { ...data, user_id: user.id };
+    try {
+      const promise = UpdateProfileQuery.mutateAsync(user_data);
+
+      toast.promise(promise, {
+        loading: "Updating...",
+        success: () => {
+          console.log("Form data to submit:", data);
+          resolve(data);
+          return "Updated!";
+        },
+        error:
+          "There was an error while trying to update your profile, please try again later.",
+      });
+    } catch (error) {
+      console.log(errror);
+      reject(error);
+    }
+  };
+
+  return (
+    <>
+      <HeaderTwo links="profile" title="Edit Profile" />
+
+      <div className="page-content-wrapper">
+        <div className="container">
+          <div className="profile-wrapper-area py-3">
+            <div className="card user-info-card">
+              <div className="card-body p-4 d-flex align-items-center">
+                <div className="user-profile me-3">
+                  <ImageWithFallback
+                    src={
+                      user && user.avatar_url
+                        ? user.avatar_url
+                        : `/assets/img/core-img/user-profile-male.jpg`
+                    }
+                    alt={user.full_name}
+                  />
+                  <div className="change-user-thumb">
+                    <form onSubmit={(e) => e.preventDefault()}>
+                      <input className="form-control-file" type="file" />
+                      <button type="button">
+                        <i className="ti ti-pencil"></i>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+                <div className="user-info">
+                  <h5 className="mb-0 text-white">
+                    {user?.full_name || "Suha Jannat"}
+                  </h5>
+                  <p className="mb-0 text-white">
+                    @{user?.email || "designing-world"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="card user-data-card">
+              <div className="card-body">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="mb-3">
+                    <div className="title mb-2">
+                      <i className="ti ti-user"></i>
+                      <span>Full Name</span>
+                    </div>
+                    <input
+                      className={`form-control ${
+                        errors.full_name ? "is-invalid" : ""
+                      }`}
+                      type="text"
+                      {...register("full_name")}
+                    />
+                    {errors.full_name && (
+                      <div className="invalid-feedback">
+                        {errors.full_name.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="title mb-2">
+                      <i className="ti ti-phone"></i>
+                      <span>Phone</span>
+                    </div>
+                    <input
+                      className={`form-control ${
+                        errors.phone ? "is-invalid" : ""
+                      }`}
+                      type="text"
+                      {...register("phone")}
+                    />
+                    {errors.phone && (
+                      <div className="invalid-feedback">
+                        {errors.phone.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="title mb-2">
+                      <i className="ti ti-mail"></i>
+                      <span>Email Address</span>
+                    </div>
+                    <input
+                      className={`form-control ${
+                        errors.email ? "is-invalid" : ""
+                      }`}
+                      type="email"
+                      {...register("email")}
+                    />
+                    {errors.email && (
+                      <div className="invalid-feedback">
+                        {errors.email.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="title mb-2">
+                      <i className="ti ti-location"></i>
+                      <span>Shipping Address</span>
+                    </div>
+                    <input
+                      className={`form-control ${
+                        errors.delivery_address ? "is-invalid" : ""
+                      }`}
+                      type="text"
+                      {...register("delivery_address")}
+                    />
+                    {errors.delivery_address && (
+                      <div className="invalid-feedback">
+                        {errors.delivery_address.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    className="btn btn-primary btn-lg w-100"
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Saving...
+                      </>
+                    ) : (
+                      "Save All Changes"
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="internet-connection-status" id="internetStatus"></div>
+
+      <Footer />
+    </>
+  );
 };
 
 export default EditProfile;

@@ -2,7 +2,7 @@
 
 import top_product from "@/data/top_product";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 import dynamic from "next/dynamic";
 import { useDispatch } from "react-redux";
@@ -12,16 +12,31 @@ import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import useCartStore from "@/store/cartStore";
 import { toast } from "sonner";
+import { useAuthStore } from "@/store/authStore";
 const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const TopProducts = () => {
   const dispatch = useDispatch();
 
+  const { user } = useAuthStore();
   const { addProductToCart } = useCartStore();
 
   const handleAddToCart = (item: any) => {
-    addProductToCart(item);
+    addProductToCart(
+      item,
+      // vendor data
+      {
+        vendor_name: item.vendor_name,
+        vendor_id: item.vendor_id,
+        vendor_img: "/assets/img/vendor/vendor-avatar.png", //update this to the actual vendor avatar
+      },
+      user && user.id
+    );
   };
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   //   data fetching
   const GetTopProducts = useGetTopProducts();
