@@ -1,12 +1,13 @@
 "use client";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import UserAvatar from "../ui/UserAvatar";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Logout } from "@/queries/auth.queries";
+import { useGetNotificationsCount } from "@/queries/notifications.queries";
 
 const Offcanvas = ({ handleShow, show }: any) => {
   const router = useRouter();
@@ -21,6 +22,13 @@ const Offcanvas = ({ handleShow, show }: any) => {
       console.log(err);
     }
   }
+
+  // Get user notifications count
+  const userNotificationCount = useGetNotificationsCount(user);
+
+  useEffect(() => {
+    userNotificationCount.data && console.log(userNotificationCount.data);
+  }, [userNotificationCount.isSuccess]);
 
   return (
     <>
@@ -74,7 +82,10 @@ const Offcanvas = ({ handleShow, show }: any) => {
             <li>
               <Link href="/notifications">
                 <i className="ti ti-bell-ringing lni-tada-effect"></i>
-                Notifications<span className="ms-1 badge badge-warning">3</span>
+                Notifications
+                <span className="ms-1 badge badge-warning">
+                  {userNotificationCount.data}
+                </span>
               </Link>
             </li>
             {/* <li className="suha-dropdown-menu">
