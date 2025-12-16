@@ -37,9 +37,9 @@ const Notifications = () => {
         },
         () => {
           // Invalidate both queries so UI updates immediately
-          queryClient.invalidateQueries(["notifications", user.id]);
+          queryClient.invalidateQueries(["notifications", user?.id]);
           queryClient.refetchQueries({
-            queryKey: ["notifications-count", user.id],
+            queryKey: ["notifications-count", user?.id],
             exact: true,
           });
         }
