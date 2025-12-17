@@ -8,8 +8,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import useCartStore from "@/store/cartStore";
 import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useAuthStore } from "@/store/authStore";
+import { useClientReady } from "@/hooks/useClientReady";
 
 const Checkout = () => {
+  const ready = useClientReady();
+  const { user } = useAuthStore();
   const searchParams = useSearchParams();
   const vendorId = searchParams.get("vendor");
 
@@ -41,6 +45,8 @@ const Checkout = () => {
       router.push("/cart");
     }
   }, [vendorCart]);
+
+  if (!ready) return null;
 
   if (!vendorCart || !vendor) {
     return (
@@ -302,21 +308,21 @@ const Checkout = () => {
                             <i className="ti ti-user me-2"></i>
                             <span>Full Name</span>
                           </div>
-                          <div className="data-content">SUHA JANNAT</div>
+                          <div className="data-content">{user.full_name}</div>
                         </div>
                         <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
                           <div className="title d-flex align-items-center">
                             <i className="ti ti-mail me-2"></i>
                             <span>Email Address</span>
                           </div>
-                          <div className="data-content">care@example.com</div>
+                          <div className="data-content">{user?.email}</div>
                         </div>
                         <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
                           <div className="title d-flex align-items-center">
                             <i className="ti ti-phone me-2"></i>
                             <span>Phone</span>
                           </div>
-                          <div className="data-content">+880 000 111 222</div>
+                          <div className="data-content">{user?.phone}</div>
                         </div>
                         <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
                           <div className="title d-flex align-items-center">
@@ -324,7 +330,9 @@ const Checkout = () => {
                             <span>Shipping:</span>
                           </div>
                           <div className="data-content">
-                            28/C Green Road, BD
+                            {user?.delivery_address
+                              ? user?.delivery_address
+                              : "Add a delivery address"}
                           </div>
                         </div>
                         <Link
@@ -408,17 +416,23 @@ const Checkout = () => {
 
                   {/* Total and confirm */}
                   <div className="card cart-amount-area">
-                    <div className="card-body d-flex align-items-center justify-content-between">
-                      <h5 className="total-price mb-0">
-                        {formatCurrency(total)}
-                      </h5>
-                      <Link
-                        className="btn btn-primary"
-                        href="/checkout-payment"
-                      >
-                        Confirm & Pay
-                      </Link>
-                    </div>
+                    {user?.delivery_address ? (
+                      <div className="card-body d-flex align-items-center justify-content-between">
+                        <h5 className="total-price mb-0">
+                          {formatCurrency(total)}
+                        </h5>
+                        <Link
+                          className="btn btn-primary"
+                          href="/checkout-payment"
+                        >
+                          Confirm & Pay
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="card-body d-flex align-items-center justify-content-between">
+                        <p>Add a delivery address to continue</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Back button */}

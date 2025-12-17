@@ -61,7 +61,7 @@ const CartArea = () => {
           </div>
 
           {/* Tabs */}
-          <div className="card mb-3">
+          {/* <div className="card mb-3">
             <div className="card-body p-2">
               <div className="d-flex">
                 <button className="btn btn-dark flex-fill rounded-pill me-2">
@@ -75,7 +75,7 @@ const CartArea = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Empty state */}
           {!hasItems && (

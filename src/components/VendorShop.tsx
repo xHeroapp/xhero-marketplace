@@ -140,7 +140,7 @@ const VendorShop = ({ initialData }) => {
           <div className="container">
             <ul className="nav nav-tabs mb-3" id="vendorTab" role="tablist">
               {/* removed About for now */}
-              {/* <li className="nav-item" role="presentation">
+              <li className="nav-item" role="presentation">
                 <button
                   className="nav-link"
                   id="home-tab"
@@ -153,7 +153,7 @@ const VendorShop = ({ initialData }) => {
                 >
                   About
                 </button>
-              </li> */}
+              </li>
               <li className="nav-item" role="presentation">
                 <button
                   className="nav-link active"
@@ -189,7 +189,7 @@ const VendorShop = ({ initialData }) => {
 
         <div className="tab-content" id="vendorTabContent">
           {/* removed about tab content for now */}
-          {/* <div
+          <div
             className="tab-pane fade"
             id="home"
             role="tabpanel"
@@ -250,7 +250,7 @@ const VendorShop = ({ initialData }) => {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
           <div
             className="tab-pane fade show active"
             id="products"

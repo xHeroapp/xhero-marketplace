@@ -66,7 +66,7 @@ const NotificationDetails = () => {
         });
     }
     queryClient.refetchQueries({
-      queryKey: ["notifications-count", user.id],
+      queryKey: ["notifications-count", user && user.id],
       exact: true,
     });
   }, [notification?.id, id]);
