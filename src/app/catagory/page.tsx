@@ -2,15 +2,15 @@ import React from "react";
 import Catagory from "@/components/Catagory";
 
 export const metadata = {
-	title: "Suha Catagory - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Catagory",
 };
 
 const index = () => {
-	return (
-		<>
-			<Catagory />
-		</>
-	);
+  return (
+    <>
+      <Catagory />
+    </>
+  );
 };
 
 export default index;

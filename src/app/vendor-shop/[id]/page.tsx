@@ -40,8 +40,6 @@ export default async function Product({
       }
     >
       <VendorShop initialData={data} />
-
-      {/* <SingleProduct product={data} key={single_product?.id} /> */}
     </Suspense>
   );
 }

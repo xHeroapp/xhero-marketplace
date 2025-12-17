@@ -21,7 +21,7 @@ const CartArea = () => {
 
   // Get userId from your auth system
   const { user } = useAuthStore();
-  const userId = user.id;
+  const userId = "user && user?.id";
 
   useEffect(() => {
     console.log("Cart state:", cart);

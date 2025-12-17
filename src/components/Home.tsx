@@ -25,7 +25,6 @@ const Home = () => {
         <HeroSlider />
         <ProductCatagories />
         <FlashSale />
-        {/* Dark  mode not needed for now */}
         <DarkLight />
         <TopProducts />
         <CtaArea />

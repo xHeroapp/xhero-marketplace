@@ -27,10 +27,6 @@ export default async function Product({
     console.error(error);
     return <div>Error loading Product</div>;
   }
-  // const params = useParams();
-  const single_product = top_product.find(
-    (item) => Number(item.id) === Number(params.id)
-  );
 
   return (
     <Suspense
@@ -42,7 +38,7 @@ export default async function Product({
         </div>
       }
     >
-      <SingleProduct product={data} key={single_product?.id} />
+      <SingleProduct product={data} />
     </Suspense>
   );
 }

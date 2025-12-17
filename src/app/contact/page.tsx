@@ -2,15 +2,15 @@ import React from "react";
 import Contact from "@/components/Contact";
 
 export const metadata = {
-	title: "Suha Contact - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Contact",
 };
 
 const index = () => {
-	return (
-		<>
-			<Contact />
-		</>
-	);
+  return (
+    <>
+      <Contact />
+    </>
+  );
 };
 
 export default index;

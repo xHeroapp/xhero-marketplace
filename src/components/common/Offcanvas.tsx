@@ -24,11 +24,11 @@ const Offcanvas = ({ handleShow, show }: any) => {
   }
 
   // Get user notifications count
-  const userNotificationCount = useGetNotificationsCount(user);
+  const userNotificationCount = useGetNotificationsCount(user?.id);
 
-  useEffect(() => {
-    userNotificationCount.data && console.log(userNotificationCount.data);
-  }, [userNotificationCount.isSuccess]);
+  // useEffect(() => {
+  //   userNotificationCount.data && console.log(userNotificationCount.data);
+  // }, [userNotificationCount.isSuccess]);
 
   return (
     <>
@@ -84,7 +84,9 @@ const Offcanvas = ({ handleShow, show }: any) => {
                 <i className="ti ti-bell-ringing lni-tada-effect"></i>
                 Notifications
                 <span className="ms-1 badge badge-warning">
-                  {userNotificationCount.data}
+                  {userNotificationCount.data
+                    ? userNotificationCount.data?.data
+                    : "1"}
                 </span>
               </Link>
             </li>

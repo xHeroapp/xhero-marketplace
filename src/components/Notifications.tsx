@@ -20,7 +20,7 @@ const Notifications = () => {
   //   router
   const router = useRouter();
 
-  const notificationQuery = useGetNotifications(user);
+  const notificationQuery = useGetNotifications(user?.id);
 
   useEffect(() => {
     if (!user?.id) return;

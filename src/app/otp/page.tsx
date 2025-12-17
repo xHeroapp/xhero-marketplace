@@ -2,11 +2,11 @@ import Otp from "@/components/Otp";
 import React from "react";
 
 const index = () => {
-	return (
-		<>
-			<Otp />
-		</>
-	);
+  return (
+    <>
+      <Otp />
+    </>
+  );
 };
 
 export default index;

@@ -1,16 +1,25 @@
 "use client";
+
 import Footer from "@/layouts/Footer";
 import Header from "@/layouts/Header";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
-import React, { useEffect } from "react";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
+import { useClientReady } from "@/hooks/useClientReady";
 
 const Profile = () => {
+  const ready = useClientReady();
   const { user } = useAuthStore();
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+
+  // stop render until client hydration
+  if (!ready) return null;
+
+  //  enforce auth
+  if (!user) {
+    return <p className="text-center mt-5">Loading profile...</p>;
+    // or redirect("/login")
+  }
+
   return (
     <>
       <Header />
@@ -23,13 +32,11 @@ const Profile = () => {
                 <div className="user-profile me-3">
                   <ImageWithFallback
                     src={
-                      user && user.avatar_url
-                        ? user.avatar_url
-                        : `/assets/img/core-img/user-profile-male.jpg`
+                      user.avatar_url ||
+                      "/assets/img/core-img/user-profile-male.jpg"
                     }
                     alt={user.full_name}
                   />
-                  {/* <img src="/assets/img/bg-img/9.jpg" alt="" /> */}
                 </div>
                 <div className="user-info">
                   <h5 className="mb-0 text-white">{user.full_name}</h5>
@@ -40,59 +47,21 @@ const Profile = () => {
 
             <div className="card user-data-card">
               <div className="card-body">
-                {/* <div className="single-profile-data d-flex align-items-center justify-content-between">
-									<div className="title d-flex align-items-center">
-										<i className="ti ti-at"></i>
-										<span>Username</span>
-									</div>
-									<div className="data-content">@designing-world</div>
-								</div>
-								<div className="single-profile-data d-flex align-items-center justify-content-between">
-									<div className="title d-flex align-items-center">
-										<i className="ti ti-user"></i>
-										<span>Full Name</span>
-									</div>
-									<div className="data-content">SUHA JANNAT</div>
-								</div> */}
                 <div className="single-profile-data d-flex align-items-center justify-content-between">
-                  <div className="title d-flex align-items-center">
-                    <i className="ti ti-phone"></i>
-                    <span>Phone</span>
-                  </div>
-                  <div className="data-content">{user.phone}</div>
+                  <span>Phone</span>
+                  <span>{user.phone}</span>
                 </div>
-                {/* <div className="single-profile-data d-flex align-items-center justify-content-between">
-                  <div className="title d-flex align-items-center">
-                    <i className="ti ti-mail"></i>
-                    <span>Email</span>
-                  </div>
-                  <div className="data-content">care@example.com </div>
-                </div> */}
+
                 <div className="single-profile-data d-flex align-items-center justify-content-between">
-                  <div className="title d-flex align-items-center">
-                    <i className="ti ti-location-pin"></i>
-                    <span>Address:</span>
-                  </div>
-                  <div className="data-content">{user.location}</div>
+                  <span>Address</span>
+                  <span>{user.location}</span>
                 </div>
+
                 <div className="single-profile-data d-flex align-items-center justify-content-between">
-                  <div className="title d-flex align-items-center">
-                    <i className="ti ti-location-pin"></i>
-                    <span>Shipping Address:</span>
-                  </div>
-                  {/* Update this */}
-                  <div className="data-content">{user.location}</div>
-                </div>
-                <div className="single-profile-data d-flex align-items-center justify-content-between">
-                  <div className="title d-flex align-items-center">
-                    <i className="ti ti-star-filled"></i>
-                    <span>My Orders</span>
-                  </div>
-                  <div className="data-content">
-                    <Link className="btn btn-primary btn-sm" href="/my-order">
-                      View Status
-                    </Link>
-                  </div>
+                  <span>My Orders</span>
+                  <Link className="btn btn-primary btn-sm" href="/my-order">
+                    View Status
+                  </Link>
                 </div>
 
                 <div className="edit-profile-btn mt-3">
@@ -100,7 +69,7 @@ const Profile = () => {
                     className="btn btn-primary btn-lg w-100"
                     href="/edit-profile"
                   >
-                    <i className="ti ti-pencil me-2"></i>Edit Profile
+                    Edit Profile
                   </Link>
                 </div>
               </div>
@@ -108,8 +77,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      <div className="internet-connection-status" id="internetStatus"></div>
 
       <Footer />
     </>

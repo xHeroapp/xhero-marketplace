@@ -2,11 +2,11 @@ import React from "react";
 import ForgetPasswordSuccess from "@/components/ForgetPasswordSuccess";
 
 const index = () => {
-	return (
-		<>
-			<ForgetPasswordSuccess />
-		</>
-	);
+  return (
+    <>
+      <ForgetPasswordSuccess />
+    </>
+  );
 };
 
 export default index;

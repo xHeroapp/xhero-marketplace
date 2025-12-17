@@ -2,15 +2,15 @@ import React from "react";
 import WishlistGrid from "@/components/WishlistGrid";
 
 export const metadata = {
-	title: "Suha Wishlist Grid - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Suha Wishlist Grid - Multipurpose Ecommerce Mobile Next js Template",
 };
 
 const index = () => {
-	return (
-		<>
-			<WishlistGrid />
-		</>
-	);
+  return (
+    <>
+      <WishlistGrid />
+    </>
+  );
 };
 
 export default index;

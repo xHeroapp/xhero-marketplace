@@ -37,10 +37,10 @@ const EditProfile = () => {
   useEffect(() => {
     if (user) {
       reset({
-        full_name: user.full_name || "Suha Jannat",
-        phone: user.phone || "+880 000 111 222",
-        email: user.email || "care@example.com",
-        delivery_address: user.delivery_address || "",
+        full_name: user?.full_name || "Suha Jannat",
+        phone: user?.phone || "+880 000 111 222",
+        email: user?.email || "care@example.com",
+        delivery_address: user?.delivery_address || "",
       });
     }
   }, [user, reset]);
@@ -55,15 +55,13 @@ const EditProfile = () => {
         loading: "Updating...",
         success: () => {
           console.log("Form data to submit:", data);
-          resolve(data);
           return "Updated!";
         },
         error:
           "There was an error while trying to update your profile, please try again later.",
       });
     } catch (error) {
-      console.log(errror);
-      reject(error);
+      console.log(error);
     }
   };
 
@@ -79,11 +77,11 @@ const EditProfile = () => {
                 <div className="user-profile me-3">
                   <ImageWithFallback
                     src={
-                      user && user.avatar_url
-                        ? user.avatar_url
+                      user && user?.avatar_url
+                        ? user?.avatar_url
                         : `/assets/img/core-img/user-profile-male.jpg`
                     }
-                    alt={user.full_name}
+                    alt={user && user.full_name}
                   />
                   <div className="change-user-thumb">
                     <form onSubmit={(e) => e.preventDefault()}>
@@ -96,10 +94,10 @@ const EditProfile = () => {
                 </div>
                 <div className="user-info">
                   <h5 className="mb-0 text-white">
-                    {user?.full_name || "Suha Jannat"}
+                    {(user && user?.full_name) || "Suha Jannat"}
                   </h5>
                   <p className="mb-0 text-white">
-                    @{user?.email || "designing-world"}
+                    @{(user && user?.email) || "designing-world"}
                   </p>
                 </div>
               </div>

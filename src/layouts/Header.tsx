@@ -10,15 +10,15 @@ const Header = () => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(!show);
 
-  const { loadCart, cart } = useCartStore();
+  // const { loadCart, cart } = useCartStore();
 
   const { user } = useAuthStore();
 
-  useEffect(() => {
-    if (user?.id) {
-      loadCart(user?.id);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user?.id) {
+  //     loadCart(user?.id);
+  //   }
+  // }, [user]);
 
   return (
     <>
@@ -36,12 +36,12 @@ const Header = () => {
             </Link>
           </div>
           <div className="navbar-logo-container d-flex align-items-center">
-            <div className="cart-icon-wrap">
+            {/* <div className="cart-icon-wrap">
               <Link href="/cart">
                 <i className="ti ti-basket-bolt"></i>
                 <span>{Object.values(cart).length}</span>
               </Link>
-            </div>
+            </div> */}
 
             <UserAvatar
               src={user?.avatar_url}

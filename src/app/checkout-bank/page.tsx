@@ -2,15 +2,15 @@ import React from "react";
 import CheckoutBank from "@/components/CheckoutBank";
 
 export const metadata = {
-	title: "Suha Checkout Bank - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Suha Checkout Bank - Multipurpose Ecommerce Mobile Next js Template",
 };
 
 const index = () => {
-	return (
-		<>
-			<CheckoutBank />
-		</>
-	);
+  return (
+    <>
+      <CheckoutBank />
+    </>
+  );
 };
 
 export default index;

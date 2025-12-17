@@ -2,16 +2,16 @@ import BecomeVendor from "@/components/BecomeVendor";
 import React from "react";
 
 export const metadata = {
-	title:
-		"Suha Become A Vendor - Multipurpose Ecommerce Mobile Next js Template",
+  title:
+    "Suha Become A Vendor - Multipurpose Ecommerce Mobile Next js Template",
 };
 
 const index = () => {
-	return (
-		<>
-			<BecomeVendor />
-		</>
-	);
+  return (
+    <>
+      <BecomeVendor />
+    </>
+  );
 };
 
 export default index;
