@@ -358,54 +358,59 @@ const Checkout = () => {
                         <h5>{formatCurrency(total)}</h5>
                       </div>
 
-                      <div className="shipping-method-choose mb-3">
-                        <div className="card shipping-method-choose-title-card">
+                      <div className="shipping-method-choose mb-3 mt-3">
+                        <div className="card shipping-method-card">
                           <div className="card-body">
-                            <h6 className="text-center mb-0">
-                              Shipping Method
+                            <h6 className="shipping-title mb-3">
+                              Delivery Method
                             </h6>
-                          </div>
-                        </div>
-                        <div className="card shipping-method-choose-card">
-                          <div
-                            className="card-body"
-                            style={{ paddingLeft: "0" }}
-                          >
-                            <div className="shipping-method-choose">
-                              <ul className="ps-0">
-                                <li>
-                                  <input
-                                    id="delivery"
-                                    type="radio"
-                                    name="shipping"
-                                    defaultChecked
-                                  />
-                                  <label
-                                    htmlFor="delivery"
-                                    //   onClick={() => handleShippingCost(20)}
-                                  >
-                                    Delivery:{" "}
-                                    <span>{formatCurrency(2000)}</span>
-                                  </label>
+                            <div className="shipping-options">
+                              <label className="shipping-option">
+                                <input
+                                  type="radio"
+                                  name="shipping"
+                                  defaultChecked
+                                  className="shipping-radio"
+                                />
+                                <div className="option-content">
+                                  <div className="option-icon">
+                                    <i className="ti ti-truck"></i>
+                                  </div>
+                                  <div className="option-details">
+                                    <span className="option-label">
+                                      Delivery
+                                    </span>
+                                    <span className="option-price">
+                                      {formatCurrency(2000)}
+                                    </span>
+                                  </div>
+                                  <div className="option-check">
+                                    <i className="ti ti-circle-check-filled"></i>
+                                  </div>
+                                </div>
+                              </label>
 
-                                  <div className="check"></div>
-                                </li>
-                                {/* <li className="disabled">
-                                  <input
-                                    id="pickup"
-                                    type="radio"
-                                    name="shipping"
-                                    disabled
-                                  />
-                                  <label
-                                    htmlFor="pickup"
-                                    //   onClick={() => handleShippingCost(25)}
-                                  >
-                                    Pickup <span>Coming Soon</span>
-                                  </label>
-                                  <div className="check"></div>
-                                </li> */}
-                              </ul>
+                              {/* Uncomment when pickup is available */}
+                              {/* <label className="shipping-option disabled">
+        <input
+          type="radio"
+          name="shipping"
+          disabled
+          className="shipping-radio"
+        />
+        <div className="option-content">
+          <div className="option-icon">
+            <i className="ti ti-building-store"></i>
+          </div>
+          <div className="option-details">
+            <span className="option-label">Store Pickup</span>
+            <span className="option-price coming-soon">Coming Soon</span>
+          </div>
+          <div className="option-check">
+            <i className="ti ti-circle-check-filled"></i>
+          </div>
+        </div>
+      </label> */}
                             </div>
                           </div>
                         </div>
@@ -512,37 +517,158 @@ const Checkout = () => {
           border-bottom: none;
         }
 
-        .shipping-method-choose ul {
-          list-style: none;
+        /* Updated Shipping Method Styles */
+        .shipping-method-card {
+          border-radius: 12px;
+          border: 1px solid #e5e7eb;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
         }
 
-        .shipping-method-choose li {
+        .shipping-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 16px;
+        }
+
+        .shipping-options {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .shipping-option {
           position: relative;
-          padding-left: 35px;
-        }
-
-        .shipping-method-choose input[type="radio"] {
-          position: absolute;
-          left: 0;
-          top: 2px;
-        }
-
-        .shipping-method-choose label {
-          display: block;
           cursor: pointer;
+          margin: 0;
+        }
+
+        .shipping-option.disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+
+        .shipping-radio {
+          position: absolute;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .option-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          background: #f9fafb;
+          border: 2px solid #e5e7eb;
+          border-radius: 10px;
+          transition: all 0.2s ease;
+        }
+
+        .shipping-option:hover .option-content {
+          background: #f3f4f6;
+          border-color: #d1d5db;
+        }
+
+        .shipping-radio:checked + .option-content {
+          background: #f0fdf4;
+          border-color: #10b981;
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .option-icon {
+          width: 40px;
+          height: 40px;
+          background: #ffffff;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: all 0.2s ease;
+        }
+
+        .option-icon i {
+          font-size: 20px;
+          color: #6b7280;
+        }
+
+        .shipping-radio:checked + .option-content .option-icon {
+          background: #10b981;
+        }
+
+        .shipping-radio:checked + .option-content .option-icon i {
+          color: #ffffff;
+        }
+
+        .option-details {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .option-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #111827;
+          line-height: 1.3;
+        }
+
+        .option-price {
+          font-size: 13px;
+          font-weight: 600;
+          color: #10b981;
+        }
+
+        .option-price.coming-soon {
+          color: #6b7280;
           font-weight: 500;
         }
 
-        .shipping-method-choose label span {
-          display: block;
-          font-size: 0.875rem;
-          color: #6c757d;
-          font-weight: 400;
+        .option-check {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .option-check i {
+          font-size: 24px;
+          color: #d1d5db;
+          transition: all 0.2s ease;
+        }
+
+        .shipping-radio:checked + .option-content .option-check i {
+          color: #10b981;
         }
 
         @media (max-width: 576px) {
           .step-indicator span {
             font-size: 0.75rem;
+          }
+
+          .option-content {
+            padding: 12px 14px;
+          }
+
+          .option-icon {
+            width: 36px;
+            height: 36px;
+          }
+
+          .option-icon i {
+            font-size: 18px;
+          }
+
+          .option-label {
+            font-size: 13px;
+          }
+
+          .option-price {
+            font-size: 12px;
           }
         }
       `}</style>
