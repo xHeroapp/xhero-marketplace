@@ -353,10 +353,10 @@ const Checkout = () => {
                   {/* Summary */}
                   <div className="card cart-amount-area">
                     <div className="card-body">
-                      <div className="tp-cart-subtotal d-flex justify-content-between">
+                      {/* <div className="tp-cart-subtotal d-flex justify-content-between">
                         <h5>Subtotal</h5>
                         <h5>{formatCurrency(total)}</h5>
-                      </div>
+                      </div> */}
 
                       <div className="shipping-method-choose mb-3 mt-3">
                         <div className="card shipping-method-card">
@@ -418,7 +418,7 @@ const Checkout = () => {
 
                       <div className="tp-cart-subtotal d-flex justify-content-between">
                         <h5>Total</h5>
-                        <h5>{formatCurrency(total)}</h5>
+                        {/* <h5>{formatCurrency(total)}</h5> */}
                         {/* <h5>$ {total + shipCost}</h5> */}
                       </div>
                     </div>
@@ -446,12 +446,12 @@ const Checkout = () => {
                   </div>
 
                   {/* Back button */}
-                  <button
+                  {/* <button
                     className="btn btn-link w-100 mt-2"
                     onClick={() => setCurrentStep("order")}
                   >
                     Back to Order Summary
-                  </button>
+                  </button> */}
                 </div>
               </>
             )}
