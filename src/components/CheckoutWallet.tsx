@@ -3,8 +3,10 @@
 import { useClientReady } from "@/hooks/useClientReady";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
+import { useGetUser } from "@/queries/auth.queries";
 import { processOrder } from "@/services/processOrder.service";
 import { useAuthStore } from "@/store/authStore";
+import useCartStore from "@/store/cartStore";
 import useCheckoutStore from "@/store/checkoutStore";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { generateTxRef } from "@/utils/generateTxRef";
@@ -14,47 +16,57 @@ import { toast } from "sonner";
 
 const CheckoutWallet = () => {
   const ready = useClientReady();
-  const { user } = useAuthStore();
   const router = useRouter();
-  const [txRef, setTxRef] = useState("");
 
+  // state
+  const [txRef, setTxRef] = useState(generateTxRef());
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Stores
+  const { user } = useAuthStore();
+  const { clearVendorCart } = useCartStore();
+  const useGetUserQuery = useGetUser();
   const { getTotal, getVendorCart } = useCheckoutStore();
   const vendorCart = getVendorCart();
 
+  // update the user store to get the up to date user information
   useEffect(() => {
-    setTxRef(generateTxRef());
-  }, [txRef]);
+    useGetUserQuery.refetch();
+  }, [useGetUserQuery.data]);
 
-  useEffect(() => {
-    console.log(vendorCart);
-    if (!vendorCart) {
-      // Redirect back to cart if vendor not found
-      router.push("/cart");
-    }
-  }, [vendorCart]);
-
-  // Mock order amount - replace with actual order amount from your cart/checkout state
   const orderAmount = getTotal();
 
+  // Payment / Order handler
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     // Add your payment logic here
     // Check if wallet balance is sufficient
     if (user?.points_balance >= orderAmount) {
       // Process payment
       try {
         const promise = processOrder({
-          vendor_id: vendorCart.vendor.vendor_id,
-          items: vendorCart.items,
-          delivery_fee: 2000, // for now
-          discount: 0, // for now
-          payment_method: "wallet", // or "bank_transfer"
-          reference: txRef,
+          p_vendor_id: vendorCart.vendor.vendor_id,
+          p_items: Object.values(vendorCart.items),
+          p_delivery_fee: 2000, // for now
+          p_discount: 0, // for now
+          p_payment_method: "wallet", // or "bank_transfer"
+          p_reference: txRef,
         });
 
         toast.promise(promise, {
           loading: "Processing Payment...",
           success: () => {
+            // refetch user data
+            useGetUserQuery.refetch();
+            // update state
+            setIsLoading(false);
+            setIsSuccess(true);
+            // route user to success page
+            router.push(
+              `/payment-success?vendor_id=${vendorCart.vendor.vendor_id}`
+            );
             return "Payment Successful!";
           },
           error:
@@ -63,7 +75,6 @@ const CheckoutWallet = () => {
       } catch (err) {
         console.log(err);
       }
-
     } else {
       // Show insufficient balance error
       alert("Insufficient wallet balance");
@@ -90,7 +101,7 @@ const CheckoutWallet = () => {
                       <p className="wallet-label mb-1 text-white">
                         Wallet Balance
                       </p>
-                      <h2 className="wallet-balance mb-0">
+                      <h2 className="wallet-balance mb-0 text-white">
                         {formatCurrency(user?.points_balance)}
                       </h2>
                     </div>
@@ -172,7 +183,11 @@ const CheckoutWallet = () => {
               <button
                 className="btn btn-primary btn-lg w-100"
                 type="submit"
-                disabled={Number(user?.points_balance) < orderAmount}
+                disabled={
+                  Number(user?.points_balance) < orderAmount ||
+                  isLoading ||
+                  isSuccess
+                }
                 onClick={handlePayment}
               >
                 {Number(user?.points_balance) > orderAmount ? (

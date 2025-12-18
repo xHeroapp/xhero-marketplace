@@ -1,15 +1,24 @@
-import React from "react";
+import React, { Suspense } from "react";
 import PaymentSuccess from "@/components/PaymentSuccess";
 
 export const metadata = {
-  title:
-    "Suha Payment Success - Multipurpose Ecommerce Mobile Next js Template",
+  title: "Payment Success",
 };
 
 const index = () => {
   return (
     <>
-      <PaymentSuccess />
+      <Suspense
+        fallback={
+          <div className="login-wrapper d-flex align-items-center justify-content-center text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        }
+      >
+        <PaymentSuccess />
+      </Suspense>
     </>
   );
 };

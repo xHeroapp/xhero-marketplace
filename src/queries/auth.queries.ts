@@ -1,6 +1,7 @@
 import { SignInWithMagicLink } from "@/services/SignInWithMagicLink.service";
+import { useAuthStore } from "@/store/authStore";
 import { supabase } from "@/supabase-client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useLogin = () => {
@@ -56,5 +57,30 @@ export const UpdateProfile = () => {
 
       return data;
     },
+  });
+};
+
+// Get user
+export const useGetUser = () => {
+  const { user, setUser } = useAuthStore();
+
+  return useQuery({
+    queryKey: ["get-user", user?.id],
+    queryFn: async () => {
+      const { data: employee, error } = await supabase
+        .from("employees")
+        .select("*")
+        .eq("id", user?.id)
+        .single();
+
+      if (error) throw error;
+
+      // Sync Zustand store with fetched user
+      setUser(employee);
+
+      return employee;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    // enabled: !!user?.id, // only fetch if userId exists
   });
 };

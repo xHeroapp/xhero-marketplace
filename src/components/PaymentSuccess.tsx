@@ -1,13 +1,28 @@
+"use client";
+import { useAuthStore } from "@/store/authStore";
+import useCartStore from "@/store/cartStore";
 import Link from "next/link";
-import React from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 
 const PaymentSuccess = () => {
+  const searchParams = useSearchParams();
+  const vendorId = searchParams.get("vendor_id");
+  const { user } = useAuthStore();
+  const { clearVendorCart } = useCartStore();
+
+  useEffect(() => {
+    if (vendorId) {
+      clearVendorCart(vendorId, user?.id);
+    }
+  }, [vendorId]);
+
   return (
     <>
       <div className="order-success-wrapper">
         <div className="content">
           <div className="display-1 text-white mb-2">
-            <i className="ti ti-basket-dollar"></i>
+            <i className="ti ti-circle-check"></i>
           </div>
           <h5 className="text-white">Payment successful</h5>
           <p className="text-white opacity-75">
