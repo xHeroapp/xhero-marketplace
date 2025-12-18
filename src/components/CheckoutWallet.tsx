@@ -3,21 +3,30 @@
 import { useClientReady } from "@/hooks/useClientReady";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
+import { processOrder } from "@/services/processOrder.service";
 import { useAuthStore } from "@/store/authStore";
 import useCheckoutStore from "@/store/checkoutStore";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { generateTxRef } from "@/utils/generateTxRef";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const CheckoutWallet = () => {
   const ready = useClientReady();
   const { user } = useAuthStore();
   const router = useRouter();
+  const [txRef, setTxRef] = useState("");
 
   const { getTotal, getVendorCart } = useCheckoutStore();
   const vendorCart = getVendorCart();
 
   useEffect(() => {
+    setTxRef(generateTxRef());
+  }, [txRef]);
+
+  useEffect(() => {
+    console.log(vendorCart);
     if (!vendorCart) {
       // Redirect back to cart if vendor not found
       router.push("/cart");
@@ -33,7 +42,28 @@ const CheckoutWallet = () => {
     // Check if wallet balance is sufficient
     if (user?.points_balance >= orderAmount) {
       // Process payment
-      window.location.href = "/payment-success";
+      try {
+        const promise = processOrder({
+          vendor_id: vendorCart.vendor.vendor_id,
+          items: vendorCart.items,
+          delivery_fee: 2000, // for now
+          discount: 0, // for now
+          payment_method: "wallet", // or "bank_transfer"
+          reference: txRef,
+        });
+
+        toast.promise(promise, {
+          loading: "Processing Payment...",
+          success: () => {
+            return "Payment Successful!";
+          },
+          error:
+            "There was an error while trying to process your payment. Please try again later",
+        });
+      } catch (err) {
+        console.log(err);
+      }
+
     } else {
       // Show insufficient balance error
       alert("Insufficient wallet balance");
@@ -143,6 +173,7 @@ const CheckoutWallet = () => {
                 className="btn btn-primary btn-lg w-100"
                 type="submit"
                 disabled={Number(user?.points_balance) < orderAmount}
+                onClick={handlePayment}
               >
                 {Number(user?.points_balance) > orderAmount ? (
                   <>
