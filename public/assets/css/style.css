@@ -3714,7 +3714,33 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   padding: 2rem 1rem;
   border-radius: 0.5rem;
 }
+.single-payment-method div {
+  display: block;
+  position: relative;
+  z-index: 1;
+  background-color: #ffffff;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: 0.5rem;
+}
 .single-payment-method a::after {
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  content: "\ea5e";
+  font-family: "tabler-icons";
+  border-radius: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  background-color: #625afa;
+  color: #ffffff;
+  line-height: 1.75rem;
+  opacity: 0;
+}
+.single-payment-method div::after {
   -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
   position: absolute;
@@ -3739,7 +3765,22 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   display: block;
   color: #625afa;
 }
+.single-payment-method div i {
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #625afa;
+}
 .single-payment-method a h6 {
+  -webkit-transition-duration: 500ms;
+  transition-duration: 500ms;
+  margin-bottom: 0;
+  color: #747794;
+  font-size: 0.75rem;
+}
+.single-payment-method div h6 {
   -webkit-transition-duration: 500ms;
   transition-duration: 500ms;
   margin-bottom: 0;
@@ -3750,8 +3791,17 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 .single-payment-method a:hover::after {
   opacity: 1;
 }
+.single-payment-method div.active::after,
+.single-payment-method div:hover::after {
+  opacity: 1;
+}
 .single-payment-method a.active h6,
 .single-payment-method a:hover h6 {
+  color: #020310;
+}
+
+.single-payment-method div.active h6,
+.single-payment-method div:hover h6 {
   color: #020310;
 }
 

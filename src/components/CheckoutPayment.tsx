@@ -1,12 +1,24 @@
+"use client";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
+import useCheckoutStore from "@/store/checkoutStore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const CheckoutPayment = () => {
+  const { setPaymentMethod } = useCheckoutStore();
+  const router = useRouter();
+
+  const handlePaymentMethod = (paymentMethod: string) => {
+    setPaymentMethod(paymentMethod);
+
+    paymentMethod == "wallet"
+      ? router.push("checkout-wallet")
+      : router.push("checkout-bank");
+  };
   return (
     <>
-
       <HeaderTwo links="checkout" title="Choose Payment Method" />
 
       <div className="page-content-wrapper">
@@ -17,42 +29,45 @@ const CheckoutPayment = () => {
                 {/* <!-- Single Payment Method--> */}
                 <div className="col-6 col-md-5">
                   <div className="single-payment-method">
-                    <Link
-                      className="credit-card active"
-                      href="/checkout-credit-card"
+                    <div
+                      className="credit-card"
+                      onClick={() => handlePaymentMethod("wallet")}
                     >
-                      <i className="ti ti-brand-mastercard"></i>
-                      <h6>Credit Card</h6>
-                    </Link>
+                      <i className="ti ti-wallet"></i>
+                      <h6>Wallet</h6>
+                    </div>
                   </div>
                 </div>
                 {/* <!-- Single Payment Method--> */}
                 <div className="col-6 col-md-5">
                   <div className="single-payment-method">
-                    <Link className="bank" href="/checkout-bank">
+                    <div
+                      className="bank"
+                      onClick={() => handlePaymentMethod("bank-transfer")}
+                    >
                       <i className="ti ti-building"></i>
                       <h6>Bank Transfer</h6>
-                    </Link>
+                    </div>
                   </div>
                 </div>
                 {/* <!-- Single Payment Method--> */}
-                <div className="col-6 col-md-5">
+                {/* <div className="col-6 col-md-5">
                   <div className="single-payment-method">
                     <Link className="paypal" href="/checkout-paypal">
                       <i className="ti ti-brand-paypal"></i>
                       <h6>PayPal</h6>
                     </Link>
                   </div>
-                </div>
+                </div> */}
                 {/* <!-- Single Payment Method--> */}
-                <div className="col-6 col-md-5">
+                {/* <div className="col-6 col-md-5">
                   <div className="single-payment-method">
                     <Link className="cash" href="/checkout-cash">
                       <i className="ti ti-shield-dollar"></i>
                       <h6>Cash On Delivary</h6>
                     </Link>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAuthStore } from "@/store/authStore";
 import { useClientReady } from "@/hooks/useClientReady";
+import useCheckoutStore from "@/store/checkoutStore";
 
 const Checkout = () => {
   const ready = useClientReady();
@@ -25,11 +26,10 @@ const Checkout = () => {
     removeProductFromCart,
   } = useCartStore();
 
+  const { startCheckout } = useCheckoutStore();
+
   //   router
   const router = useRouter();
-
-  // Get userId from your auth system
-  const userId = "current-user-id"; // Replace with actual user ID from auth
 
   const [currentStep, setCurrentStep] = useState<"order" | "delivery">("order");
 
@@ -45,6 +45,11 @@ const Checkout = () => {
       router.push("/cart");
     }
   }, [vendorCart]);
+
+  const handleCheckOut = () => {
+    startCheckout(vendorId); // pass in delivery fee and discount later
+    router.push("/checkout-payment");
+  };
 
   if (!ready) return null;
 
@@ -185,7 +190,7 @@ const Checkout = () => {
                                   removeProductFromCart(
                                     vendorId!,
                                     product.product_id,
-                                    userId
+                                    user?.id
                                   )
                                 }
                               >
@@ -220,9 +225,9 @@ const Checkout = () => {
                                 style={{ width: 32, height: 32, padding: 0 }}
                                 onClick={() =>
                                   decrementQuantity(
-                                    vendorId!,
+                                    vendorId,
                                     product.product_id,
-                                    userId
+                                    user?.id
                                   )
                                 }
                               >
@@ -238,7 +243,7 @@ const Checkout = () => {
                                   incrementQuantity(
                                     vendorId!,
                                     product.product_id,
-                                    userId
+                                    user?.id
                                   )
                                 }
                               >
@@ -421,12 +426,12 @@ const Checkout = () => {
                         <h5 className="total-price mb-0">
                           {formatCurrency(total)}
                         </h5>
-                        <Link
+                        <button
                           className="btn btn-primary"
-                          href="/checkout-payment"
+                          onClick={handleCheckOut}
                         >
                           Confirm & Pay
-                        </Link>
+                        </button>
                       </div>
                     ) : (
                       <div className="card-body d-flex align-items-center justify-content-between">
