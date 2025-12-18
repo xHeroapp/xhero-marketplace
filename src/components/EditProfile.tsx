@@ -14,7 +14,7 @@ import { UpdateProfile } from "@/queries/auth.queries";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 
 const EditProfile = () => {
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const UpdateProfileQuery = UpdateProfile();
 
@@ -53,13 +53,17 @@ const EditProfile = () => {
 
       toast.promise(promise, {
         loading: "Updating...",
-        success: () => {
+        success: (userData) => {
           console.log("Form data to submit:", data);
+          console.log(userData);
+          setUser(userData[0]);
           return "Updated!";
         },
         error:
           "There was an error while trying to update your profile, please try again later.",
       });
+
+      // setUser(UserData)
     } catch (error) {
       console.log(error);
     }

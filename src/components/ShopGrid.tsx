@@ -18,6 +18,8 @@ import {
 import { useFilters } from "@/hooks/useFilters";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
+import useCartStore from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
 const MyTimer = dynamic(() => import("../components/common/Timer"), {
   ssr: false,
 });
@@ -25,9 +27,20 @@ const MyTimer = dynamic(() => import("../components/common/Timer"), {
 const ShopGrid = () => {
   const selectHandler = (e: any) => {};
 
-  const dispatch = useDispatch();
+  const { user } = useAuthStore();
+  const { addProductToCart } = useCartStore();
+
   const handleAddToCart = (item: any) => {
-    dispatch(addToCart(item));
+    addProductToCart(
+      item,
+      // vendor data
+      {
+        vendor_name: item.vendor_name,
+        vendor_id: item.vendor_id,
+        vendor_img: "/assets/img/vendor/vendor-avatar.png", //update this to the actual vendor avatar
+      },
+      user && user.id
+    );
   };
 
   const Filters = useFilters();

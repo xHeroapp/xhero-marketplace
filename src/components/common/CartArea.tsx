@@ -6,10 +6,13 @@ import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
+import { useClientReady } from "@/hooks/useClientReady";
 
 const CartArea = () => {
+  const ready = useClientReady();
   // router
   const router = useRouter();
+
   const {
     cart,
     getVendorTotal,
@@ -21,7 +24,6 @@ const CartArea = () => {
 
   // Get userId from your auth system
   const { user } = useAuthStore();
-  const userId = "user && user?.id";
 
   useEffect(() => {
     console.log("Cart state:", cart);
@@ -37,6 +39,8 @@ const CartArea = () => {
 
   const hasItems = vendorCarts.length > 0;
 
+  if (!ready) return null;
+
   return (
     <>
       <div className="page-content-wrapper">
@@ -50,7 +54,7 @@ const CartArea = () => {
                 onClick={() => {
                   if (confirm("Clear entire cart?")) {
                     vendorCarts.forEach(({ vendorId }) =>
-                      clearVendorCart(vendorId, userId)
+                      clearVendorCart(vendorId, user?.id)
                     );
                   }
                 }}
@@ -190,7 +194,7 @@ const CartArea = () => {
                                   decrementQuantity(
                                     vendorId,
                                     product.product_id,
-                                    userId
+                                    user?.id
                                   )
                                 }
                               >
@@ -211,7 +215,7 @@ const CartArea = () => {
                                   incrementQuantity(
                                     vendorId,
                                     product.product_id,
-                                    userId
+                                    user?.id
                                   )
                                 }
                               >
@@ -226,7 +230,7 @@ const CartArea = () => {
                                 removeProductFromCart(
                                   vendorId,
                                   product.product_id,
-                                  userId
+                                  user?.id
                                 )
                               }
                               style={{ fontSize: "1.2rem" }}
@@ -254,7 +258,7 @@ const CartArea = () => {
                   <button
                     className="btn btn-link w-100 text-success p-0"
                     onClick={() => {
-                      clearVendorCart(vendorId, userId);
+                      clearVendorCart(vendorId, user?.id);
                     }}
                   >
                     Clear Selection

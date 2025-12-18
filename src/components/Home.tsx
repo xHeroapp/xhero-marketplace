@@ -19,7 +19,7 @@ const Home = () => {
   return (
     <>
       <Header />
-      <Alert />
+      {/* <Alert /> */}
       <div className="page-content-wrapper">
         <Search />
         <HeroSlider />

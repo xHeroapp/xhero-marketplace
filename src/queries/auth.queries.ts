@@ -49,7 +49,8 @@ export const UpdateProfile = () => {
       const { data, error } = await supabase
         .from("employees")
         .update(rest)
-        .eq("id", user_id);
+        .eq("id", user_id)
+        .select();
 
       if (error) throw error;
 

@@ -1,23 +1,16 @@
 "use client";
 
-import top_product from "@/data/top_product";
 import Link from "next/link";
 import React, { useEffect } from "react";
-
 import dynamic from "next/dynamic";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/redux/features/cartSlice";
 import { useGetTopProducts } from "@/queries/products.queries";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import useCartStore from "@/store/cartStore";
-import { toast } from "sonner";
 import { useAuthStore } from "@/store/authStore";
-const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const TopProducts = () => {
-  const dispatch = useDispatch();
-
   const { user } = useAuthStore();
   const { addProductToCart } = useCartStore();
 
@@ -33,10 +26,6 @@ const TopProducts = () => {
       user && user.id
     );
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   //   data fetching
   const GetTopProducts = useGetTopProducts();

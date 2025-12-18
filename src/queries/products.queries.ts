@@ -80,6 +80,7 @@ export const useGetProductItems = (filters = {}, limit: number) => {
       let query = supabase
         .from("vendor_products_view")
         .select("*", { count: "exact" })
+        .neq("product_id", "7177584c-8ea8-4cb8-9758-ae1b7edf51d2") // avoid returning cash product
         .range(from, to);
 
       // Search filter
