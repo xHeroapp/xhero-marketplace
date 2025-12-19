@@ -1,13 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Offcanvas from "@/components/common/Offcanvas";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const HeaderTwo = ({ links, title }: any) => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(!show);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Close offcanvas on route change
+    setShow(false);
+
+    // Force close using Bootstrap's API if available
+    const offcanvasElement = document.getElementById("suhaOffcanvas");
+    if (offcanvasElement && typeof window !== "undefined") {
+      // @ts-ignore
+      const bsOffcanvas =
+        window.bootstrap?.Offcanvas?.getInstance(offcanvasElement);
+      if (bsOffcanvas) {
+        bsOffcanvas.hide();
+      }
+    }
+
+    // Aggressive backdrop removal
+    setTimeout(() => {
+      const backdrops = document.querySelectorAll(
+        ".offcanvas-backdrop, .modal-backdrop"
+      );
+      backdrops.forEach((backdrop) => backdrop.remove());
+
+      document.body.classList.remove("offcanvas-open", "modal-open");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }, 150);
+  }, [pathname]);
 
   const router = useRouter();
 

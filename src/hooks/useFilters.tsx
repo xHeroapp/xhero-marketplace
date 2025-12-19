@@ -8,6 +8,7 @@ import { PRODUCT_LIMIT } from "@/constant/constant";
 export function useFilters() {
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState("all");
+  const [category, setCategory] = useState("");
   const [orderby, setOrderBy] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -20,10 +21,11 @@ export function useFilters() {
     () => ({
       search: debouncedSearchTerm,
       status,
+      category,
       startDate,
       endDate,
     }),
-    [debouncedSearchTerm, status, startDate, endDate]
+    [debouncedSearchTerm, status, category, startDate, endDate]
   );
 
   const handleSearchChange = useCallback((e) => {
@@ -33,6 +35,7 @@ export function useFilters() {
   const clearFilters = useCallback(() => {
     setSearchTerm("");
     setStatus("all");
+    setCategory("");
     setStartDate(null);
     setEndDate(null);
   }, []);
@@ -40,6 +43,7 @@ export function useFilters() {
   return {
     searchTerm,
     status,
+    category,
     orderby,
     startDate,
     endDate,
@@ -47,6 +51,7 @@ export function useFilters() {
     page,
     limit,
     setStatus,
+    setCategory,
     setOrderBy,
     setStartDate,
     setEndDate,

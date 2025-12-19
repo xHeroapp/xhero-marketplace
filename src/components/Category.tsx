@@ -11,18 +11,34 @@ import useCartStore from "@/store/cartStore";
 import { useCategoryStore } from "@/store/categoryStore";
 import { useSortedCategories } from "@/hooks/useSortedCategories";
 import { useSearchParams } from "next/navigation";
+import { ProductsGrid } from "./ProductsGrid";
+import { useGetProductItems } from "@/queries/products.queries";
+import { useFilters } from "@/hooks/useFilters";
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
 const Category = () => {
   const searchParams = useSearchParams();
   const activeCategory_id = searchParams.get("category_id");
+  const activeCategory_name = searchParams.get("category_name");
 
   const { categories, loading, error } = useCategoryStore();
   const { sortedCategories } = useSortedCategories(categories);
 
+  const Filters = useFilters();
+
   const [active, setActive] = useState(
     activeCategory_id ? activeCategory_id : sortedCategories[0].id
   );
+
+  // filter the product by the active category
+  useEffect(() => {
+    if (activeCategory_name) {
+      Filters.setCategory(activeCategory_name);
+    } else {
+      // this would sort by the first category on the list
+      Filters.setCategory(sortedCategories[0].name);
+    }
+  }, [activeCategory_name, sortedCategories]);
 
   // Scroll to active category
   useEffect(() => {
@@ -45,6 +61,23 @@ const Category = () => {
       }
     }
   }, [activeCategory_id, sortedCategories]);
+
+  // get products
+  const GetProductsQuery = useGetProductItems(Filters.filters, Filters.limit);
+
+  useEffect(() => {
+    GetProductsQuery.isSuccess && console.log(GetProductsQuery.data);
+  }, [GetProductsQuery.isSuccess]);
+
+  //   flat map the items in the pages
+  const productItems =
+    GetProductsQuery.data?.pages.flatMap((page) => page.items) ?? [];
+
+  // Handle category changes
+  function handleActiveCategory(item) {
+    setActive(item.id);
+    Filters.setCategory(item.name);
+  }
 
   return (
     <>
@@ -73,7 +106,7 @@ const Category = () => {
                     {sortedCategories.map((item) => (
                       <div
                         key={item.id}
-                        onClick={() => setActive(item.id)}
+                        onClick={() => handleActiveCategory(item)}
                         className="category-item-wrapper"
                       >
                         <div
@@ -102,7 +135,71 @@ const Category = () => {
             <div className="section-heading rtl-text-right">
               <h6>Products</h6>
             </div>
-            <div className="row g-2 rtl-flex-d-row-r">
+            {GetProductsQuery.isPending ? (
+              <div className="row g-2 rtl-flex-d-row-r">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="col-6 col-md-4">
+                    <div className="card product-card">
+                      <div className="card-body">
+                        <div className="placeholder-glow">
+                          <div
+                            className="bg-secondary rounded mb-3"
+                            style={{ height: "200px" }}
+                          ></div>
+                          <span className="placeholder col-10 d-block mb-2"></span>
+                          <span className="placeholder col-6 d-block mb-2"></span>
+                          <span className="placeholder col-12 btn btn-primary"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : !productItems || productItems.length === 0 ? (
+              <div className="card">
+                <div className="card-body text-center py-5">
+                  <i
+                    className="ti ti-shopping-bag text-muted"
+                    style={{ fontSize: "3rem" }}
+                  ></i>
+                  <h5 className="mt-3 mb-2">No Products Found</h5>
+                  <p className="text-muted mb-3">
+                    Try adjusting your filters or check back later for new
+                    products.
+                  </p>
+                  <Link href="/" className="btn btn-primary">
+                    <i className="ti ti-home me-2"></i>Go to Home
+                  </Link>
+                </div>
+              </div>
+            ) : GetProductsQuery.isError ? (
+              <div className="card border-danger">
+                <div className="card-body text-center py-5">
+                  <i
+                    className="ti ti-alert-circle text-danger"
+                    style={{ fontSize: "3rem" }}
+                  ></i>
+                  <h5 className="mt-3 mb-2">Unable to Load Products</h5>
+                  <p className="text-muted mb-3">
+                    {GetProductsQuery.error?.message ||
+                      "Something went wrong while fetching products."}
+                  </p>
+                  <button
+                    onClick={() => GetProductsQuery.refetch()}
+                    className="btn btn-danger"
+                  >
+                    <i className="ti ti-refresh me-2"></i>Try Again
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <ProductsGrid
+                productItems={productItems}
+                GetProductsQuery={GetProductsQuery}
+              />
+            )}
+
+            {/* <div className="row g-2 rtl-flex-d-row-r">
               {top_product.map((item, i) => (
                 <div key={i} className="col-6 col-md-4">
                   <div className="card product-card">
@@ -150,55 +247,7 @@ const Category = () => {
                   </div>
                 </div>
               ))}
-
-              {top_product.map((item, i) => (
-                <div key={i} className="col-6 col-md-4">
-                  <div className="card product-card">
-                    <div className="card-body">
-                      <span
-                        className={`badge rounded-pill badge-${item.badge_color}`}
-                      >
-                        {item.badge_text}
-                      </span>
-                      <a className="wishlist-btn" href="#">
-                        <i className="ti ti-heart"></i>
-                      </a>
-                      <Link
-                        className="product-thumbnail d-block"
-                        href="/single-product"
-                      >
-                        <img className="mb-2" src={item.img} alt="" />
-                        {i === 0 || i === 3 ? (
-                          <ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
-                            <MyTimer />
-                          </ul>
-                        ) : null}
-                      </Link>
-
-                      <Link className="product-title" href="/single-product">
-                        {item.title}
-                      </Link>
-
-                      <p className="sale-price">
-                        $ {item.new_price}
-                        <span>$ {item.old_price}</span>
-                      </p>
-
-                      <div className="product-rating">
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                      </div>
-                      <a className="btn btn-primary btn-sm" href="#">
-                        <i className="ti ti-plus"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
