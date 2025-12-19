@@ -35,7 +35,7 @@ const CheckoutWallet = () => {
     useGetUserQuery.refetch();
   }, [useGetUserQuery.data]);
 
-  const orderAmount = getVendorTotal(vendorCart.vendor.vendor_id);
+  const orderAmount = getVendorTotal(vendorCart && vendorCart.vendor.vendor_id);
 
   // Payment / Order handler
   const handlePayment = (e: React.FormEvent) => {
