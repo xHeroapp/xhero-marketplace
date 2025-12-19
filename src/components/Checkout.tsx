@@ -11,6 +11,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { useAuthStore } from "@/store/authStore";
 import { useClientReady } from "@/hooks/useClientReady";
 import useCheckoutStore from "@/store/checkoutStore";
+import { calculateCartDiscount } from "@/utils/calculateCartDiscount";
 
 const Checkout = () => {
   const ready = useClientReady();
@@ -37,7 +38,9 @@ const Checkout = () => {
   const vendorCart = vendorId ? cart[vendorId] : null;
   const items = vendorCart ? Object.values(vendorCart.items) : [];
   const vendor = vendorCart?.vendor;
-  const total = vendorId ? getVendorTotal(vendorId) : 0;
+  const vendor_delivery_fee = vendorCart?.vendor.delivery_fee;
+  const totalDiscount = calculateCartDiscount(items);
+  const { subtotal, discount, deliveryFee, total } = getVendorTotal(vendorId);
 
   useEffect(() => {
     if (!vendorCart) {
@@ -185,7 +188,7 @@ const Checkout = () => {
                                 <i className="ti ti-copy"></i>
                               </button> */}
                               <button
-                                className="btn btn-sm btn-link text-danger p-1"
+                                className="btn btn-sm text-danger p-1"
                                 onClick={() =>
                                   removeProductFromCart(
                                     vendorId!,
@@ -231,7 +234,7 @@ const Checkout = () => {
                                   )
                                 }
                               >
-                                -
+                                <i className="ti ti-minus"></i>
                               </button>
                               <span className="mx-3 fw-medium">
                                 {product.quantity}
@@ -247,7 +250,7 @@ const Checkout = () => {
                                   )
                                 }
                               >
-                                +
+                                <i className="ti ti-plus"></i>
                               </button>
                             </div>
                           </div>
@@ -353,17 +356,21 @@ const Checkout = () => {
                   {/* Summary */}
                   <div className="card cart-amount-area">
                     <div className="card-body">
-                      {/* <div className="tp-cart-subtotal d-flex justify-content-between">
+                      <div className="tp-cart-subtotal d-flex justify-content-between">
                         <h5>Subtotal</h5>
-                        <h5>{formatCurrency(total)}</h5>
-                      </div> */}
+                        <h5>{formatCurrency(subtotal)}</h5>
+                      </div>
+                      <div className="tp-cart-subtotal d-flex justify-content-between">
+                        <h6>Discount</h6>
+                        <h6>{formatCurrency(discount)}</h6>
+                      </div>
 
                       <div className="shipping-method-choose mb-3 mt-3">
                         <div className="card shipping-method-card">
                           <div className="card-body">
-                            <h6 className="shipping-title mb-3">
-                              Delivery Method
-                            </h6>
+                            {/* <h6 className="shipping-title mb-3">
+                              Shipping Method
+                            </h6> */}
                             <div className="shipping-options">
                               <label className="shipping-option">
                                 <input
@@ -381,7 +388,7 @@ const Checkout = () => {
                                       Delivery
                                     </span>
                                     <span className="option-price">
-                                      {formatCurrency(2000)}
+                                      {formatCurrency(vendor_delivery_fee)}
                                     </span>
                                   </div>
                                   <div className="option-check">

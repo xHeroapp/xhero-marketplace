@@ -47,7 +47,7 @@ const useCheckoutStore = create((set, get) => ({
     const subTotal = get().getSubTotal();
     const { deliveryFee, discount } = get();
 
-    return Math.max(subTotal + deliveryFee - discount, 0);
+    return Math.max(subTotal.subtotal + deliveryFee - discount, 0);
   },
 
   getVendorCart: () => {

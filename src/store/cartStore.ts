@@ -1,3 +1,4 @@
+import { calculateCartDiscount } from "@/utils/calculateCartDiscount";
 import { toast } from "sonner";
 import { create } from "zustand";
 
@@ -108,12 +109,23 @@ const useCartStore = create((set, get) => ({
 
   getVendorTotal: (vendorId) => {
     const vendorCart = get().cart[vendorId];
-    if (!vendorCart) return 0;
+    if (!vendorCart) {
+      return { subtotal: 0, discount: 0, deliveryFee: 0, total: 0 };
+    }
 
-    return Object.values(vendorCart.items).reduce(
+    const items = Object.values(vendorCart.items);
+
+    const subtotal = items.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     );
+
+    const discount = calculateCartDiscount(items);
+    const deliveryFee = vendorCart.vendor.delivery_fee ?? 0;
+
+    const total = Math.max(0, subtotal - discount + deliveryFee);
+
+    return { subtotal, discount, deliveryFee, total };
   },
 }));
 

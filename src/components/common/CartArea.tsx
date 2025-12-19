@@ -110,7 +110,7 @@ const CartArea = () => {
                         <h6 className="mb-0">{vendor.vendor_name}</h6>
                         <small className="text-muted">
                           {items.length} Item{items.length !== 1 ? "s" : ""} •{" "}
-                          {formatCurrency(total)}
+                          {formatCurrency(total.total)}
                         </small>
                       </div>
                     </div>
@@ -179,7 +179,7 @@ const CartArea = () => {
                                   }
                                   aria-label="Decrease quantity"
                                 >
-                                  −
+                                  <i className="ti ti-minus"></i>
                                 </button>
                                 <span className="qty-display">
                                   {product.quantity}
@@ -195,7 +195,7 @@ const CartArea = () => {
                                   }
                                   aria-label="Increase quantity"
                                 >
-                                  +
+                                  <i className="ti ti-plus"></i>
                                 </button>
                               </div>
 
@@ -210,7 +210,8 @@ const CartArea = () => {
                                 }
                                 aria-label="Remove item"
                               >
-                                ×
+                                <i className="ti ti-x"></i>
+                                {/* × */}
                               </button>
                             </div>
                           </div>
@@ -379,6 +380,8 @@ const CartArea = () => {
         .remove-btn {
           width: 28px;
           height: 28px;
+          // padding: 5px;
+          padding-top: 3px;
           border-radius: 8px;
           border: none;
           background: #fee2e2;

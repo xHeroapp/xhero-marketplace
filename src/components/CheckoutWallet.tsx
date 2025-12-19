@@ -25,7 +25,7 @@ const CheckoutWallet = () => {
 
   // Stores
   const { user } = useAuthStore();
-  const { clearVendorCart } = useCartStore();
+  const { clearVendorCart, getVendorTotal } = useCartStore();
   const useGetUserQuery = useGetUser();
   const { getTotal, getVendorCart } = useCheckoutStore();
   const vendorCart = getVendorCart();
@@ -35,7 +35,7 @@ const CheckoutWallet = () => {
     useGetUserQuery.refetch();
   }, [useGetUserQuery.data]);
 
-  const orderAmount = getTotal();
+  const orderAmount = getVendorTotal(vendorCart.vendor.vendor_id);
 
   // Payment / Order handler
   const handlePayment = (e: React.FormEvent) => {
@@ -137,8 +137,8 @@ const CheckoutWallet = () => {
                   <h6 className="mb-3">Payment Summary</h6>
                   <div className="d-flex justify-content-between mb-2">
                     <span className="text-muted">Order Amount</span>
-                    <span className="fw-bold text-white">
-                      {formatCurrency(orderAmount)}
+                    <span className="fw-bold">
+                      {formatCurrency(orderAmount.total)}
                     </span>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
@@ -152,12 +152,12 @@ const CheckoutWallet = () => {
                     <span className="fw-bold">Balance After Payment</span>
                     <span
                       className={`fw-bold ${
-                        user?.points_balance - orderAmount >= 0
+                        user?.points_balance - orderAmount.total >= 0
                           ? "text-success"
                           : "text-danger"
                       }`}
                     >
-                      {formatCurrency(user?.points_balance - orderAmount)}
+                      {formatCurrency(user?.points_balance - orderAmount.total)}
                     </span>
                   </div>
                 </div>
@@ -184,16 +184,16 @@ const CheckoutWallet = () => {
                 className="btn btn-primary btn-lg w-100"
                 type="submit"
                 disabled={
-                  Number(user?.points_balance) < orderAmount ||
+                  Number(user?.points_balance) < orderAmount.total ||
                   isLoading ||
                   isSuccess
                 }
                 onClick={handlePayment}
               >
-                {Number(user?.points_balance) > orderAmount ? (
+                {Number(user?.points_balance) > orderAmount.total ? (
                   <>
                     <i className="ti ti-wallet me-2"></i>
-                    Pay {formatCurrency(orderAmount)} from Wallet
+                    Pay {formatCurrency(orderAmount.total)} from Wallet
                   </>
                 ) : (
                   <>

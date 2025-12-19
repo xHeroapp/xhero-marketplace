@@ -3,13 +3,8 @@ import React from "react";
 import Link from "next/link";
 import Footer from "@/layouts/Footer";
 import NiceSelect from "@/ui/NiceSelect";
-import top_product from "@/data/top_product";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-import dynamic from "next/dynamic";
-import { useDispatch } from "react-redux";
-import { addToCart } from "@/redux/features/cartSlice";
 import { ToastContainer } from "react-toastify";
 import {
   useGetProductCategories,
@@ -18,30 +13,13 @@ import {
 import { useFilters } from "@/hooks/useFilters";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
-import useCartStore from "@/store/cartStore";
-import { useAuthStore } from "@/store/authStore";
-const MyTimer = dynamic(() => import("../components/common/Timer"), {
-  ssr: false,
-});
+import { useAddToCart } from "@/hooks/useAddToCart";
 
 const ShopGrid = () => {
   const selectHandler = (e: any) => {};
 
-  const { user } = useAuthStore();
-  const { addProductToCart } = useCartStore();
-
-  const handleAddToCart = (item: any) => {
-    addProductToCart(
-      item,
-      // vendor data
-      {
-        vendor_name: item.vendor_name,
-        vendor_id: item.vendor_id,
-        vendor_img: "/assets/img/vendor/vendor-avatar.png", //update this to the actual vendor avatar
-      },
-      user && user.id
-    );
-  };
+  // handle add to cart
+  const { handleAddToCart } = useAddToCart();
 
   const Filters = useFilters();
 
