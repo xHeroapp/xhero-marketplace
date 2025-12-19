@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 
-export const useAddToCart = () => {
+export const useAddToCart = (quantity?: number) => {
   const { user } = useAuthStore();
   const { addProductToCart } = useCartStore();
 
@@ -15,7 +15,8 @@ export const useAddToCart = () => {
         vendor_img: "/assets/img/vendor/vendor-avatar.png", //update this to the actual vendor avatar
         delivery_fee: item.delivery_fee,
       },
-      user && user.id
+      user && user.id,
+      quantity && quantity
     );
   };
 

@@ -1,20 +1,15 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Autoplay } from "swiper/modules";
-import top_product from "@/data/top_product";
-import VideoPopup from "@/modals/VideoPopup";
-import { Swiper, SwiperSlide } from "swiper/react";
-
 import dynamic from "next/dynamic";
-import reviews_data from "@/data/reviews_data";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useAddToCart } from "@/hooks/useAddToCart";
 const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const SingleProductArea = ({ product }: any) => {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number>(1);
   const increment = () => {
     setQuantity(quantity + 1);
   };
@@ -35,10 +30,8 @@ const SingleProductArea = ({ product }: any) => {
   const image = image_data.map((item) => item.img);
   const productItem = useSelector((state: any) => state.cart.cart);
 
-  const dispatch = useDispatch();
-  const handleAddToCart = (item: any) => {
-    dispatch(addToCart(item));
-  };
+  // handleAdd to cart
+  const { handleAddToCart } = useAddToCart(quantity);
 
   const totalItems = productItem.find(
     (d_item: any) => d_item?.id === product?.id
@@ -129,12 +122,7 @@ const SingleProductArea = ({ product }: any) => {
           <div className="container">
             <form className="cart-form" onSubmit={(e) => e.preventDefault()}>
               <div className="order-plus-minus d-flex align-items-center">
-                <div
-                  className="quantity-button-handler"
-                  onClick={() =>
-                    product ? dispatch(decrease_quantity(product)) : ""
-                  }
-                >
+                <div className="quantity-button-handler" onClick={decrement}>
                   -
                 </div>
                 <input
@@ -142,14 +130,11 @@ const SingleProductArea = ({ product }: any) => {
                   type="text"
                   step="1"
                   name="quantity"
-                  value={totalItems?.quantity}
+                  value={quantity}
                   defaultValue={0}
                   readOnly
                 />
-                <div
-                  className="quantity-button-handler"
-                  onClick={() => (product ? dispatch(addToCart(product)) : "")}
-                >
+                <div className="quantity-button-handler" onClick={increment}>
                   +
                 </div>
               </div>
