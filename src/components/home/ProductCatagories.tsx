@@ -109,7 +109,7 @@ const ProductCatagories = () => {
   // Success state with data
   return (
     <>
-      <div className="product-catagories-wrapper py-3">
+      <div className="product-catagories-wrapper py-3 px-3">
         <div className="container">
           <div className="categories-scroll-container">
             <div className="categories-scroll-wrapper">
@@ -125,7 +125,7 @@ const ProductCatagories = () => {
                     }`}
                   >
                     <div className="card-body px-2">
-                      <Link href="/catagory">
+                      <Link href={`/category?category_id=${item.id}`}>
                         <img src={item.img} alt={item.name} />
                         <span>{item.name}</span>
                       </Link>
@@ -159,7 +159,7 @@ const ProductCatagories = () => {
 
         .category-item-wrapper {
           flex: 0 0 auto;
-          width: 85px;
+          width: 100px;
         }
 
         .category-item-wrapper .catagory-card {
@@ -168,13 +168,13 @@ const ProductCatagories = () => {
         }
 
         .category-item-wrapper .catagory-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          // transform: translateY(-2px);
+          // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .category-item-wrapper .catagory-card.active {
-          border-color: var(--bs-primary);
-          box-shadow: 0 0 0 2px var(--bs-primary);
+          // border-color: var(--bs-primary);
+          // box-shadow: 0 0 0 2px var(--bs-primary);
         }
 
         .category-item-wrapper .card-body {

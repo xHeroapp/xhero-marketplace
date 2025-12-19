@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 // import ProgressBar from "./ProgressBar";
 import { Toaster } from "sonner";
+import CategoryProvider from "./CategoryProvider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -13,6 +14,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       {/* <ProgressBar /> */}
       <Toaster richColors position="top-right" />
+      <CategoryProvider />
       {/* <ThemeProvider
         attribute="class"
         defaultTheme="light"
