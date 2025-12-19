@@ -43,7 +43,7 @@ const CheckoutWallet = () => {
     setIsLoading(true);
     // Add your payment logic here
     // Check if wallet balance is sufficient
-    if (user?.points_balance >= orderAmount) {
+    if (user?.points_balance >= orderAmount.total) {
       // Process payment
       try {
         const promise = processOrder({
@@ -69,15 +69,18 @@ const CheckoutWallet = () => {
             );
             return "Payment Successful!";
           },
-          error:
-            "There was an error while trying to process your payment. Please try again later",
+          error: () => {
+            setIsLoading(false);
+            setIsSuccess(false);
+            return "There was an error while trying to process your payment. Please try again later";
+          },
         });
       } catch (err) {
+        setIsLoading(false);
         console.log(err);
       }
     } else {
-      // Show insufficient balance error
-      alert("Insufficient wallet balance");
+      toast.error("Insufficient wallet balance");
     }
   };
 
