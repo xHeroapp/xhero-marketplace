@@ -31,26 +31,18 @@ const ProductCatagories = () => {
   // Loading state
   if (ProductCategoriesQuery.isLoading) {
     return (
-      <>
-        <div className="product-catagories-wrapper py-3 px-3">
-          <div className="container">
-            <div className="categories-scroll-container">
-              <div className="categories-scroll-wrapper">
-                {[...Array(1)].map((_, i) => (
-                  <div key={i} className="category-item-wrapper">
-                    <div className="card catagory-card">
-                      <div className="card-body px-2">
-                        <div className="skeleton-circle"></div>
-                        <div className="skeleton-text"></div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      <div className="product-catagories-wrapper py-3 px-3">
+        <div className="container">
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ minHeight: "120px" }}
+          >
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
           </div>
         </div>
-      </>
+      </div>
     );
   }
 

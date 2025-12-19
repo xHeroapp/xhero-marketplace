@@ -10,6 +10,50 @@ import React, { useEffect, useState } from "react";
 const Header = () => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(!show);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Close offcanvas on route change
+    setShow(false);
+
+    // Force close using Bootstrap's API if available
+    const offcanvasElement = document.getElementById("suhaOffcanvas");
+    if (offcanvasElement && typeof window !== "undefined") {
+      // @ts-ignore
+      const bsOffcanvas =
+        window.bootstrap?.Offcanvas?.getInstance(offcanvasElement);
+      if (bsOffcanvas) {
+        bsOffcanvas.hide();
+      }
+    }
+
+    // Aggressive backdrop removal
+    setTimeout(() => {
+      const backdrops = document.querySelectorAll(
+        ".offcanvas-backdrop, .modal-backdrop"
+      );
+      backdrops.forEach((backdrop) => backdrop.remove());
+
+      document.body.classList.remove("offcanvas-open", "modal-open");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }, 150);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (show) {
+      setShow(false); // Actually close the offcanvas
+      // Remove backdrop
+      const backdrop = document.querySelector(".offcanvas-backdrop");
+      if (backdrop) {
+        backdrop.remove();
+      }
+      // Remove body classes
+      document.body.classList.remove("offcanvas-open");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+  }, [pathname]);
 
   const { loadCart, cart } = useCartStore();
 
