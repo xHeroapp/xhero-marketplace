@@ -2,53 +2,55 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useGetProductCategories } from "@/queries/products.queries";
+import { useSortedCategories } from "@/hooks/useSortedCategories";
+import { useCategoryStore } from "@/store/categoryStore";
 
 const ProductCatagories = () => {
   const [active, setActive] = useState();
+  const { categories, loading, error } = useCategoryStore();
+
+  const { sortedCategories } = useSortedCategories(categories);
   // data fetching (queries)
   const ProductCategoriesQuery = useGetProductCategories();
 
   // Sort categories to put "Others" at the end
-  const sortedCategories = React.useMemo(() => {
-    if (!ProductCategoriesQuery.data) return [];
+  // const sortedCategories = React.useMemo(() => {
+  //   if (!ProductCategoriesQuery.data) return [];
 
-    const categories = [...ProductCategoriesQuery.data];
-    return categories.sort((a, b) => {
-      const aIsOthers = a.name.toLowerCase() === "others";
-      const bIsOthers = b.name.toLowerCase() === "others";
+  //   const categories = [...ProductCategoriesQuery.data];
+  //   return categories.sort((a, b) => {
+  //     const aIsOthers = a.name.toLowerCase() === "others";
+  //     const bIsOthers = b.name.toLowerCase() === "others";
 
-      if (aIsOthers) return 1;
-      if (bIsOthers) return -1;
-      return 0;
-    });
-  }, [ProductCategoriesQuery.data]);
+  //     if (aIsOthers) return 1;
+  //     if (bIsOthers) return -1;
+  //     return 0;
+  //   });
+  // }, [ProductCategoriesQuery.data]);
 
   // Loading state
   if (ProductCategoriesQuery.isLoading) {
     return (
-      <div className="product-catagories-wrapper py-3">
-        <div className="container">
-          <div className="categories-scroll-container">
-            <div className="categories-scroll-wrapper">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="category-item-wrapper">
-                  <div className="card catagory-card">
-                    <div className="card-body px-2">
-                      <div className="placeholder-glow text-center">
-                        <div
-                          className="bg-secondary rounded-circle mx-auto mb-2"
-                          style={{ width: "50px", height: "50px" }}
-                        ></div>
-                        <span className="placeholder col-8 d-block mx-auto"></span>
+      <>
+        <div className="product-catagories-wrapper py-3 px-3">
+          <div className="container">
+            <div className="categories-scroll-container">
+              <div className="categories-scroll-wrapper">
+                {[...Array(1)].map((_, i) => (
+                  <div key={i} className="category-item-wrapper">
+                    <div className="card catagory-card">
+                      <div className="card-body px-2">
+                        <div className="skeleton-circle"></div>
+                        <div className="skeleton-text"></div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 

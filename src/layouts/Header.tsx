@@ -4,6 +4,7 @@ import UserAvatar from "@/components/ui/UserAvatar";
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Header = () => {

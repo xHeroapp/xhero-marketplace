@@ -10,18 +10,41 @@ import HeaderThree from "@/layouts/HeaderThree";
 import useCartStore from "@/store/cartStore";
 import { useCategoryStore } from "@/store/categoryStore";
 import { useSortedCategories } from "@/hooks/useSortedCategories";
+import { useSearchParams } from "next/navigation";
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
 const Category = () => {
-  const [active, setActive] = useState();
+  const searchParams = useSearchParams();
+  const activeCategory_id = searchParams.get("category_id");
 
   const { categories, loading, error } = useCategoryStore();
-
   const { sortedCategories } = useSortedCategories(categories);
 
+  const [active, setActive] = useState(
+    activeCategory_id ? activeCategory_id : sortedCategories[0].id
+  );
+
+  // Scroll to active category
   useEffect(() => {
-    console.log(categories);
-  }, [categories]);
+    if (activeCategory_id && sortedCategories.length > 0) {
+      const activeIndex = sortedCategories.findIndex(
+        (cat) => cat.id === activeCategory_id
+      );
+
+      if (activeIndex !== -1) {
+        const categoryElement = document.querySelectorAll(
+          ".category-item-wrapper"
+        )[activeIndex];
+        if (categoryElement) {
+          categoryElement.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+            block: "nearest",
+          });
+        }
+      }
+    }
+  }, [activeCategory_id, sortedCategories]);
 
   return (
     <>

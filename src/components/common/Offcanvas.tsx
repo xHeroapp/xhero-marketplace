@@ -4,14 +4,33 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import UserAvatar from "../ui/UserAvatar";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Logout } from "@/queries/auth.queries";
 import { useGetNotificationsCount } from "@/queries/notifications.queries";
 
 const Offcanvas = ({ handleShow, show }: any) => {
+  const pathname = usePathname();
+
   const router = useRouter();
   const { user, setUser } = useAuthStore();
+
+  // Close offcanvas when route changes
+  // Close offcanvas and remove backdrop when route changes
+  useEffect(() => {
+    if (show) {
+      handleShow();
+      // Remove backdrop
+      const backdrop = document.querySelector(".offcanvas-backdrop");
+      if (backdrop) {
+        backdrop.remove();
+      }
+      // Remove body classes
+      document.body.classList.remove("offcanvas-open");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+  }, [pathname]);
 
   async function handleLogOut() {
     try {
