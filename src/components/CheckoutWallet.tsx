@@ -1,33 +1,28 @@
 "use client";
 
 import { useClientReady } from "@/hooks/useClientReady";
+import { useHandlePayment } from "@/hooks/useHandlePayment";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import { useGetUser } from "@/queries/auth.queries";
-import { processOrder } from "@/services/processOrder.service";
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 import useCheckoutStore from "@/store/checkoutStore";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { generateTxRef } from "@/utils/generateTxRef";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 const CheckoutWallet = () => {
   const ready = useClientReady();
-  const router = useRouter();
 
   // state
-  const [txRef, setTxRef] = useState(generateTxRef());
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Stores
   const { user } = useAuthStore();
-  const { clearVendorCart, getVendorTotal } = useCartStore();
+  const { getVendorTotal } = useCartStore();
   const useGetUserQuery = useGetUser();
-  const { getTotal, getVendorCart } = useCheckoutStore();
+  const { getVendorCart } = useCheckoutStore();
   const vendorCart = getVendorCart();
 
   // update the user store to get the up to date user information
@@ -37,52 +32,15 @@ const CheckoutWallet = () => {
 
   const orderAmount = getVendorTotal(vendorCart && vendorCart.vendor.vendor_id);
 
-  // Payment / Order handler
-  const handlePayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Add your payment logic here
-    // Check if wallet balance is sufficient
-    if (user?.points_balance >= orderAmount.total) {
-      // Process payment
-      try {
-        const promise = processOrder({
-          p_vendor_id: vendorCart.vendor.vendor_id,
-          p_items: Object.values(vendorCart.items),
-          p_delivery_fee: 2000, // for now
-          p_discount: 0, // for now
-          p_payment_method: "wallet", // or "bank_transfer"
-          p_reference: txRef,
-        });
-
-        toast.promise(promise, {
-          loading: "Processing Payment...",
-          success: () => {
-            // refetch user data
-            useGetUserQuery.refetch();
-            // update state
-            setIsLoading(false);
-            setIsSuccess(true);
-            // route user to success page
-            router.push(
-              `/payment-success?vendor_id=${vendorCart.vendor.vendor_id}`
-            );
-            return "Payment Successful!";
-          },
-          error: () => {
-            setIsLoading(false);
-            setIsSuccess(false);
-            return "There was an error while trying to process your payment. Please try again later";
-          },
-        });
-      } catch (err) {
-        setIsLoading(false);
-        console.log(err);
-      }
-    } else {
-      toast.error("Insufficient wallet balance");
-    }
-  };
+  // Payment handler
+  const { handlePayment } = useHandlePayment({
+    orderAmount,
+    vendorCart,
+    setIsLoading,
+    setIsSuccess,
+    payment_method: "wallet",
+    redirect_link: `/payment-success?vendor_id=${vendorCart.vendor.vendor_id}`,
+  });
 
   if (!ready) return null;
 
@@ -182,7 +140,7 @@ const CheckoutWallet = () => {
             </div>
 
             {/* Payment Form */}
-            <form onSubmit={handlePayment}>
+            <form onSubmit={(e) => handlePayment(e)}>
               <button
                 className="btn btn-primary btn-lg w-100"
                 type="submit"
@@ -191,7 +149,7 @@ const CheckoutWallet = () => {
                   isLoading ||
                   isSuccess
                 }
-                onClick={handlePayment}
+                onClick={(e) => handlePayment(e)}
               >
                 {Number(user?.points_balance) > orderAmount.total ? (
                   <>
