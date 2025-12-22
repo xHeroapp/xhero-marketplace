@@ -9,7 +9,6 @@ import { formatCurrency } from "@/utils/formatCurrency";
 const WeeklyBestSellers = () => {
   //   data fetching
   const GetWeeklyProducts = useGetWeeklyProducts();
-
   // Loading state
   if (GetWeeklyProducts.isLoading) {
     return (
@@ -141,9 +140,9 @@ const WeeklyBestSellers = () => {
                           />
                         </Link>
 
-                        {/* <a className="wishlist-btn" href="#">
-												<i className="ti ti-heart"></i>
-											</a> */}
+                        <a className="wishlist-btn" href="#">
+                          <i className="ti ti-heart"></i>
+                        </a>
                       </div>
                       <div className="product-description">
                         <Link

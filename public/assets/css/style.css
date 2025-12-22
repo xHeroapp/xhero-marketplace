@@ -2548,6 +2548,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   border-radius: 50%;
   z-index: 10;
   color: #ea4c62;
+  background-color: #f1f1f2;
   font-size: 1.25rem;
   line-height: 1;
   display: -webkit-box;

@@ -10,6 +10,8 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import useCartStore from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useAddToCart } from "@/hooks/useAddToCart";
+import { toast } from "sonner";
+import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 const TopProducts = () => {
   const { user } = useAuthStore();
@@ -17,6 +19,9 @@ const TopProducts = () => {
 
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart();
+
+  // handle add to wishlist
+  const { addToWishList } = useAddToWishList();
 
   // const handleAddToCart = (item: any) => {
   //   addProductToCart(
@@ -166,6 +171,18 @@ const TopProducts = () => {
                       >
                         {item.vendor_products_view.product_name}
                       </Link>
+
+                      <div
+                        onClick={() =>
+                          addToWishList(
+                            user?.id,
+                            item.vendor_products_view.vendor_product_id
+                          )
+                        }
+                        className="wishlist-btn"
+                      >
+                        <i className="ti ti-heart"></i>
+                      </div>
 
                       <p className="sale-price mb-0">
                         {formatCurrency(item.vendor_products_view.price)}

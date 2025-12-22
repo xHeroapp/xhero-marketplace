@@ -6,7 +6,6 @@ import HeaderTwo from "@/layouts/HeaderTwo";
 import useCartStore from "@/store/cartStore";
 import useCheckoutStore from "@/store/checkoutStore";
 import { generateTxRef } from "@/utils/generateTxRef";
-import Link from "next/link";
 import React, { useState } from "react";
 
 const CheckoutBank = () => {
