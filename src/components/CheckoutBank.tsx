@@ -29,7 +29,9 @@ const CheckoutBank = () => {
     setIsLoading,
     setIsSuccess,
     payment_method: "bank_transfer",
-    redirect_link: `/order-success?vendor_id=${vendorCart.vendor.vendor_id}`,
+    redirect_link: `/order-success?vendor_id=${
+      vendorCart && vendorCart.vendor.vendor_id
+    }`,
     TX_REF: txRef,
   });
 

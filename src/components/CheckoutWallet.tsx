@@ -39,7 +39,9 @@ const CheckoutWallet = () => {
     setIsLoading,
     setIsSuccess,
     payment_method: "wallet",
-    redirect_link: `/payment-success?vendor_id=${vendorCart.vendor.vendor_id}`,
+    redirect_link: `/payment-success?vendor_id=${
+      vendorCart && vendorCart.vendor.vendor_id
+    }`,
   });
 
   if (!ready) return null;
