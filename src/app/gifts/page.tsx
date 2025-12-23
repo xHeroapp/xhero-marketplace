@@ -1,14 +1,14 @@
 import React from "react";
-import FlashSale from "@/components/FlashSale";
+import Gifts from "@/components/Gifts/Gifts";
 
 export const metadata = {
-  title: "Flash Sale",
+  title: "Gifts",
 };
 
 const index = () => {
   return (
     <>
-      <FlashSale />
+      <Gifts />
     </>
   );
 };

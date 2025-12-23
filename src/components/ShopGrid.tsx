@@ -185,7 +185,7 @@ const ShopGrid = () => {
                     Try adjusting your filters or check back later for new
                     products.
                   </p>
-                  <Link href="/" className="btn btn-primary">
+                  <Link href="/home" className="btn btn-primary">
                     <i className="ti ti-home me-2"></i>Go to Home
                   </Link>
                 </div>
