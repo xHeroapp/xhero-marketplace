@@ -174,9 +174,12 @@ const Wishlist = () => {
                             />
                             {/* <img src={item.image_url} alt={item.product_name} /> */}
                           </Link>
-                          <a className="delete-btn" href="#">
+                          <div
+                            className="delete-btn"
+                            onClick={() => handleDeleteItem(item.wishlist_id)}
+                          >
                             <i className="ti ti-trash"></i>
-                          </a>
+                          </div>
                         </div>
 
                         <div className="product-description">

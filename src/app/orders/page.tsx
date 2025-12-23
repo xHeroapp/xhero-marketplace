@@ -1,14 +1,15 @@
+import Orders from "@/components/Orders";
 import PrivacyPolicy from "@/components/PrivacyPolicy";
 import React from "react";
 
 export const metadata = {
-  title: "Privacy Policy",
+  title: "Orders",
 };
 
 const index = () => {
   return (
     <>
-      <PrivacyPolicy />
+      <Orders />
     </>
   );
 };

@@ -121,6 +121,11 @@ const Offcanvas = ({ handleShow, show }: any) => {
               </Link>
             </li> */}
             <li className="suha-dropdown-menu">
+              <Link href="/orders">
+                <i className="ti ti-box"></i>My Orders
+              </Link>
+            </li>
+            <li className="suha-dropdown-menu">
               <Link href="/wishlist">
                 <i className="ti ti-heart"></i>My Wishlist
               </Link>

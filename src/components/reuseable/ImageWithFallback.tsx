@@ -8,6 +8,7 @@ export default function ImageWithFallback({
   className = "",
   width,
   height,
+  style,
 }: {
   src: string;
   fallback?: string;
@@ -15,6 +16,7 @@ export default function ImageWithFallback({
   className?: string;
   width?: string | number;
   height?: string | number;
+  style?: {};
 }) {
   const [imgSrc, setImgSrc] = useState(fallback);
 
@@ -41,6 +43,7 @@ export default function ImageWithFallback({
       loading="lazy"
       width={width && width}
       height={height && height}
+      style={style}
     />
   );
 }
