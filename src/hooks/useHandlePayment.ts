@@ -43,8 +43,6 @@ export const useHandlePayment = ({
       const promise = processOrder({
         p_vendor_id: vendorCart.vendor.vendor_id,
         p_items: Object.values(vendorCart.items),
-        p_delivery_fee: 2000,
-        p_discount: 0,
         p_payment_method: payment_method,
         p_reference: txRef ?? TX_REF,
       });
