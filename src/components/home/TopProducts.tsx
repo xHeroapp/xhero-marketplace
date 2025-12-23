@@ -15,27 +15,12 @@ import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 const TopProducts = () => {
   const { user } = useAuthStore();
-  const { addProductToCart } = useCartStore();
 
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart();
 
   // handle add to wishlist
   const { addToWishList } = useAddToWishList();
-
-  // const handleAddToCart = (item: any) => {
-  //   addProductToCart(
-  //     item,
-  //     // vendor data
-  //     {
-  //       vendor_name: item.vendor_name,
-  //       vendor_id: item.vendor_id,
-  //       vendor_img: "/assets/img/vendor/vendor-avatar.png", //update this to the actual vendor avatar
-  //       delivery_fee: item.vendor.delivery_fee,
-  //     },
-  //     user && user.id
-  //   );
-  // };
 
   //   data fetching
   const GetTopProducts = useGetTopProducts();

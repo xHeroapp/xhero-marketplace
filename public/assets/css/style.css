@@ -1040,11 +1040,30 @@ textarea:invalid {
   font-size: 1.125rem;
   color: #747794;
 }
+.layout-options button {
+  display: inline-block;
+  width: 1.875rem;
+  height: 1.875rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  margin-left: 0.5rem;
+  text-align: center;
+  font-size: 1.125rem;
+  color: #747794;
+}
 .layout-options a i {
+  line-height: 1.875rem;
+}
+.layout-options button i {
   line-height: 1.875rem;
 }
 .layout-options a.active,
 .layout-options a:hover {
+  color: #ffffff;
+  background-color: #ea4c62;
+}
+.layout-options button.active,
+.layout-options button:hover {
   color: #ffffff;
   background-color: #ea4c62;
 }
@@ -5097,8 +5116,16 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 [theme-color="dark"] .layout-options a {
   background-color: #332858;
 }
+[theme-color="dark"] .layout-options button {
+  background-color: #332858;
+}
 [theme-color="dark"] .layout-options a.active,
 [theme-color="dark"] .layout-options a:hover {
+  color: #ffffff;
+  background-color: #ea4c62;
+}
+[theme-color="dark"] .layout-options button.active,
+[theme-color="dark"] .layout-options button:hover {
   color: #ffffff;
   background-color: #ea4c62;
 }
@@ -5774,6 +5801,10 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   float: right;
 }
 [view-mode="rtl"] .layout-options a {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+[view-mode="rtl"] .layout-options button {
   margin-left: 0;
   margin-right: 0.5rem;
 }
