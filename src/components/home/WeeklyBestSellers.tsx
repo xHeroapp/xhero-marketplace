@@ -5,10 +5,17 @@ import Link from "next/link";
 import React from "react";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useAddToWishList } from "@/hooks/useAddToWishList";
+import { useAuthStore } from "@/store/authStore";
 
 const WeeklyBestSellers = () => {
+  const { user } = useAuthStore();
   //   data fetching
   const GetWeeklyProducts = useGetWeeklyProducts();
+
+  // handle add to wishlist
+  const { addToWishList } = useAddToWishList();
+
   // Loading state
   if (GetWeeklyProducts.isLoading) {
     return (
@@ -16,9 +23,9 @@ const WeeklyBestSellers = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Weekly Best Sellers</h6>
-            <Link className="btn btn-sm btn-light" href="/shop-list">
+            {/* <Link className="btn btn-sm btn-light" href="/shop-list">
               View all<i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="row g-2">
             {[...Array(6)].map((_, i) => (
@@ -56,9 +63,9 @@ const WeeklyBestSellers = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
             <h6>Weekly Best Sellers</h6>
-            <Link className="btn btn-sm btn-light" href="/shop-list">
+            {/* <Link className="btn btn-sm btn-light" href="/shop-list">
               View all<i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="card border-danger">
             <div className="card-body text-center py-5">
@@ -91,9 +98,9 @@ const WeeklyBestSellers = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
             <h6>Weekly Best Sellers</h6>
-            <Link className="btn btn-sm btn-light" href="/shop-list">
+            {/* <Link className="btn btn-sm btn-light" href="/shop-list">
               View all<i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="card">
             <div className="card-body text-center py-5">
@@ -119,9 +126,9 @@ const WeeklyBestSellers = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Weekly Best Sellers</h6>
-            <Link className="btn btn-sm btn-light" href="/shop-list">
+            {/* <Link className="btn btn-sm btn-light" href="/shop-list">
               View all<i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="row g-2">
             {GetWeeklyProducts.data &&
@@ -140,9 +147,16 @@ const WeeklyBestSellers = () => {
                           />
                         </Link>
 
-                        <a className="wishlist-btn" href="#">
+                        <div
+                          onClick={() =>
+                            addToWishList(
+                              item.vendor_products_view.vendor_product_id
+                            )
+                          }
+                          className="wishlist-btn"
+                        >
                           <i className="ti ti-heart"></i>
-                        </a>
+                        </div>
                       </div>
                       <div className="product-description">
                         <Link

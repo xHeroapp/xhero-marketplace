@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
-const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
+import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
+
   const increment = () => {
     setQuantity(quantity + 1);
   };
@@ -20,22 +21,11 @@ const SingleProductArea = ({ product }: any) => {
     }
   };
 
-  //  images
-  const image_data = [
-    { img: "/assets/img/product/3.png" },
-    { img: "/assets/img/product/4.png" },
-    { img: "/assets/img/product/6.png" },
-  ];
-
-  const image = image_data.map((item) => item.img);
-  const productItem = useSelector((state: any) => state.cart.cart);
-
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart(quantity);
 
-  const totalItems = productItem.find(
-    (d_item: any) => d_item?.id === product?.id
-  );
+  // handle add to wishlist
+  const { addToWishList } = useAddToWishList();
 
   //   console.log(totalItems?.quantity);
 
@@ -52,10 +42,13 @@ const SingleProductArea = ({ product }: any) => {
               </p>
               <p className="">{product.product_description}</p>
             </div>
-            <div className="p-wishlist-share">
-              <Link href="/wishlist-grid">
+            <div
+              onClick={() => addToWishList(product.vendor_product_id)}
+              className="p-wishlist-share"
+            >
+              <div>
                 <i className="ti ti-heart"></i>
-              </Link>
+              </div>
             </div>
           </div>
           <div className="container">

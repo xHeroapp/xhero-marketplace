@@ -21,10 +21,10 @@ const FeaturedProducts = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Featured Products</h6>
-            <Link className="btn btn-sm btn-light" href="/featured-products">
+            {/* <Link className="btn btn-sm btn-light" href="/featured-products">
               View all
               <i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="row g-2">
             {[...Array(6)].map((_, i) => (
@@ -63,10 +63,10 @@ const FeaturedProducts = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
             <h6>Featured Products</h6>
-            <Link className="btn btn-sm btn-light" href="/featured-products">
+            {/* <Link className="btn btn-sm btn-light" href="/featured-products">
               View all
               <i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="card border-danger">
             <div className="card-body text-center py-5">
@@ -99,10 +99,10 @@ const FeaturedProducts = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl mb-3">
             <h6>Featured Products</h6>
-            <Link className="btn btn-sm btn-light" href="/featured-products">
+            {/* <Link className="btn btn-sm btn-light" href="/featured-products">
               View all
               <i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="card">
             <div className="card-body text-center py-5">
@@ -128,10 +128,10 @@ const FeaturedProducts = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Featured Products</h6>
-            <Link className="btn btn-sm btn-light" href="/featured-products">
+            {/* <Link className="btn btn-sm btn-light" href="/featured-products">
               View all
               <i className="ms-1 ti ti-arrow-right"></i>
-            </Link>
+            </Link> */}
           </div>
           <div className="row g-2">
             {GetFeaturedProducts.data &&

@@ -14,8 +14,6 @@ import { toast } from "sonner";
 import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 const TopProducts = () => {
-  const { user } = useAuthStore();
-
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart();
 
@@ -160,7 +158,6 @@ const TopProducts = () => {
                       <div
                         onClick={() =>
                           addToWishList(
-                            user?.id,
                             item.vendor_products_view.vendor_product_id
                           )
                         }

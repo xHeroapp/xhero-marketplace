@@ -3186,6 +3186,11 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   color: #ea4c62;
   font-size: 1.5rem;
 }
+.p-wishlist-share div {
+  display: inline-block;
+  color: #ea4c62;
+  font-size: 1.5rem;
+}
 
 .choose-color-radio .form-check-input {
   border: 0;
@@ -5091,6 +5096,9 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   background-image: url(../img/core-img/curve2.png);
 }
 [theme-color="dark"] .p-wishlist-share a {
+  color: #ea4c62;
+}
+[theme-color="dark"] .p-wishlist-share div {
   color: #ea4c62;
 }
 [theme-color="dark"] .progress {

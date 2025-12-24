@@ -1,15 +1,18 @@
 import { useAddToWishListQuery } from "@/queries/wishlist.queries";
+import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 
 export const useAddToWishList = () => {
+  const { user } = useAuthStore();
+
   // Data mutation
   const AddToWishListQuery = useAddToWishListQuery();
 
   // handle add to wishlist
-  function addToWishList(user_id, vendor_product_id) {
+  function addToWishList(vendor_product_id) {
     try {
       const promise = AddToWishListQuery.mutateAsync({
-        user_id,
+        user_id: user?.id,
         vendor_product_id,
       });
 
@@ -17,10 +20,10 @@ export const useAddToWishList = () => {
         loading: "Adding wishlist",
         success: "Product added to wish list",
         error: (err) => {
-            if(err.code == "23505")// this is the duplicate key value error code 
-            {
-                return "Product already added to wishlist"
-            } 
+          if (err.code == "23505") {
+            // this is the duplicate key value error code
+            return "Product already added to wishlist";
+          }
           return err.message;
         },
       });
