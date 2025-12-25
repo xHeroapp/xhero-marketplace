@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 
 const Login = () => {
-  // if user gets redireted back to the login page on expired link
+  // if user gets redirected back to the login page on expired link
   const searchParams = useSearchParams();
   const InvalidOrExpiredMagicLinkError = searchParams.get("error");
 
@@ -38,15 +38,14 @@ const Login = () => {
       toast.promise(promise, {
         loading: "Logging...",
         success: "Magic Link has been sent to your email",
-        error: "There was an error while trying to login",
+        error: (error) =>
+          error
+            ? error.message && error.message
+            : "There was an error while trying to login",
       });
-      await promise;
-      console.log(promise);
     } catch (err) {
       console.log(err);
     }
-
-    console.log(data);
   }
 
   return (

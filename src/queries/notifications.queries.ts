@@ -4,9 +4,9 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 // get notifications
 
-export const useGetNotifications = (userId: string) => {
+export const useGetNotifications = () => {
   return useInfiniteQuery({
-    queryKey: ["notifications", userId],
+    queryKey: ["notifications"],
     queryFn: async ({ pageParam = 0 }) => {
       const from = pageParam * NOTIFICATIONS_PER_PAGE;
       const to = from + NOTIFICATIONS_PER_PAGE - 1;
@@ -14,7 +14,6 @@ export const useGetNotifications = (userId: string) => {
       const { data, error, count } = await supabase
         .from("notifications")
         .select("*", { count: "exact" })
-        .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -30,12 +29,11 @@ export const useGetNotifications = (userId: string) => {
       };
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
-    enabled: !!userId,
     initialPageParam: 0,
   });
 };
 
-export const useGetNotificationsCount = (userId) => {
+export const useGetNotificationsCount = (userId: string) => {
   return useQuery({
     queryKey: ["notifications-count", userId],
     queryFn: async () => {

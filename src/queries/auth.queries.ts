@@ -7,23 +7,21 @@ import { toast } from "sonner";
 export const useLogin = () => {
   return useMutation({
     mutationFn: async (email: string) => {
-      const { data: employee, error: employeeCheckError } = await supabase
-        .from("employees")
-        .select("*")
-        .eq("email", email)
-        .single();
+      const { data } = await supabase.rpc("check_employee_email", {
+        p_email: email,
+      });
+      console.log(data);
 
-      if (!employee) {
-        throw employeeCheckError;
+      if (data !== true) {
+        throw new Error("Employee not found");
       }
 
       // send magic link / otp
-      const { data, error } = await SignInWithMagicLink(email);
+      const { data: authData, error } = await SignInWithMagicLink(email);
+      console.log(authData);
 
-      if (error) {
-        throw error;
-      }
-      return data;
+      if (error) throw error;
+      return authData;
     },
   });
 };

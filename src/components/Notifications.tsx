@@ -18,7 +18,7 @@ const Notifications = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  const notificationQuery = useGetNotifications(user?.id);
+  const notificationQuery = useGetNotifications();
 
   // Set up real-time subscription for notifications
   useEffect(() => {
@@ -37,7 +37,7 @@ const Notifications = () => {
         () => {
           // Invalidate both queries so UI updates immediately
           queryClient.invalidateQueries({
-            queryKey: ["notifications", user?.id],
+            queryKey: ["notifications"],
           });
           queryClient.refetchQueries({
             queryKey: ["notifications-count", user?.id],
