@@ -1,3 +1,4 @@
+import { FLASH_SALE_ORDER_TYPE } from "@/constant/constant";
 import { useGetUser } from "@/queries/auth.queries";
 import { processOrder } from "@/services/processOrder.service";
 import { useAuthStore } from "@/store/authStore";
@@ -40,38 +41,76 @@ export const useHandlePayment = ({
     }
 
     try {
-      const promise = processOrder({
-        p_vendor_id: vendorCart.vendor.vendor_id,
-        p_items: Object.values(vendorCart.items),
-        p_payment_method: payment_method,
-        p_reference: txRef ?? TX_REF,
-      });
+      // A check to detrmine if its a product on flash sale or normal product
 
-      toast.promise(promise, {
-        loading:
-          payment_method === "wallet"
-            ? "Processing Payment..."
-            : "Processing Order...",
+      if (vendorCart.order_type == FLASH_SALE_ORDER_TYPE) {
+        // flash sale order
+        const promise = processOrder({
+          p_flash_sale_item_id: vendorCart.vendor.vendor_id,
+          p_payment_method: payment_method,
+          p_reference: txRef ?? TX_REF,
+        });
 
-        success: () => {
-          useGetUserQuery.refetch();
-          setIsLoading(false);
-          setIsSuccess(true);
-          router.push(redirect_link);
+        toast.promise(promise, {
+          loading:
+            payment_method === "wallet"
+              ? "Processing Payment..."
+              : "Processing Order...",
 
-          return payment_method === "wallet"
-            ? "Payment Successful"
-            : "Order Successful";
-        },
+          success: () => {
+            useGetUserQuery.refetch();
+            setIsLoading(false);
+            setIsSuccess(true);
+            router.push(redirect_link);
 
-        error: () => {
-          setIsLoading(false);
-          setIsSuccess(false);
-          return `There was an error while trying to process your ${
-            payment_method === "wallet" ? "payment" : "order"
-          }. Please try again later`;
-        },
-      });
+            return payment_method === "wallet"
+              ? "Payment Successful"
+              : "Order Successful";
+          },
+
+          error: () => {
+            setIsLoading(false);
+            setIsSuccess(false);
+            return `There was an error while trying to process your ${
+              payment_method === "wallet" ? "payment" : "order"
+            }. Please try again later`;
+          },
+        });
+      } else {
+        // normal order
+        const promise = processOrder({
+          p_vendor_id: vendorCart.vendor.vendor_id,
+          p_items: Object.values(vendorCart.items),
+          p_payment_method: payment_method,
+          p_reference: txRef ?? TX_REF,
+        });
+
+        toast.promise(promise, {
+          loading:
+            payment_method === "wallet"
+              ? "Processing Payment..."
+              : "Processing Order...",
+
+          success: () => {
+            useGetUserQuery.refetch();
+            setIsLoading(false);
+            setIsSuccess(true);
+            router.push(redirect_link);
+
+            return payment_method === "wallet"
+              ? "Payment Successful"
+              : "Order Successful";
+          },
+
+          error: () => {
+            setIsLoading(false);
+            setIsSuccess(false);
+            return `There was an error while trying to process your ${
+              payment_method === "wallet" ? "payment" : "order"
+            }. Please try again later`;
+          },
+        });
+      }
     } catch (err) {
       setIsLoading(false);
       console.error(err);

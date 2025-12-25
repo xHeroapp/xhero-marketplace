@@ -1,12 +1,11 @@
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import React from "react";
-import ProductSlider from "./ProductSlider";
-import SingleProductArea from "./SingleProductArea";
 import { ToastContainer } from "react-toastify";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
+import FlashSaleSingleProductArea from "./FlashSaleSingleProduct";
 
-const SingleProduct = ({ product }: any) => {
+const FlashSaleSingleProduct = ({ product }: any) => {
   console.log(product);
   return (
     <>
@@ -14,7 +13,7 @@ const SingleProduct = ({ product }: any) => {
       <div className="page-content-wrapper">
         {/* <ProductSlider product_images={product.image_url} /> */}
         <ImageWithFallback src={product.image_url} alt={product.product_name} />
-        <SingleProductArea product={product} />
+        <FlashSaleSingleProductArea product={product} />
       </div>
       <div className="internet-connection-status" id="internetStatus"></div>
       <Footer />
@@ -23,4 +22,4 @@ const SingleProduct = ({ product }: any) => {
   );
 };
 
-export default SingleProduct;
+export default FlashSaleSingleProduct;

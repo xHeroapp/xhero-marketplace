@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 
-export const useAddToCart = (quantity?: number) => {
+export const useAddToCart = (quantity?: number, order_type?: string) => {
   const { user } = useAuthStore();
   const { addProductToCart } = useCartStore();
 
@@ -16,7 +16,8 @@ export const useAddToCart = (quantity?: number) => {
         delivery_fee: item.delivery_fee,
       },
       user && user.id,
-      quantity && quantity
+      quantity && quantity,
+      order_type && order_type
     );
   };
 

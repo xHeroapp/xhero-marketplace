@@ -19,3 +19,6 @@ export const ORDER_FLOW = [
   "in_transit",
   "delivered",
 ] as const;
+
+// Flash sale order type
+export const FLASH_SALE_ORDER_TYPE = "flash_sale";
