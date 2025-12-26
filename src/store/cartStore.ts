@@ -19,7 +19,7 @@ const useCartStore = create((set, get) => ({
 
   /* ---------------- ADD PRODUCT ---------------- */
 
-  addProductToCart: (product, vendor, userId, quantity = 1, order_type) => {
+  addProductToCart: (product, vendor, userId, quantity = 1) => {
     const cart = { ...get().cart };
     const vendorId = vendor.vendor_id;
     const productId = product.product_id;
@@ -28,16 +28,7 @@ const useCartStore = create((set, get) => ({
       cart[vendorId] = {
         vendor,
         items: {},
-        order_type,
       };
-    }
-
-    if (
-      cart[vendorId].items[productId] &&
-      order_type == FLASH_SALE_ORDER_TYPE
-    ) {
-      toast.info("Quantity for Flash sale Products is limited to one");
-      return;
     }
 
     if (cart[vendorId].items[productId]) {

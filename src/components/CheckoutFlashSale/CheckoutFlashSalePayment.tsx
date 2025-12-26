@@ -1,35 +1,21 @@
 "use client";
-import { FLASH_SALE_ORDER_TYPE } from "@/constant/constant";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
-import useCheckoutStore from "@/store/checkoutStore";
 import useFlashSaleStore from "@/store/flashSaleStore";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 
-const CheckoutPayment = () => {
-  const searchParams = useSearchParams();
-  const order_type = searchParams.get("order_type");
-
-  const { setPaymentMethod } = useCheckoutStore();
-  const { setPaymentMethod: setFlashSalePaymentMethod } = useFlashSaleStore();
+const CheckoutFlashSalePayment = () => {
+  const { setPaymentMethod } = useFlashSaleStore();
   const router = useRouter();
 
   const handlePaymentMethod = (paymentMethod: string) => {
-    if (order_type == FLASH_SALE_ORDER_TYPE) {
-      setFlashSalePaymentMethod(paymentMethod);
+    setPaymentMethod(paymentMethod);
 
-      paymentMethod == "wallet"
-        ? router.push("checkout-flash-sale-wallet")
-        : router.push("checkout-flash-sale-bank");
-    } else {
-      setPaymentMethod(paymentMethod);
-
-      paymentMethod == "wallet"
-        ? router.push("checkout-wallet")
-        : router.push("checkout-bank");
-    }
+    paymentMethod == "wallet"
+      ? router.push("checkout-flash-sale-wallet")
+      : router.push("checkout-flash-sale-bank");
   };
   return (
     <>
@@ -57,7 +43,7 @@ const CheckoutPayment = () => {
                   <div className="single-payment-method">
                     <div
                       className="bank"
-                      onClick={() => handlePaymentMethod("bank_transfer")}
+                      onClick={() => handlePaymentMethod("bank-transfer")}
                     >
                       <i className="ti ti-building"></i>
                       <h6>Bank Transfer</h6>
@@ -95,4 +81,4 @@ const CheckoutPayment = () => {
   );
 };
 
-export default CheckoutPayment;
+export default CheckoutFlashSalePayment;

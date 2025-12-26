@@ -1,34 +1,21 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useAddToCart } from "@/hooks/useAddToCart";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
-import { FLASH_SALE_ORDER_TYPE } from "@/constant/constant";
+
+import useFlashSaleStore from "@/store/flashSaleStore";
+import { useRouter } from "next/navigation";
 
 const FlashSaleSingleProductArea = ({ product }: any) => {
-  const [quantity, setQuantity] = useState<number>(1);
+  const { setFlashSaleItem } = useFlashSaleStore();
+  const router = useRouter();
 
-  const increment = () => {
-    setQuantity(quantity + 1);
-  };
+  // handle flash sale
+  function handleAddFlashSaleItem() {
+    setFlashSaleItem(product);
 
-  const decrement = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  // handleAdd to cart
-  const { handleAddToCart } = useAddToCart(quantity, FLASH_SALE_ORDER_TYPE);
-
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
-
-  //   console.log(totalItems?.quantity);
+    router.push("/checkout-flash-sale");
+  }
 
   return (
     <>
@@ -133,12 +120,12 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
                 </div>
               </div> */}
               <button
-                onClick={() => product && handleAddToCart(product)}
+                onClick={() => product && handleAddFlashSaleItem()}
                 style={{ cursor: "pointer" }}
                 className="btn btn-primary ms-3"
                 type="submit"
               >
-                Add To Cart
+                Buy Now
               </button>
             </form>
           </div>

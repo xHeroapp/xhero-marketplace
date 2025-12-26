@@ -4,41 +4,59 @@ import { useClientReady } from "@/hooks/useClientReady";
 import { useHandlePayment } from "@/hooks/useHandlePayment";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
+import { processFlashSaleOrder } from "@/services/processFlashSaleOrder.service";
 import useCartStore from "@/store/cartStore";
 import useCheckoutStore from "@/store/checkoutStore";
+import useFlashSaleStore from "@/store/flashSaleStore";
 import { generateTxRef } from "@/utils/generateTxRef";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
-const CheckoutBank = () => {
+const CheckoutFlashSaleBank = () => {
   const ready = useClientReady();
+  const router = useRouter();
 
   // state
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [txRef, setTxRef] = useState(generateTxRef());
 
-  const { getVendorTotal } = useCartStore();
-  const { getVendorCart } = useCheckoutStore();
-  const vendorCart = getVendorCart();
+  const { item, paymentMethod, clear, getTotal } = useFlashSaleStore();
 
-  const orderAmount = getVendorTotal(vendorCart && vendorCart.vendor.vendor_id);
+  const orderAmount = getTotal();
 
   // Payment handler
-  const { handlePayment } = useHandlePayment({
-    orderAmount,
-    vendorCart,
-    setIsLoading,
-    setIsSuccess,
-    payment_method: "bank_transfer",
-    redirect_link: `/order-success?vendor_id=${
-      vendorCart && vendorCart.vendor.vendor_id
-    }`,
-    TX_REF: txRef,
-  });
+  const handlePayment = () => {
+    setIsLoading(true);
+    const promise = processFlashSaleOrder({
+      p_flash_sale_item_id: item.flash_sale_item_id,
+      p_payment_method: paymentMethod,
+      p_reference: txRef,
+    });
+
+    toast.promise(promise, {
+      loading: "Processing flash deal...",
+      success: () => {
+        setIsSuccess(true);
+        clear();
+        router.push("/payment-success");
+        return "Flash sale order successful 🎉";
+      },
+      error: (err) => {
+        setIsSuccess(false);
+        if (err.message) {
+          return `${err.message}`;
+        } else {
+          return "Flash sale item may be sold out. Please try again.";
+        }
+      },
+    });
+  };
 
   if (!ready) return null;
 
-  if (!vendorCart) return null;
+  if (!item) return null;
 
   return (
     <>
@@ -90,4 +108,4 @@ const CheckoutBank = () => {
   );
 };
 
-export default CheckoutBank;
+export default CheckoutFlashSaleBank;

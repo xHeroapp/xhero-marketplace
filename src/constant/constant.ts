@@ -22,3 +22,7 @@ export const ORDER_FLOW = [
 
 // Flash sale order type
 export const FLASH_SALE_ORDER_TYPE = "flash_sale";
+
+// Bank Details
+export const BANK_NAME = "Example Bank Ltd";
+export const ACCOUNT_NUMBER = "010 2125 32563 2525";
