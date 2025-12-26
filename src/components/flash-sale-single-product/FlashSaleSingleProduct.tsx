@@ -39,7 +39,7 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
               <h5 className="mb-1"> {product.product_name}</h5>
               <p className="sale-price mb-0 lh-1">
                 {formatCurrency(product?.price)}
-                {/* <span> $ {product?.old_price ? product.old_price : "67"}</span> */}
+                <span> {formatCurrency(product?.normal_price)}</span>
               </p>
               <p className="">{product.product_description}</p>
             </div>
