@@ -57,10 +57,10 @@ const HeaderThree = ({ links, title }: any) => {
             data-bs-target="#suhaFilterOffcanvas"
             aria-controls="suhaFilterOffcanvas"
           >
-            <i
+            {/* <i
               onClick={() => handleShow()}
               className="ti ti-adjustments-horizontal"
-            ></i>
+            ></i> */}
           </div>
         </div>
       </div>

@@ -90,12 +90,11 @@ const FlashSale = () => {
               <MyTimer />
             </ul>
 
-            <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
-              <h6>Top Products</h6>
-              <Link className="btn btn-sm btn-light" href="/shop-grid">
-                View all<i className="ms-1 ti ti-arrow-right"></i>
-              </Link>
-            </div>
+            {/* <div className="section-heading d-flex align-items-center justify-content-between dir-rtl"> */}
+            <Link className="btn btn-sm btn-light" href="/flash-sale">
+              View all<i className="ms-1 ti ti-arrow-right"></i>
+            </Link>
+            {/* </div> */}
           </div>
 
           <Swiper

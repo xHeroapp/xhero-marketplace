@@ -33,7 +33,7 @@ const useCartStore = create((set, get) => ({
     }
 
     if (
-      cart[vendorId].items[productId] ||
+      cart[vendorId].items[productId] &&
       order_type == FLASH_SALE_ORDER_TYPE
     ) {
       toast.info("Quantity for Flash sale Products is limited to one");
