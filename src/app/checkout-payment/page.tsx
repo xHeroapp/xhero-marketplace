@@ -1,5 +1,5 @@
 import CheckoutPayment from "@/components/CheckoutPayment";
-import React from "react";
+import React, { Suspense } from "react";
 
 export const metadata = {
   title: "Checkout Payment",
@@ -8,7 +8,17 @@ export const metadata = {
 const index = () => {
   return (
     <>
-      <CheckoutPayment />
+      <Suspense
+        fallback={
+          <div className="login-wrapper d-flex align-items-center justify-content-center text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        }
+      >
+        <CheckoutPayment />
+      </Suspense>
     </>
   );
 };
