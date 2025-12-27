@@ -12,7 +12,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" theme-color="dark">
+    // set the default them to white
+    <html lang="en" theme-color="light">
       <head>
         <title>xHero - Market Place</title>
         <link
