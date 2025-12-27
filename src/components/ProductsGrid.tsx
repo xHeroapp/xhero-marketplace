@@ -2,28 +2,35 @@ import Link from "next/link";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
+import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 export const ProductsGrid = ({ productItems, GetProductsQuery }) => {
   // handle add to cart
   const { handleAddToCart } = useAddToCart();
 
+  // handle add to wishlist
+  const { addToWishList } = useAddToWishList();
+
   return (
     <>
       <div className="row g-2 rtl-flex-d-row-r">
         {productItems &&
-          productItems.map((product, i) => (
+          productItems.map((product) => (
             <div key={product.vendor_product_id} className="col-6 col-md-4">
               <div className="card product-card">
                 <div className="card-body">
                   {/* removed badge and wishlist buttons for now */}
-                  {/* <span
-                                className={`badge rounded-pill badge-${product.badge_color}`}
-                              >
-                                {product.badge_text}
-                              </span>
-                              <a className="wishlist-btn" href="#">
-                                <i className="ti ti-heart"></i>
-                              </a> */}
+                  <span
+                    className={`badge rounded-pill badge-${product.badge_color}`}
+                  >
+                    {product.badge_text}
+                  </span>
+                  <div
+                    onClick={() => addToWishList(product.vendor_product_id)}
+                    className="wishlist-btn"
+                  >
+                    <i className="ti ti-heart"></i>
+                  </div>
                   <Link
                     className="product-thumbnail d-block"
                     href={`/product/${product.vendor_product_id}`}

@@ -133,11 +133,11 @@ const ShopGrid = () => {
       <>
         <HeaderTwo links="home" title="Shop Grid" />
 
-        <div className="page-content-wrapper">
-          <div className="py-3">
+        <div className="page-content-wrapper ">
+          <div className="py-3 ">
             <div className="container">
               <div className="row g-1 align-items-center rtl-flex-d-row-r mb-3">
-                <div className="col-8" style={{ marginTop: "-15px" }}>
+                <div className="" style={{ marginTop: "-15px" }}>
                   <Swiper
                     loop={true}
                     slidesPerView={2.5}
@@ -147,15 +147,18 @@ const ShopGrid = () => {
                     {ProductCategoriesQuery.data &&
                       ProductCategoriesQuery.data.map((item, i) => (
                         <SwiperSlide key={item.id}>
-                          <a className="shadow-sm" href="#">
+                          <div
+                            className="catg-btn shadow-sm"
+                            onClick={() => Filters.setCategory(item.name)}
+                          >
                             {/* <img src={item.img} alt="" /> */}
                             {item.name}
-                          </a>
+                          </div>
                         </SwiperSlide>
                       ))}
                   </Swiper>
                 </div>
-                <div className="col-4">
+                {/* <div className="col-4">
                   <div className="select-product-catagory">
                     <NiceSelect
                       className="filter-select right small border-0 d-flex align-items-center"
@@ -171,7 +174,7 @@ const ShopGrid = () => {
                       name="myNiceSelect"
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div className="card">
@@ -209,7 +212,7 @@ const ShopGrid = () => {
         <div className="py-3">
           <div className="container">
             <div className="row g-1 align-items-center rtl-flex-d-row-r">
-              <div className="col-8" style={{ marginTop: "-15px" }}>
+              <div className="" style={{ marginTop: "-15px" }}>
                 <Swiper
                   loop={true}
                   slidesPerView={2.5}
@@ -219,15 +222,18 @@ const ShopGrid = () => {
                   {ProductCategoriesQuery.data &&
                     ProductCategoriesQuery.data.map((item, i) => (
                       <SwiperSlide key={item.id}>
-                        <a className="shadow-sm" href="#">
+                        <div
+                          className="catg-btn shadow-sm"
+                          onClick={() => Filters.setCategory(item.name)}
+                        >
                           {/* <img src={item.img} alt="" /> */}
                           {item.name}
-                        </a>
+                        </div>
                       </SwiperSlide>
                     ))}
                 </Swiper>
               </div>
-              <div className="col-4">
+              {/* <div className="col-4">
                 <div className="select-product-catagory">
                   <NiceSelect
                     className="filter-select right small border-0 d-flex align-items-center"
@@ -243,7 +249,7 @@ const ShopGrid = () => {
                     name="myNiceSelect"
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="mb-3"></div>
             <ProductsGrid

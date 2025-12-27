@@ -2,9 +2,12 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { formatCurrency } from "@/utils/formatCurrency";
+import dynamic from "next/dynamic";
 
 import useFlashSaleStore from "@/store/flashSaleStore";
 import { useRouter } from "next/navigation";
+
+const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
 
 const FlashSaleSingleProductArea = ({ product }: any) => {
   const { setFlashSaleItem } = useFlashSaleStore();
@@ -17,6 +20,33 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
     router.push("/checkout-flash-sale");
   }
 
+  // Calculate stock percentage
+  const calculateStockPercentage = () => {
+    if (!product.normal_stock || !product.flash_stock) return 0;
+    const soldStock = product.normal_stock - product.flash_stock;
+    return Math.round((soldStock / product.normal_stock) * 100);
+  };
+
+  // Get stock status color
+  const getStockStatusColor = () => {
+    if (!product.flash_stock) return "danger";
+    if (product.flash_stock <= 10) return "danger";
+    if (product.flash_stock <= 30) return "warning";
+    return "success";
+  };
+
+  // Calculate discount percentage
+  const calculateDiscount = () => {
+    if (!product.normal_price || !product.flash_price) return 0;
+    const normal = parseFloat(product.normal_price);
+    const flash = parseFloat(product.flash_price);
+    return Math.round(((normal - flash) / normal) * 100);
+  };
+
+  const stockPercentage = calculateStockPercentage();
+  const stockStatusColor = getStockStatusColor();
+  const discountPercentage = calculateDiscount();
+
   return (
     <>
       <div className="product-description pb-3">
@@ -25,10 +55,18 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
             <div className="p-title-price">
               <h5 className="mb-1"> {product.product_name}</h5>
               <p className="sale-price mb-0 lh-1">
-                {formatCurrency(product?.price)}
+                {formatCurrency(product?.flash_price || product?.price)}
                 <span> {formatCurrency(product?.normal_price)}</span>
               </p>
-              <p className="">{product.product_description}</p>
+              {discountPercentage > 0 && (
+                <span
+                  className="badge bg-danger"
+                  style={{ fontSize: "12px", marginTop: "4px" }}
+                >
+                  {discountPercentage}% OFF
+                </span>
+              )}
+              <p className="mt-2">{product.product_description}</p>
             </div>
             {/* <div
               onClick={() => addToWishList(product.vendor_product_id)}
@@ -67,37 +105,84 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
             </div>
           </div> */}
         </div>
-        {/* Removed flash sales for now */}
-        {/* <div className="flash-sale-panel bg-white mb-3 py-3">
-          <div className="container">
-            <div className="sales-offer-content d-flex align-items-end justify-content-between">
-              <div className="sales-end">
-                <p className="mb-1 font-weight-bold">
-                  <i className="ti ti-bolt-lightning lni-flashing-effect text-danger"></i>
-                  Flash sale end in
-                </p>
 
-                <ul className="sales-end-timer ps-0 d-flex align-items-center">
-                  <MyTimer />
-                </ul>
+        {/* Flash Sale Panel - Now Active */}
+        {product.flash_sale_id && (
+          <div className="flash-sale-panel bg-white mb-3 py-3">
+            <div className="container">
+              <div className="sales-offer-content d-flex align-items-end justify-content-between">
+                <div className="sales-end">
+                  <p className="mb-1 font-weight-bold">
+                    <i className="ti ti-bolt-lightning lni-flashing-effect text-danger"></i>
+                    Flash sale ends in
+                  </p>
+
+                  <ul className="sales-end-timer ps-0 d-flex align-items-center">
+                    <MyTimer endTime={product.end_time} />
+                  </ul>
+                </div>
+
+                <div className="sales-volume text-end">
+                  <p className="mb-1 font-weight-bold">
+                    {stockPercentage}% Sold Out
+                  </p>
+                  <div className="progress" style={{ height: "0.375rem" }}>
+                    <div
+                      className={`progress-bar bg-${stockStatusColor}`}
+                      role="progressbar"
+                      style={{ width: `${stockPercentage}%` }}
+                      aria-valuenow={stockPercentage}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    ></div>
+                  </div>
+                </div>
               </div>
 
-              <div className="sales-volume text-end">
-                <p className="mb-1 font-weight-bold">82% Sold Out</p>
-                <div className="progress" style={{ height: "0.375rem" }}>
-                  <div
-                    className="progress-bar bg-warning"
-                    role="progressbar"
-                    style={{ width: "82%" }}
-                    aria-valuenow={82}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  ></div>
+              {/* Stock Information */}
+              <div
+                className="stock-info mt-3 pt-3"
+                style={{ borderTop: "1px solid #e9ecef" }}
+              >
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p className="mb-0" style={{ fontSize: "14px" }}>
+                      <i className="ti ti-package me-1"></i>
+                      <strong>Stock Available:</strong>
+                    </p>
+                  </div>
+                  <div>
+                    <span
+                      className={`badge bg-${stockStatusColor}`}
+                      style={{ fontSize: "13px" }}
+                    >
+                      {product.flash_stock} items left
+                    </span>
+                  </div>
                 </div>
+
+                {product.flash_stock <= 10 && product.flash_stock > 0 && (
+                  <div className="mt-2">
+                    <small className="text-danger">
+                      <i className="ti ti-alert-circle me-1"></i>
+                      Hurry! Only {product.flash_stock} items remaining at this
+                      price
+                    </small>
+                  </div>
+                )}
+
+                {product.flash_stock === 0 && (
+                  <div className="mt-2">
+                    <small className="text-danger fw-bold">
+                      <i className="ti ti-x me-1"></i>
+                      Out of Stock - Flash Sale Ended
+                    </small>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div> */}
+        )}
 
         <div className="cart-form-wrapper bg-white mb-3 py-3">
           <div className="container">
@@ -124,17 +209,19 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
                 style={{ cursor: "pointer" }}
                 className="btn btn-primary ms-3"
                 type="submit"
+                disabled={product.flash_stock === 0}
               >
-                Buy Now
+                {product.flash_stock === 0 ? "Out of Stock" : "Buy Now"}
               </button>
             </form>
           </div>
         </div>
+
         {/* removed product specfication for now */}
-        <div className="p-specification bg-white mb-3 py-3">
+        {/* return the product long descriptions here */}
+        {/* <div className="p-specification bg-white mb-3 py-3">
           <div className="container">
             <h6>Description</h6>
-            {/* return the product long descriptions here */}
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
               eum? Id, culpa? At officia quisquam laudantium nisi mollitia
@@ -164,7 +251,7 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
               recusandae in facere quos vitae?
             </p>
           </div>
-        </div>
+        </div> */}
 
         {/* removed the video pop up, our products do not have videos  */}
         {/* <div

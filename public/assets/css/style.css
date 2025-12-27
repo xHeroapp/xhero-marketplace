@@ -3419,6 +3419,27 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.product-catagories .catg-btn {
+  padding: 0.425rem 0.5rem;
+  background-color: #ffffff;
+  height: 50px;
+  border-radius: 0.5rem;
+  color: #020310;
+  font-size: 0.75rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .product-catagories a img {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 1.25rem;
@@ -3427,7 +3448,18 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   max-width: 1.25rem;
   margin-right: 0.25rem;
 }
+.product-catagories .catg-btn img {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 1.25rem;
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  max-width: 1.25rem;
+  margin-right: 0.25rem;
+}
 .product-catagories a:hover {
+  color: #ea4c62;
+}
+.product-catagories .catg-btn:hover {
   color: #ea4c62;
 }
 
