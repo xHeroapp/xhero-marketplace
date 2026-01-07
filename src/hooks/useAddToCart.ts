@@ -1,11 +1,19 @@
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
+import { useRouter } from "next/navigation";
 
 export const useAddToCart = (quantity?: number, order_type?: string) => {
   const { user } = useAuthStore();
   const { addProductToCart } = useCartStore();
+  const router = useRouter();
 
   const handleAddToCart = (item: any) => {
+    // Check if item is a service (not goods)
+    if (item.product_type !== "goods") {
+      router.push(`/product/${item.vendor_product_id}`);
+      return;
+    }
+
     addProductToCart(
       item,
       // vendor data

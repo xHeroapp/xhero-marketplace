@@ -22,3 +22,27 @@
   background-color: rgb(235, 235, 235); /* your color */
   color: #625afa; /* text color */
 }
+
+/* Booking Form Styles - Override cart-form styles */
+.booking-form-wrapper .cart-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-form-wrapper .cart-form .form-control {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto;
+  margin-right: 0;
+  margin-left: 0;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+}
+
+.booking-form-wrapper .cart-form .form-group {
+  width: 100%;
+}
+
+.booking-form-wrapper .cart-form .form-label {
+  width: 100%;
+}

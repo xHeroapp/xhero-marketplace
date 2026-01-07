@@ -7,9 +7,47 @@ import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { useAddToWishList } from "@/hooks/useAddToWishList";
+import { useForm } from "react-hook-form";
+import useServiceStore from "@/store/serviceStore";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import { SERVICE_ORDER_TYPE } from "@/constant/constant";
 
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
+  const { addBooking } = useServiceStore();
+  const userId = useAuthStore((state) => state.user?.id);
+  const router = useRouter();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmitBooking = (data: any) => {
+    if (!userId) {
+      alert("Please login to book a service");
+      return;
+    }
+
+    // Map form data to booking details structure
+    // we are currently using only one date/time for one_time service
+    const bookingDetails = {
+      start_date: data.date || "",
+      end_date: data.date || "", // Using same date for start and end for one_time service
+      start_time: data.time || "",
+      end_time: data.time || "", // Using same time for start and end for one_time service
+      service_mode: data.service_mode || "one_time",
+      note: data.special_requirements || "",
+    };
+
+    // Add booking to store (this will replace any previous booking)
+    addBooking(bookingDetails, product, userId);
+
+    // Redirect to checkout payment page
+    router.push(`/checkout-payment?order_type=${SERVICE_ORDER_TYPE}`);
+  };
 
   const increment = () => {
     setQuantity(quantity + 1);
@@ -111,37 +149,128 @@ const SingleProductArea = ({ product }: any) => {
           </div>
         </div> */}
 
-        <div className="cart-form-wrapper bg-white mb-3 py-3">
-          <div className="container">
-            <form className="cart-form" onSubmit={(e) => e.preventDefault()}>
-              <div className="order-plus-minus d-flex align-items-center">
-                <div className="quantity-button-handler" onClick={decrement}>
-                  -
-                </div>
-                <input
-                  className="form-control cart-quantity-input"
-                  type="text"
-                  step="1"
-                  name="quantity"
-                  value={quantity}
-                  defaultValue={0}
-                  readOnly
-                />
-                <div className="quantity-button-handler" onClick={increment}>
-                  +
-                </div>
-              </div>
-              <button
-                onClick={() => product && handleAddToCart(product)}
-                style={{ cursor: "pointer" }}
-                className="btn btn-primary ms-3"
-                type="submit"
+        {product.product_type === "service" ? (
+          <div className="bg-white mb-3 py-3 booking-form-wrapper">
+            <div className="container">
+              <form
+                className="cart-form d-flex flex-column"
+                onSubmit={handleSubmit(onSubmitBooking)}
               >
-                Add To Cart
-              </button>
-            </form>
+                <div className="mb-3 d-flex flex-column w-100">
+                  <label htmlFor="booking-date" className="form-label mb-1">
+                    Select Date
+                  </label>
+                  <input
+                    type="date"
+                    id="booking-date"
+                    className="form-control w-100"
+                    {...register("date", { required: true })}
+                  />
+                  {errors.date && (
+                    <span className="text-danger">Date is required</span>
+                  )}
+                </div>
+                <div className="mb-3 d-flex flex-column w-100">
+                  <label htmlFor="booking-time" className="form-label mb-1">
+                    Select Time
+                  </label>
+                  <select
+                    id="booking-time"
+                    className="form-control w-100"
+                    {...register("time", { required: true })}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select a time slot
+                    </option>
+                    <option value="09:00">9:00 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">1:00 PM</option>
+                    <option value="14:00">2:00 PM</option>
+                    <option value="15:00">3:00 PM</option>
+                    <option value="16:00">4:00 PM</option>
+                    <option value="17:00">5:00 PM</option>
+                    <option value="18:00">6:00 PM</option>
+                  </select>
+                  {errors.time && (
+                    <span className="text-danger">Time is required</span>
+                  )}
+                </div>
+                <div className="mb-3 d-flex flex-column w-100">
+                  <label htmlFor="service-mode" className="form-label mb-1">
+                    Service Mode
+                  </label>
+                  <select
+                    id="service-mode"
+                    className="form-control w-100"
+                    disabled
+                    {...register("service_mode")}
+                    defaultValue="one_time"
+                  >
+                    <option value="one_time">One Time</option>
+                  </select>
+                </div>
+                <div className="mb-3 d-flex flex-column w-100">
+                  <label
+                    htmlFor="special-requirements"
+                    className="form-label mb-1"
+                  >
+                    Special Requirements
+                  </label>
+                  <textarea
+                    id="special-requirements"
+                    className="form-control w-100"
+                    placeholder="Any special requirements..."
+                    rows={3}
+                    {...register("special_requirements")}
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100"
+                  style={{ cursor: "pointer" }}
+                >
+                  Submit Booking
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="cart-form-wrapper bg-white mb-3 py-3">
+            <div className="container">
+              <form className="cart-form" onSubmit={(e) => e.preventDefault()}>
+                <div className="order-plus-minus d-flex align-items-center">
+                  <div className="quantity-button-handler" onClick={decrement}>
+                    -
+                  </div>
+                  <input
+                    className="form-control cart-quantity-input"
+                    type="text"
+                    step="1"
+                    name="quantity"
+                    value={quantity}
+                    defaultValue={0}
+                    readOnly
+                  />
+                  <div className="quantity-button-handler" onClick={increment}>
+                    +
+                  </div>
+                </div>
+                <button
+                  onClick={() => product && handleAddToCart(product)}
+                  style={{ cursor: "pointer" }}
+                  className="btn btn-primary ms-3"
+                  type="submit"
+                >
+                  Add To Cart
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* removed product specfication for now */}
         <div className="p-specification bg-white mb-3 py-3">
           <div className="container">

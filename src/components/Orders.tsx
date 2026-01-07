@@ -122,7 +122,7 @@ const Orders: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserOrders("f65c1a92-4dda-4fb6-bf2b-b71ad05561d5");
+  } = useGetUserOrders(user?.user_id ?? "");
 
   // Debug log
   useEffect(() => {
