@@ -116,7 +116,7 @@ export const useGetUserOrders = (user_id: string, limit = PRODUCT_LIMIT) => {
       const { data, error, count } = await supabase
         .from("order_items_view")
         .select("*", { count: "exact" })
-        .eq("user_id", user_id)
+        // .eq("user_id", user_id)
         .order("order_created_at", { ascending: false })
         .range(from, to);
 
@@ -138,7 +138,61 @@ export const useGetUserOrders = (user_id: string, limit = PRODUCT_LIMIT) => {
   });
 };
 
-export const useGetOrderStatus = (order_id, options) => {
+// Service order types
+export interface ServiceOrder {
+  idx: number;
+  service_order_id: string;
+  user_id: string;
+  vendor_id: string;
+  vendor_name: string;
+  vendor_product_id: string;
+  service_name: string;
+  image_url: string;
+  total_amount: string;
+  status: string;
+  reference: string;
+  created_at: string;
+  service_mode: string;
+  start_date: string | null;
+  end_date: string | null;
+  start_time: string;
+  duration_minutes: number;
+  note: string;
+}
+
+export const useGetUserServiceOrders = (
+  user_id: string,
+  limit = PRODUCT_LIMIT
+) => {
+  return useInfiniteQuery({
+    queryKey: ["user-service-orders", user_id],
+    queryFn: async ({ pageParam = 0 }) => {
+      const from = pageParam * limit;
+      const to = from + limit - 1;
+
+      const { data, error, count } = await supabase
+        .from("service_orders_view")
+        .select("*", { count: "exact" })
+        // .eq("user_id", user_id)
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      return {
+        items: data ?? [],
+        page: pageParam,
+        totalCount: count ?? 0,
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.items.length === limit ? pages.length : undefined,
+    enabled: !!user_id,
+  });
+};
+
+export const useGetOrderStatus = (order_id: string, options?: any) => {
   return useQuery({
     queryKey: ["get-order-status", order_id],
     queryFn: async () => {
@@ -146,6 +200,25 @@ export const useGetOrderStatus = (order_id, options) => {
         .from("order_status_history")
         .select("status, created_at")
         .eq("order_id", order_id);
+
+      if (error) throw error;
+      return data;
+    },
+    ...options,
+  });
+};
+
+export const useGetServiceOrderStatus = (
+  service_order_id: string,
+  options?: any
+) => {
+  return useQuery({
+    queryKey: ["get-service-order-status", service_order_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("service_order_status_history")
+        .select("status, created_at")
+        .eq("order_id", service_order_id);
 
       if (error) throw error;
       return data;

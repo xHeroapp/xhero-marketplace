@@ -85,3 +85,33 @@ export const formatOrderDate = (dateString: string): string => {
 
   return `${day}-${month}-${year}`;
 };
+
+/**
+ * Get the display status label for a service order
+ */
+export const getServiceOrderStatusLabel = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    pending: "Pending",
+    confirmed: "Confirmed",
+    completed: "Completed",
+    cancelled: "Cancelled",
+    refunded: "Refunded",
+  };
+
+  return statusMap[status.toLowerCase()] || status;
+};
+
+/**
+ * Get the status color class for service order styling
+ */
+export const getServiceOrderStatusColor = (status: string): string => {
+  const colorMap: Record<string, string> = {
+    pending: "warning",
+    confirmed: "info",
+    completed: "success",
+    cancelled: "danger",
+    refunded: "secondary",
+  };
+
+  return colorMap[status.toLowerCase()] || "secondary";
+};
