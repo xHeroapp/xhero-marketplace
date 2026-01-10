@@ -6,6 +6,7 @@ import React from "react";
 // import ProgressBar from "./ProgressBar";
 import { Toaster } from "sonner";
 import CategoryProvider from "./CategoryProvider";
+import AuthSync from "@/components/auth/AuthSync";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -15,6 +16,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       {/* <ProgressBar /> */}
       <Toaster richColors position="top-right" />
       <CategoryProvider />
+      <AuthSync />
       {/* <ThemeProvider
         attribute="class"
         defaultTheme="light"
@@ -26,3 +28,4 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     </QueryClientProvider>
   );
 }
+
