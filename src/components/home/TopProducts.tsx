@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { toast } from "sonner";
 import { useAddToWishList } from "@/hooks/useAddToWishList";
+import MyTimer from "../common/MyTimer";
 
 const TopProducts = () => {
   // handleAdd to cart
@@ -34,7 +35,7 @@ const TopProducts = () => {
               View all<i className="ms-1 ti ti-arrow-right"></i>
             </Link>
           </div>
-          <div className="row g-3">
+          <div className="row g-2">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="col-6 col-md-4 col-lg-3">
                 <div className="card product-card">
@@ -132,28 +133,20 @@ const TopProducts = () => {
               View all<i className="ms-1 ti ti-arrow-right"></i>
             </Link>
           </div>
-          <div className="row g-3">
+          <div className="row g-2">
             {GetTopProducts.data &&
               GetTopProducts.data.map((item, i) => (
-                <div key={i} className="col-6 col-md-4 col-lg-3">
+                <div key={i} className="col-6 col-md-4">
                   <div className="card product-card h-100">
-                    <div className="card-body d-flex flex-column">
-                      <Link
-                        className="product-thumbnail d-block"
-                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
-                      >
-                        <ImageWithFallback
-                          src={item.vendor_products_view.image_url}
-                          alt={item.vendor_products_view.product_name}
-                        />
-                      </Link>
-
-                      <Link
-                        className="product-title d-block"
-                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
-                      >
-                        {item.vendor_products_view.product_name}
-                      </Link>
+                    <div className="card-body d-flex flex-column position-relative">
+                      {(i === 0 || i === 1) && (
+                        <span
+                          className={`badge rounded-pill ${i === 0 ? "badge-success" : "badge-warning"
+                            }`}
+                        >
+                          {i === 0 ? "New" : "Sale"}
+                        </span>
+                      )}
 
                       <div
                         onClick={() =>
@@ -165,6 +158,29 @@ const TopProducts = () => {
                       >
                         <i className="ti ti-heart"></i>
                       </div>
+
+                      <Link
+                        className="product-thumbnail d-block"
+                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
+                      >
+                        <ImageWithFallback
+                          src={item.vendor_products_view.image_url}
+                          alt={item.vendor_products_view.product_name}
+                        />
+                        {/* Timer for 1st and 4th item */}
+                        {(i === 0 || i === 3) && (
+                          <ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
+                            <MyTimer />
+                          </ul>
+                        )}
+                      </Link>
+
+                      <Link
+                        className="product-title d-block"
+                        href={`/product/${item.vendor_products_view.vendor_product_id}`}
+                      >
+                        {item.vendor_products_view.product_name}
+                      </Link>
 
                       <div className="mt-auto">
                         <p className="sale-price mb-1">
@@ -181,7 +197,7 @@ const TopProducts = () => {
                         </div>
 
                         <button
-                          className="btn btn-primary btn-add-cart"
+                          className="btn btn-primary btn-sm"
                           onClick={() =>
                             handleAddToCart(item.vendor_products_view)
                           }
@@ -198,20 +214,7 @@ const TopProducts = () => {
         </div>
       </div>
 
-      <style jsx>{`
-        .product-card .sale-price {
-          font-size: 0.95rem;
-          font-weight: 600;
-          line-height: 1.2;
-        }
-        .product-card .product-rating {
-          color: #ffaf00;
-        }
-        .product-card .product-rating i {
-          font-size: 0.625rem;
-          margin: 0 0.063rem;
-        }
-      `}</style>
+
     </>
   );
 };
