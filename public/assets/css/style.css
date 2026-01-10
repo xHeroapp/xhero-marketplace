@@ -3044,7 +3044,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 .horizontal-product-card .product-thumbnail-side .product-thumbnail img {
   max-height: 110px;
   padding: 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
 }
 
 .horizontal-product-card .product-thumbnail-side .product-thumbnail .offer-countdown-timer {
@@ -3144,6 +3144,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: auto;
 }
 
 .horizontal-product-card .product-description .delete-btn {

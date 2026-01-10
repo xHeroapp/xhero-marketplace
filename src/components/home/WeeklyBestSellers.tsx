@@ -167,19 +167,15 @@ const WeeklyBestSellers = () => {
                         </Link>
 
                         <p className="sale-price">
-                          {/* <i className="ti ti-currency-dollar"></i> */}
                           {formatCurrency(item.vendor_products_view.price)}
-                          {/* <span>$ {item.old_price}</span> */}
                         </p>
 
-                        {/* removed product rating for now */}
-                        {/* <div className="product-rating">
-												<i className="ti ti-star-filled"></i> {item.ratting}{" "}
-												<span className="ms-1">
-													{"("} {item.review_text}{" "}
-													{item.review_text > 1 ? "reviews" : "review"} {")"}
-												</span>
-											</div> */}
+                        <div className="product-rating">
+                          <i className="ti ti-star-filled"></i> 4.5{" "}
+                          <span className="ms-1">
+                            ( 12 reviews )
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
