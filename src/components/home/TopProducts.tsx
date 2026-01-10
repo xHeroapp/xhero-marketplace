@@ -136,8 +136,8 @@ const TopProducts = () => {
             {GetTopProducts.data &&
               GetTopProducts.data.map((item, i) => (
                 <div key={i} className="col-6 col-md-4 col-lg-3">
-                  <div className="card product-card">
-                    <div className="card-body">
+                  <div className="card product-card h-100">
+                    <div className="card-body d-flex flex-column">
                       <Link
                         className="product-thumbnail d-block"
                         href={`/product/${item.vendor_products_view.vendor_product_id}`}
@@ -166,19 +166,30 @@ const TopProducts = () => {
                         <i className="ti ti-heart"></i>
                       </div>
 
-                      <p className="sale-price mb-0">
-                        {formatCurrency(item.vendor_products_view.price)}
-                      </p>
+                      <div className="mt-auto">
+                        <p className="sale-price mb-1">
+                          {formatCurrency(item.vendor_products_view.price)}
+                        </p>
 
-                      <button
-                        className="btn btn-primary btn-add-cart mt-2"
-                        onClick={() =>
-                          handleAddToCart(item.vendor_products_view)
-                        }
-                        disabled={GetTopProducts.isFetching}
-                      >
-                        <i className="ti ti-plus"></i>
-                      </button>
+                        <div className="product-rating mb-2">
+                          {[...Array(5)].map((_, starIndex) => (
+                            <i
+                              key={starIndex}
+                              className="ti ti-star-filled"
+                            ></i>
+                          ))}
+                        </div>
+
+                        <button
+                          className="btn btn-primary btn-add-cart"
+                          onClick={() =>
+                            handleAddToCart(item.vendor_products_view)
+                          }
+                          disabled={GetTopProducts.isFetching}
+                        >
+                          <i className="ti ti-plus"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -186,6 +197,21 @@ const TopProducts = () => {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .product-card .sale-price {
+          font-size: 0.95rem;
+          font-weight: 600;
+          line-height: 1.2;
+        }
+        .product-card .product-rating {
+          color: #ffaf00;
+        }
+        .product-card .product-rating i {
+          font-size: 0.625rem;
+          margin: 0 0.063rem;
+        }
+      `}</style>
     </>
   );
 };
