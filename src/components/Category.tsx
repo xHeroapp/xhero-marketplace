@@ -101,18 +101,14 @@ const Category = () => {
 
             <div className="product-catagories-wrapper">
               <div className="container">
-                <div className="categories-scroll-container">
-                  <div className="categories-scroll-wrapper">
-                    {sortedCategories.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => handleActiveCategory(item)}
-                        className="category-item-wrapper"
-                      >
+                <div className="row g-2 rtl-flex-d-row-r">
+                  {sortedCategories.map((item) => (
+                    <div key={item.id} className="col-3">
+                      <div className="category-item-wrapper h-100">
                         <div
-                          className={`card catagory-card ${
-                            active === item.id ? "active" : ""
-                          }`}
+                          onClick={() => handleActiveCategory(item)}
+                          className={`card catagory-card ${active === item.id ? "active" : ""
+                            } h-100`}
                         >
                           <div className="card-body px-2">
                             <Link href={`/category?category_id=${item.id}`}>
@@ -122,8 +118,8 @@ const Category = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -258,31 +254,12 @@ const Category = () => {
 
       {/* styles */}
       <style jsx>{`
-        .categories-scroll-container {
-          overflow-x: auto;
-          overflow-y: hidden;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* IE and Edge */
-        }
-
-        .categories-scroll-container::-webkit-scrollbar {
-          display: none; /* Chrome, Safari and Opera */
-        }
-
-        .categories-scroll-wrapper {
-          display: flex;
-          gap: 0.5rem;
-          padding-bottom: 0.5rem;
-        }
-
         .category-item-wrapper {
-          flex: 0 0 auto;
-          width: 100px;
+          /* No specific width needed, flexible by col class */
         }
 
         .category-item-wrapper .catagory-card {
-          height: 100%;
+           /* h-100 handles height */
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 

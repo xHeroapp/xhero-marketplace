@@ -5,9 +5,8 @@ const OffcanvasTwo = ({ handleShow, show }: any) => {
 	return (
 		<>
 			<div
-				className={`offcanvas offcanvas-start suha-filter-offcanvas-wrap ${
-					show ? "show" : ""
-				}`}
+				className={`offcanvas offcanvas-start suha-filter-offcanvas-wrap ${show ? "show" : ""
+					}`}
 				tabIndex={-1}
 				id="suhaFilterOffcanvas"
 				aria-labelledby="suhaFilterOffcanvasLabel"
@@ -368,7 +367,7 @@ const OffcanvasTwo = ({ handleShow, show }: any) => {
 														id="floatingInput"
 														type="text"
 														placeholder="1"
-														value="1"
+														defaultValue="1"
 													/>
 													<label htmlFor="floatingInput">Min</label>
 												</div>
@@ -380,7 +379,7 @@ const OffcanvasTwo = ({ handleShow, show }: any) => {
 														id="floatingInput"
 														type="text"
 														placeholder="1"
-														value="5000"
+														defaultValue="5000"
 													/>
 													<label htmlFor="floatingInput">Max</label>
 												</div>
