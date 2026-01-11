@@ -142,7 +142,7 @@ const CheckoutWallet = () => {
             </div>
 
             {/* Payment Form */}
-            <form onSubmit={(e) => handlePayment(e)}>
+            <form onSubmit={(e) =>  (e)}>
               <button
                 className="btn btn-primary btn-lg w-100"
                 type="submit"
