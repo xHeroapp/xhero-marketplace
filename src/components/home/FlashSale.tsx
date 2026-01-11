@@ -39,9 +39,9 @@ const FlashSale = () => {
               <i className="ti ti-bolt-lightning me-1 text-danger lni-flashing-effect"></i>
               Flash Sale
             </h6>
-            <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
+            {/* <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
               <MyTimer />
-            </ul>
+            </ul> */}
           </div>
 
           <Swiper
@@ -86,9 +86,9 @@ const FlashSale = () => {
               Flash Sale
             </h6>
 
-            <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
+            {/* <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
               <MyTimer />
-            </ul>
+            </ul> */}
 
             {/* <div className="section-heading d-flex align-items-center justify-content-between dir-rtl"> */}
             <Link className="btn btn-sm btn-light" href="/flash-sale">
