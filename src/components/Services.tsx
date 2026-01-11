@@ -113,7 +113,7 @@ const Services: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserServiceOrders(user?.id ?? "");
+  } = useGetUserServiceOrders(user?.user_id ?? "");
 
   // Debug log
   useEffect(() => {
