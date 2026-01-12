@@ -126,7 +126,7 @@ export const ProductsGrid = ({ productItems, GetProductsQuery }) => {
           width: 1.75rem;
           height: 1.75rem;
           font-size: 1.25rem;
-          background-color: #f1f1f2;
+          background-color: #ffffff;
           color: #ea4c62;
           border-radius: 50%;
           display: flex;

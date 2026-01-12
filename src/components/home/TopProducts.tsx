@@ -36,18 +36,36 @@ const TopProducts = () => {
             </Link>
           </div>
           <div className="row g-2">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="col-6 col-md-4 col-lg-3">
-                <div className="card product-card">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="col-6 col-md-4">
+                <div className="card product-card h-100">
                   <div className="card-body">
-                    <div className="placeholder-glow">
+                    <div className="skeleton-shimmer">
+                      {/* Image placeholder */}
                       <div
-                        className="product-thumbnail d-block bg-secondary rounded mb-2"
-                        style={{ height: "150px" }}
+                        className="skeleton-box rounded mb-3"
+                        style={{ height: "140px", width: "100%" }}
                       ></div>
-                      <span className="placeholder col-8 d-block mb-2"></span>
-                      <span className="placeholder col-6 d-block mb-2"></span>
-                      <span className="placeholder col-12 btn btn-primary"></span>
+                      {/* Title placeholder */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "16px", width: "80%" }}
+                      ></div>
+                      {/* Price placeholder */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "20px", width: "50%" }}
+                      ></div>
+                      {/* Rating placeholder */}
+                      <div className="d-flex align-items-center gap-1">
+                        {[...Array(5)].map((_, j) => (
+                          <div
+                            key={j}
+                            className="skeleton-box rounded-circle"
+                            style={{ height: "10px", width: "10px" }}
+                          ></div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -55,6 +73,29 @@ const TopProducts = () => {
             ))}
           </div>
         </div>
+        <style jsx>{`
+          .skeleton-shimmer {
+            position: relative;
+          }
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }

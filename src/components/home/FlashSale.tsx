@@ -47,26 +47,57 @@ const FlashSale = () => {
           <Swiper
             loop={false}
             slidesPerView={3}
-            spaceBetween={5}
+            spaceBetween={8}
             className="flash-sale-slide owl-carousel"
           >
             {[...Array(3)].map((_, i) => (
               <SwiperSlide key={i} className="card flash-sale-card">
                 <div className="card-body">
+                  {/* Image placeholder */}
                   <div
-                    className="skeleton"
-                    style={{
-                      width: "100%",
-                      height: "150px",
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: "4px",
-                    }}
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "100%", height: "80px" }}
+                  ></div>
+                  {/* Title placeholder */}
+                  <div
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "90%", height: "12px" }}
+                  ></div>
+                  {/* Price placeholder */}
+                  <div
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "60%", height: "14px" }}
+                  ></div>
+                  {/* Progress placeholder */}
+                  <div
+                    className="skeleton-box rounded"
+                    style={{ width: "100%", height: "6px" }}
                   ></div>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }

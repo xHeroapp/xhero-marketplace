@@ -33,15 +33,47 @@ const ProductCatagories = () => {
     return (
       <div className="product-catagories-wrapper py-3 px-3">
         <div className="container">
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "120px" }}
-          >
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
+          <div className="row g-2">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="col-3">
+                <div className="card h-100">
+                  <div className="card-body d-flex flex-column align-items-center py-3">
+                    {/* Icon placeholder */}
+                    <div
+                      className="skeleton-box rounded-circle mb-2"
+                      style={{ width: "50px", height: "50px" }}
+                    ></div>
+                    {/* Text placeholder */}
+                    <div
+                      className="skeleton-box rounded"
+                      style={{ width: "60px", height: "12px" }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }

@@ -23,27 +23,39 @@ const WeeklyBestSellers = () => {
         <div className="container">
           <div className="section-heading d-flex align-items-center justify-content-between dir-rtl">
             <h6>Weekly Best Sellers</h6>
-            {/* <Link className="btn btn-sm btn-light" href="/shop-list">
-              View all<i className="ms-1 ti ti-arrow-right"></i>
-            </Link> */}
           </div>
           <div className="row g-2">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(4)].map((_, i) => (
               <div key={i} className="col-12">
                 <div className="card horizontal-product-card">
-                  <div className="d-flex align-items-center">
+                  <div className="d-flex align-items-center p-3">
                     <div className="product-thumbnail-side">
-                      <div className="placeholder-glow">
-                        <div
-                          className="product-thumbnail d-block bg-secondary rounded"
-                          style={{ width: "100px", height: "100px" }}
-                        ></div>
-                      </div>
+                      <div
+                        className="skeleton-box rounded"
+                        style={{ width: "90px", height: "90px" }}
+                      ></div>
                     </div>
-                    <div className="product-description">
-                      <div className="placeholder-glow">
-                        <span className="placeholder col-8 d-block mb-2"></span>
-                        <span className="placeholder col-5 d-block"></span>
+                    <div className="product-description flex-grow-1 ms-3">
+                      {/* Title */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "16px", width: "70%" }}
+                      ></div>
+                      {/* Price */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "18px", width: "40%" }}
+                      ></div>
+                      {/* Rating */}
+                      <div className="d-flex align-items-center gap-1">
+                        <div
+                          className="skeleton-box rounded-circle"
+                          style={{ height: "16px", width: "16px" }}
+                        ></div>
+                        <div
+                          className="skeleton-box rounded"
+                          style={{ height: "14px", width: "80px" }}
+                        ></div>
                       </div>
                     </div>
                   </div>
@@ -52,6 +64,26 @@ const WeeklyBestSellers = () => {
             ))}
           </div>
         </div>
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }
