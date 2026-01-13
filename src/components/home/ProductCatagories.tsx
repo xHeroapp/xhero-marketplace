@@ -201,7 +201,10 @@ const ProductCatagories = () => {
           line-height: 1.2;
           display: block;
           word-wrap: break-word;
+          word-break: break-word;
+          overflow-wrap: break-word;
           max-width: 100%;
+          white-space: normal;
         }
       `}</style>
     </>
