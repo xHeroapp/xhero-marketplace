@@ -3405,6 +3405,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 .product-title-meta-data::after {
+  display: none;
   position: absolute;
   content: "";
   background-image: url(../img/core-img/curve.png);

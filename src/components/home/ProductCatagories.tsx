@@ -135,7 +135,7 @@ const ProductCatagories = () => {
   // Success state with data
   return (
     <>
-      <div className="product-catagories-wrapper py-3 px-3">
+      <div className="product-catagories-wrapper py-3">
         <div className="container">
           <div className="row g-2 rtl-flex-d-row-r">
             {sortedCategories.map((item) => (
