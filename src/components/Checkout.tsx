@@ -79,9 +79,8 @@ const Checkout = () => {
                 <div className="d-flex">
                   <div className="flex-fill text-center">
                     <div
-                      className={`progress-step ${
-                        currentStep === "order" ? "active" : ""
-                      }`}
+                      className={`progress-step ${currentStep === "order" ? "active" : ""
+                        }`}
                     >
                       <div
                         className="step-indicator"
@@ -90,9 +89,8 @@ const Checkout = () => {
                         <span>Your Order</span>
                         <div className="progress-bar">
                           <div
-                            className={`progress-fill ${
-                              currentStep === "order" ? "active" : ""
-                            }`}
+                            className={`progress-fill ${currentStep === "order" ? "active" : ""
+                              }`}
                           ></div>
                         </div>
                       </div>
@@ -100,9 +98,8 @@ const Checkout = () => {
                   </div>
                   <div className="flex-fill text-center">
                     <div
-                      className={`progress-step ${
-                        currentStep === "delivery" ? "active" : ""
-                      }`}
+                      className={`progress-step ${currentStep === "delivery" ? "active" : ""
+                        }`}
                     >
                       <div
                         className="step-indicator"
@@ -111,9 +108,8 @@ const Checkout = () => {
                         <span>Delivery & Payment</span>
                         <div className="progress-bar">
                           <div
-                            className={`progress-fill ${
-                              currentStep === "delivery" ? "active" : ""
-                            }`}
+                            className={`progress-fill ${currentStep === "delivery" ? "active" : ""
+                              }`}
                           ></div>
                         </div>
                       </div>
@@ -142,6 +138,7 @@ const Checkout = () => {
                                 width="40"
                                 height="40"
                                 className="rounded"
+                                style={{ borderRadius: "12px" }}
                               />
                             ) : (
                               <div
@@ -209,7 +206,7 @@ const Checkout = () => {
                                 alt={product.product_name}
                                 width={60}
                                 height={60}
-                                className="rounded me-3"
+                                className="me-3"
                               />
                               <div className="flex-grow-1">
                                 <p className="mb-1 fw-medium">

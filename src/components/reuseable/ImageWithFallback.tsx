@@ -43,7 +43,7 @@ export default function ImageWithFallback({
       loading="lazy"
       width={width && width}
       height={height && height}
-      style={style}
+      style={{ ...style, borderRadius: '12px' }}
     />
   );
 }

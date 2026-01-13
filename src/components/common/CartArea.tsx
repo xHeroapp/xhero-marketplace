@@ -96,6 +96,7 @@ const CartArea = () => {
                             width="40"
                             height="40"
                             className="rounded"
+                            style={{ borderRadius: "12px" }}
                           />
                         ) : (
                           <div
@@ -292,7 +293,7 @@ const CartArea = () => {
         .product-image-wrapper {
           width: 60px;
           height: 60px;
-          border-radius: 10px;
+          border-radius: 12px;
           overflow: hidden;
           background: #f3f4f6;
           flex-shrink: 0;
