@@ -332,7 +332,6 @@ const SingleProductArea = ({ product }: any) => {
                     step="1"
                     name="quantity"
                     value={quantity}
-                    defaultValue={0}
                     readOnly
                   />
                   <div className="quantity-button-handler" onClick={increment}>
