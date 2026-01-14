@@ -4,171 +4,169 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const Message = () => {
-	const router = useRouter();
-	const [message, setMessage] = useState("");
-	const messagesEndRef = useRef<HTMLDivElement>(null);
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
+  const [message, setMessage] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-	const scrollToBottom = () => {
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	};
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-	useEffect(() => {
-		scrollToBottom();
-	}, []);
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (message.trim()) {
-			// TODO: Send message logic
-			console.log("Sending:", message);
-			setMessage("");
-		}
-	};
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim()) {
+      // TODO: Send message logic
+      console.log("Sending:", message);
+      setMessage("");
+    }
+  };
 
-	const handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === "Enter" && !e.shiftKey) {
-			e.preventDefault();
-			handleSubmit(e);
-		}
-	};
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
 
-	// Sample messages for demo
-	const messages = [
-		{
-			id: 1,
-			type: "agent",
-			text: "Hi there! 👋",
-			time: "12:00",
-		},
-		{
-			id: 2,
-			type: "agent",
-			text: "Welcome to xHero support. How can I help you today?",
-			time: "12:00",
-		},
-		{
-			id: 3,
-			type: "user",
-			text: "I have a question about my order",
-			time: "12:18",
-		},
-		{
-			id: 4,
-			type: "agent",
-			text: "Of course! I'd be happy to help you with your order. Could you please share your order number?",
-			time: "12:19",
-		},
-		{
-			id: 5,
-			type: "user",
-			text: "It's #XH-2024-0156",
-			time: "12:20",
-		},
-		{
-			id: 6,
-			type: "agent",
-			text: "Thank you! Let me look that up for you...",
-			time: "12:21",
-			isTyping: true,
-		},
-	];
+  // Sample messages for demo
+  const messages = [
+    {
+      id: 1,
+      type: "agent",
+      text: "Hi there! 👋",
+      time: "12:00",
+    },
+    {
+      id: 2,
+      type: "agent",
+      text: "Welcome to xHero support. How can I help you today?",
+      time: "12:00",
+    },
+    {
+      id: 3,
+      type: "user",
+      text: "I have a question about my order",
+      time: "12:18",
+    },
+    {
+      id: 4,
+      type: "agent",
+      text: "Of course! I'd be happy to help you with your order. Could you please share your order number?",
+      time: "12:19",
+    },
+    {
+      id: 5,
+      type: "user",
+      text: "It's #XH-2024-0156",
+      time: "12:20",
+    },
+    {
+      id: 6,
+      type: "agent",
+      text: "Thank you! Let me look that up for you...",
+      time: "12:21",
+      isTyping: true,
+    },
+  ];
 
-	return (
-		<>
-			<div className="chat-page">
-				{/* Header */}
-				<div className="chat-header">
-					<div className="header-left">
-						<button className="back-btn" onClick={() => router.back()}>
-							<i className="ti ti-arrow-left"></i>
-						</button>
-					</div>
-					<div className="header-center">
-						<div className="agent-avatar">
-							<img src="/assets/img/bg-img/9.jpg" alt="Support" />
-							<span className="status-dot"></span>
-						</div>
-						<div className="agent-info">
-							<h6>xHero Support</h6>
-							<span className="status-text">Online</span>
-						</div>
-					</div>
-					<div className="header-right">
-						<button className="action-btn">
-							<i className="ti ti-dots-vertical"></i>
-						</button>
-					</div>
-				</div>
+  return (
+    <>
+      <div className="chat-page">
+        {/* Header */}
+        <div className="chat-header">
+          <div className="header-left">
+            <button className="back-btn" onClick={() => router.back()}>
+              <i className="ti ti-arrow-left"></i>
+            </button>
+            <div className="agent-avatar">
+              <img src="/assets/img/bg-img/9.jpg" alt="Support" />
+              <span className="status-dot"></span>
+            </div>
+            <div className="agent-info">
+              <h6>xHero Support</h6>
+              <span className="status-text">Online</span>
+            </div>
+          </div>
+          <div className="header-right">
+            <button className="action-btn">
+              <i className="ti ti-dots-vertical"></i>
+            </button>
+          </div>
+        </div>
 
-				{/* Messages Container */}
-				<div className="messages-container">
-					<div className="messages-wrapper">
-						{/* Date Divider */}
-						<div className="date-divider">
-							<span>Today</span>
-						</div>
+        {/* Messages Container */}
+        <div className="messages-container">
+          <div className="messages-wrapper">
+            {/* Date Divider */}
+            <div className="date-divider">
+              <span>Today</span>
+            </div>
 
-						{/* Messages */}
-						{messages.map((msg) => (
-							<div
-								key={msg.id}
-								className={`message-row ${msg.type === "user" ? "user" : "agent"}`}
-							>
-								{msg.type === "agent" && (
-									<div className="agent-avatar-small">
-										<img src="/assets/img/bg-img/9.jpg" alt="" />
-									</div>
-								)}
-								<div className="message-bubble-wrapper">
-									<div className={`message-bubble ${msg.type}`}>
-										{msg.isTyping ? (
-											<div className="typing-indicator">
-												<span></span>
-												<span></span>
-												<span></span>
-											</div>
-										) : (
-											<p>{msg.text}</p>
-										)}
-									</div>
-									<span className="message-time">{msg.time}</span>
-								</div>
-							</div>
-						))}
-						<div ref={messagesEndRef} />
-					</div>
-				</div>
+            {/* Messages */}
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`message-row ${msg.type === "user" ? "user" : "agent"}`}
+              >
+                {msg.type === "agent" && (
+                  <div className="agent-avatar-small">
+                    <img src="/assets/img/bg-img/9.jpg" alt="" />
+                  </div>
+                )}
+                <div className="message-bubble-wrapper">
+                  <div className={`message-bubble ${msg.type}`}>
+                    {msg.isTyping ? (
+                      <div className="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    ) : (
+                      <p>{msg.text}</p>
+                    )}
+                  </div>
+                  <span className="message-time">{msg.time}</span>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
 
-				{/* Input Area */}
-				<div className="input-area">
-					<form onSubmit={handleSubmit}>
-						<div className="input-wrapper">
-							<button type="button" className="attach-btn">
-								<i className="ti ti-paperclip"></i>
-							</button>
-							<textarea
-								ref={textareaRef}
-								className="message-input"
-								placeholder="Type a message..."
-								value={message}
-								onChange={(e) => setMessage(e.target.value)}
-								onKeyDown={handleKeyDown}
-								rows={1}
-							/>
-							<button
-								type="submit"
-								className={`send-btn ${message.trim() ? "active" : ""}`}
-								disabled={!message.trim()}
-							>
-								<i className="ti ti-send"></i>
-							</button>
-						</div>
-					</form>
-				</div>
-			</div>
+        {/* Input Area */}
+        <div className="input-area">
+          <form onSubmit={handleSubmit}>
+            <div className="input-wrapper">
+              <button type="button" className="attach-btn">
+                <i className="ti ti-paperclip"></i>
+              </button>
+              <textarea
+                ref={textareaRef}
+                className="message-input"
+                placeholder="Type a message..."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                rows={1}
+              />
+              <button
+                type="submit"
+                className={`send-btn ${message.trim() ? "active" : ""}`}
+                disabled={!message.trim()}
+              >
+                <i className="ti ti-send"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
-			<style jsx>{`
+      <style jsx>{`
         .chat-page {
           display: flex;
           flex-direction: column;
@@ -191,7 +189,12 @@ const Message = () => {
           z-index: 100;
         }
 
-        .header-left,
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
         .header-right {
           width: 44px;
         }
@@ -208,6 +211,7 @@ const Message = () => {
           justify-content: center;
           cursor: pointer;
           transition: background 0.2s ease;
+          flex-shrink: 0;
         }
 
         .back-btn:hover,
@@ -218,7 +222,7 @@ const Message = () => {
         .back-btn i,
         .action-btn i {
           font-size: 22px;
-          color: #007aff;
+          color: #1d1d1f;
         }
 
         .header-center {
@@ -542,8 +546,8 @@ const Message = () => {
           }
         }
       `}</style>
-		</>
-	);
+    </>
+  );
 };
 
 export default Message;
