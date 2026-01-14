@@ -5445,21 +5445,21 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 
 /* Night Mode */
 [theme-color="dark"] {
-  background-color: #0c153b;
+  background-color: #101010;
 }
 
 [theme-color="dark"] .preview-iframe-wrapper {
-  background-color: #0c153b;
+  background-color: #101010;
 }
 
 [theme-color="dark"] body,
 [theme-color="dark"] #preloader {
-  background-color: #0c153b;
+  background-color: #101010;
 }
 
 [theme-color="dark"] body,
 [theme-color="dark"] .card-body {
-  color: #747794;
+  color: #a1a1aa;
 }
 
 [theme-color="dark"] a,
@@ -5476,12 +5476,12 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 
 [theme-color="dark"] .header-area,
 [theme-color="dark"] .footer-nav-area {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .card {
-  border-color: #242644;
-  background-color: #242644;
+  border-color: #1c1c1c;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .border,
@@ -5503,7 +5503,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .dropdown-menu {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .dropdown-menu .dropdown-item:hover,
@@ -5512,7 +5512,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .bg-white {
-  background-color: #332858 !important;
+  background-color: #1c1c1c !important;
 }
 
 [theme-color="dark"] .btn-warning,
@@ -5560,7 +5560,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .search-form .form-control {
-  background-color: #332858;
+  background-color: #1c1c1c;
   color: #fff;
 }
 
@@ -5590,16 +5590,16 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .btn-light {
-  background-color: #242644;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .btn-light:hover {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .catagory-card.active,
 [theme-color="dark"] .catagory-card:hover {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .catagory-card.active span,
@@ -5637,14 +5637,14 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 
 [theme-color="dark"] .horizontal-product-card .product-thumbnail-side .wishlist-btn {
   color: #ea4c62;
-  background-color: #242644;
-  border-color: #242644;
+  background-color: #1c1c1c;
+  border-color: #1c1c1c;
 }
 
 [theme-color="dark"] .horizontal-product-card .product-thumbnail-side .delete-btn {
   color: #ea4c62;
-  background-color: #242644;
-  border-color: #242644;
+  background-color: #1c1c1c;
+  border-color: #1c1c1c;
 }
 
 [theme-color="dark"] .horizontal-product-card .product-description .product-title {
@@ -5676,7 +5676,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .page-nav li a {
-  background-color: #332858;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
@@ -5693,36 +5693,36 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .suha-filter-offcanvas-wrap {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .form-check-input {
-  background-color: #0c153b;
+  background-color: #101010;
   border: 0.063rem solid rgba(0, 0, 0, 0.25);
 }
 
 [theme-color="dark"] .form-control {
   border-color: rgba(255, 255, 255, 0.1);
-  background-color: #242644;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
 [theme-color="dark"] .product-catagories a {
-  background-color: #332858;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
 [theme-color="dark"] .single-order-status .order-text span {
-  color: #747794;
+  color: #a1a1aa;
 }
 
 [theme-color="dark"] .nice-select {
-  background-color: #332858;
+  background-color: #1c1c1c;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 [theme-color="dark"] .nice-select .list {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .nice-select .list .option:hover,
@@ -5733,7 +5733,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .product-title-meta-data {
-  background-color: #242644 !important;
+  background-color: #1c1c1c !important;
 }
 
 [theme-color="dark"] .product-title-meta-data::after {
@@ -5753,19 +5753,19 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .cart-form .quantity-button-handler {
-  background-color: #242644;
+  background-color: #1c1c1c;
   border-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
 [theme-color="dark"] .product-slide-wrapper .video-btn {
-  background-color: #0c153b;
+  background-color: #101010;
   color: #ea4c62;
 }
 
 [theme-color="dark"] .product-slides .owl-prev,
 [theme-color="dark"] .product-slides .owl-next {
-  background-color: #0c153b !important;
+  background-color: #101010 !important;
   color: #ffffff;
 }
 
@@ -5774,11 +5774,11 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .layout-options a {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .layout-options button {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .layout-options a.active,
@@ -5798,7 +5798,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .single-order-status .order-status {
-  background-color: #242644;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .single-order-status .order-status i {
@@ -5814,7 +5814,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .vendor-tabs {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .vendor-tabs .nav-item.show .nav-link,
@@ -5867,7 +5867,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .single-payment-method a {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .single-payment-method a.active h6,
@@ -5876,7 +5876,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .list-group-item {
-  background-color: #242644;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
@@ -5920,7 +5920,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .blog-card .post-content {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .blog-card .post-content .post-title {
@@ -5932,7 +5932,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .blog-card .post-content .post-meta a {
-  color: #747794;
+  color: #a1a1aa;
 }
 
 [theme-color="dark"] .blog-card .post-content .post-meta a:hover {
@@ -5952,7 +5952,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .blog-catagory-card a span {
-  color: #747794;
+  color: #a1a1aa;
 }
 
 [theme-color="dark"] .blog-catagory-card a span:hover {
@@ -5960,7 +5960,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .blog-details-post-thumbnail .post-bookmark {
-  background-color: #242644;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
@@ -5987,7 +5987,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .type-text-form .file-upload i {
-  background-color: #332858;
+  background-color: #1c1c1c;
   color: #ffffff;
 }
 
@@ -5997,7 +5997,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .notification-area .list-group-item.readed {
-  background-color: #332858;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .faq-search-form button {
@@ -6014,7 +6014,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 
 [theme-color="dark"] .preview-iframe-wrapper .preview-hero-area {
   background-image: none;
-  background-color: #0c153b;
+  background-color: #101010;
 }
 
 [theme-color="dark"] .preview-iframe-wrapper .preview-hero-area::after {
@@ -6026,11 +6026,11 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .preview-iframe-wrapper .qr-code-wrapper {
-  background-color: #242644;
+  background-color: #1c1c1c;
 }
 
 [theme-color="dark"] .preview-iframe-wrapper .features-area {
-  background-color: #242644 !important;
+  background-color: #1c1c1c !important;
 }
 
 [theme-color="dark"] .preview-iframe-wrapper .features-area ul li.active {
