@@ -278,6 +278,15 @@ const Category = () => {
           flex-direction: column;
           align-items: center;
           text-align: center;
+          overflow: hidden;
+        }
+
+        .category-item-wrapper .card-body a {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+          overflow: hidden;
         }
 
         .category-item-wrapper img {
@@ -285,6 +294,7 @@ const Category = () => {
           height: 50px;
           object-fit: contain;
           margin-bottom: 0.5rem;
+          flex-shrink: 0;
         }
 
         .category-item-wrapper span {
@@ -294,7 +304,7 @@ const Category = () => {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          max-width: 100%;
+          width: 100%;
         }
       `}</style>
     </>
