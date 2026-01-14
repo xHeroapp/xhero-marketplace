@@ -2883,7 +2883,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   overflow: hidden;
   border-radius: 12px;
   margin-bottom: 0.75rem;
-  background: #ffffff;
+  background: transparent;
 }
 
 .product-thumbnail img {
@@ -5595,7 +5595,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 [theme-color="dark"] .horizontal-product-card .product-thumbnail-side .product-thumbnail {
-  background-color: #332858;
+  background-color: transparent;
 }
 
 [theme-color="dark"] .horizontal-product-card .product-thumbnail-side .wishlist-btn {
