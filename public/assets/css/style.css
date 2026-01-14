@@ -2774,7 +2774,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 .flash-sale-card .card-body {
-  padding: 0.75rem;
+  padding: 0.5rem;
 }
 
 .flash-sale-card img {
@@ -2790,13 +2790,13 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.125rem;
 }
 
 .flash-sale-card .sale-price {
   font-size: 0.875rem;
   color: #020310;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.125rem;
 }
 
 .flash-sale-card .real-price {
@@ -2821,7 +2821,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 /* Flash Sale Per-Product Timer */
 .flash-sale-image-container {
   position: relative;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .flash-sale-image-container img {
