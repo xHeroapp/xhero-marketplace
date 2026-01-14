@@ -291,7 +291,9 @@ const Category = () => {
           font-size: 0.75rem;
           line-height: 1.2;
           display: block;
-          word-wrap: break-word;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
           max-width: 100%;
         }
       `}</style>
