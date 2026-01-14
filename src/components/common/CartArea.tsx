@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import useCartStore from "@/store/cartStore";
+import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
@@ -88,70 +89,78 @@ const CartArea = () => {
                       </span>
                     </div>
                   </div>
+                  <button
+                    className="collapse-toggle"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#vendor-items-${vendorId}`}
+                    aria-expanded="true"
+                  >
+                    <i className="ti ti-chevron-down"></i>
+                  </button>
                 </div>
 
-                {/* Products - Always Visible */}
-                <div className="products-list">
-                  {items.map((product) => (
-                    <div key={product.product_id} className="product-card">
-                      <div className="product-image">
-                        <img
-                          src={
-                            product.image_url ||
-                            "/assets/img/product/product_fallback.png"
-                          }
-                          alt={product.product_name}
-                        />
-                      </div>
-                      <div className="product-details">
-                        <div className="product-header">
-                          <h4>{product.product_name}</h4>
-                          <button
-                            className="remove-btn"
-                            onClick={() =>
-                              removeProductFromCart(
-                                vendorId,
-                                product.product_id,
-                                user?.id
-                              )
-                            }
-                          >
-                            <i className="ti ti-x"></i>
-                          </button>
+                {/* Products - Collapsible */}
+                <div className="collapse show" id={`vendor-items-${vendorId}`}>
+                  <div className="products-list">
+                    {items.map((product) => (
+                      <div key={product.product_id} className="product-card">
+                        <div className="product-image">
+                          <ImageWithFallback
+                            src={product.image_url}
+                            alt={product.product_name}
+                          />
                         </div>
-                        <div className="product-footer">
-                          <div className="quantity-stepper">
+                        <div className="product-details">
+                          <div className="product-header">
+                            <h4>{product.product_name}</h4>
                             <button
+                              className="remove-btn"
                               onClick={() =>
-                                decrementQuantity(
+                                removeProductFromCart(
                                   vendorId,
                                   product.product_id,
                                   user?.id
                                 )
                               }
                             >
-                              <i className="ti ti-minus"></i>
-                            </button>
-                            <span>{product.quantity}</span>
-                            <button
-                              onClick={() =>
-                                incrementQuantity(
-                                  vendorId,
-                                  product.product_id,
-                                  user?.id
-                                )
-                              }
-                            >
-                              <i className="ti ti-plus"></i>
+                              <i className="ti ti-x"></i>
                             </button>
                           </div>
-                          <span className="product-price">
-                            {formatCurrency(product.price * product.quantity)}
-                          </span>
+                          <div className="product-footer">
+                            <div className="quantity-stepper">
+                              <button
+                                onClick={() =>
+                                  decrementQuantity(
+                                    vendorId,
+                                    product.product_id,
+                                    user?.id
+                                  )
+                                }
+                              >
+                                <i className="ti ti-minus"></i>
+                              </button>
+                              <span>{product.quantity}</span>
+                              <button
+                                onClick={() =>
+                                  incrementQuantity(
+                                    vendorId,
+                                    product.product_id,
+                                    user?.id
+                                  )
+                                }
+                              >
+                                <i className="ti ti-plus"></i>
+                              </button>
+                            </div>
+                            <span className="product-price">
+                              {formatCurrency(product.price * product.quantity)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
                 {/* Vendor Subtotal */}
@@ -273,8 +282,38 @@ const CartArea = () => {
         }
 
         .vendor-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
           padding: 20px 20px 16px;
           border-bottom: 1px solid #f5f5f7;
+        }
+
+        .collapse-toggle {
+          width: 36px;
+          height: 36px;
+          border: none;
+          background: #f5f5f7;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          color: #86868b;
+        }
+
+        .collapse-toggle:hover {
+          background: #e5e7eb;
+        }
+
+        .collapse-toggle[aria-expanded="false"] i {
+          transform: rotate(-90deg);
+        }
+
+        .collapse-toggle i {
+          font-size: 18px;
+          transition: transform 0.2s ease;
         }
 
         .vendor-info {
@@ -352,12 +391,6 @@ const CartArea = () => {
           flex-shrink: 0;
         }
 
-        .product-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
         .product-details {
           flex: 1;
           display: flex;
@@ -382,6 +415,13 @@ const CartArea = () => {
           letter-spacing: -0.01em;
         }
 
+        .product-image :global(img) {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 12px;
+        }
+
         .remove-btn {
           width: 28px;
           height: 28px;
@@ -404,10 +444,8 @@ const CartArea = () => {
 
         .product-footer {
           display: flex;
-          justify-content: space-between;
           align-items: center;
-          margin-top: auto;
-          padding-top: 12px;
+          gap: 12px;
         }
 
         .quantity-stepper {
@@ -449,10 +487,10 @@ const CartArea = () => {
         }
 
         .product-price {
-          font-size: 17px;
+          font-size: 15px;
           font-weight: 600;
           color: #1d1d1f;
-          letter-spacing: -0.02em;
+          margin-left: auto;
         }
 
         /* Vendor Subtotal */
@@ -479,18 +517,18 @@ const CartArea = () => {
 
         .checkout-btn {
           width: 100%;
-          padding: 16px;
+          padding: 12px;
           background: #0071e3;
           color: #fff;
-          font-size: 17px;
+          font-size: 15px;
           font-weight: 500;
           border: none;
-          border-radius: 14px;
+          border-radius: 12px;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 6px;
           transition: all 0.2s ease;
         }
 
