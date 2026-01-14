@@ -13,54 +13,56 @@ const Cart = () => {
   const { cart, clearVendorCart } = useCartStore();
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<"cart" | "ongoing" | "completed">("cart");
+  const [showClearModal, setShowClearModal] = useState(false);
 
   const hasItems = Object.values(cart).length > 0;
   const vendorCarts = Object.entries(cart);
 
   const handleClearAll = () => {
-    if (confirm("Clear entire cart?")) {
-      vendorCarts.forEach(([vendorId]) => clearVendorCart(vendorId, user?.id));
-    }
+    vendorCarts.forEach(([vendorId]) => clearVendorCart(vendorId, user?.id));
+    setShowClearModal(false);
   };
 
   return (
     <>
-      {/* Custom Header */}
+      {/* Custom Header with Tab Bar */}
       <div className="orders-header">
         <div className="header-content">
-          <Link href="/" className="back-btn">
-            <i className="ti ti-arrow-left"></i>
-          </Link>
-          <h1>Orders</h1>
+          <div className="header-left">
+            <Link href="/" className="back-btn">
+              <i className="ti ti-arrow-left"></i>
+            </Link>
+            <h1>Orders</h1>
+          </div>
           {hasItems && activeTab === "cart" && (
-            <button className="clear-cart-btn" onClick={handleClearAll}>
+            <button className="clear-cart-btn" onClick={() => setShowClearModal(true)}>
               Clear Cart
             </button>
           )}
         </div>
-      </div>
 
-      {/* Tab Bar */}
-      <div className="tab-bar-container">
-        <div className="tab-bar">
-          <button
-            className={`tab ${activeTab === "cart" ? "active" : ""}`}
-            onClick={() => setActiveTab("cart")}
-          >
-            My Cart
-          </button>
-          <button
-            className={`tab ${activeTab === "ongoing" ? "active" : ""}`}
-            onClick={() => setActiveTab("ongoing")}
-          >
-            Ongoing
-          </button>
-          <button
-            className={`tab ${activeTab === "completed" ? "active" : ""}`}
-            onClick={() => setActiveTab("completed")}
-          >
-            Completed
-          </button>
+        {/* Tab Bar */}
+        <div className="tab-bar-container">
+          <div className="tab-bar">
+            <button
+              className={`tab ${activeTab === "cart" ? "active" : ""}`}
+              onClick={() => setActiveTab("cart")}
+            >
+              My Cart
+            </button>
+            <button
+              className={`tab ${activeTab === "ongoing" ? "active" : ""}`}
+              onClick={() => setActiveTab("ongoing")}
+            >
+              Ongoing
+            </button>
+            <button
+              className={`tab ${activeTab === "completed" ? "active" : ""}`}
+              onClick={() => setActiveTab("completed")}
+            >
+              Completed
+            </button>
+          </div>
         </div>
       </div>
 
@@ -87,6 +89,27 @@ const Cart = () => {
         )}
       </div>
 
+      {/* Clear Cart Modal */}
+      {showClearModal && (
+        <div className="modal-overlay" onClick={() => setShowClearModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">
+              <i className="ti ti-trash"></i>
+            </div>
+            <h3>Clear Cart?</h3>
+            <p>Are you sure you want to remove all items from your cart?</p>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={() => setShowClearModal(false)}>
+                Cancel
+              </button>
+              <button className="modal-btn confirm" onClick={handleClearAll}>
+                Clear Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
       <ToastContainer position="top-right" />
 
@@ -98,7 +121,6 @@ const Cart = () => {
           right: 0;
           background: #ffffff;
           z-index: 100;
-          border-bottom: 1px solid #f0f0f0;
         }
 
         .header-content {
@@ -110,9 +132,15 @@ const Cart = () => {
           margin: 0 auto;
         }
 
+        .header-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
         .back-btn {
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -126,9 +154,6 @@ const Cart = () => {
           font-weight: 600;
           color: #1d1d1f;
           margin: 0;
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
         }
 
         .clear-cart-btn {
@@ -148,13 +173,10 @@ const Cart = () => {
 
         /* Tab Bar */
         .tab-bar-container {
-          position: fixed;
-          top: 73px;
-          left: 0;
-          right: 0;
-          background: #ffffff;
-          z-index: 99;
-          padding: 12px 20px 16px;
+          padding: 16px 20px 20px;
+          max-width: 680px;
+          margin: 0 auto;
+          border-bottom: 1px solid #f0f0f0;
         }
 
         .tab-bar {
@@ -190,7 +212,7 @@ const Cart = () => {
 
         /* Content */
         .orders-content {
-          padding-top: 140px;
+          padding-top: 160px;
           min-height: calc(100vh - 60px);
           background: #f5f5f7;
         }
@@ -222,6 +244,94 @@ const Cart = () => {
           font-size: 14px;
           color: #86868b;
           margin: 0;
+        }
+
+        /* Modal */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .modal-content {
+          background: #ffffff;
+          border-radius: 20px;
+          padding: 32px 24px;
+          max-width: 320px;
+          width: 100%;
+          text-align: center;
+        }
+
+        .modal-icon {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: #fef2f2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 20px;
+        }
+
+        .modal-icon i {
+          font-size: 24px;
+          color: #ef4444;
+        }
+
+        .modal-content h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin: 0 0 8px;
+        }
+
+        .modal-content p {
+          font-size: 14px;
+          color: #86868b;
+          margin: 0 0 24px;
+          line-height: 1.5;
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 12px;
+        }
+
+        .modal-btn {
+          flex: 1;
+          padding: 14px;
+          border: none;
+          border-radius: 12px;
+          font-size: 15px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .modal-btn.cancel {
+          background: #f5f5f7;
+          color: #1d1d1f;
+        }
+
+        .modal-btn.cancel:hover {
+          background: #e5e7eb;
+        }
+
+        .modal-btn.confirm {
+          background: #ef4444;
+          color: #ffffff;
+        }
+
+        .modal-btn.confirm:hover {
+          background: #dc2626;
         }
       `}</style>
     </>

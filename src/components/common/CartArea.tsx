@@ -119,6 +119,9 @@ const CartArea = () => {
                 </div>
               )}
 
+              {/* Separator Line */}
+              <div className="card-divider"></div>
+
               {/* Delivery Address */}
               <div className="delivery-section">
                 <div className="delivery-icon">
@@ -159,9 +162,15 @@ const CartArea = () => {
         /* Vendor Card */
         .vendor-card {
           background: #ffffff;
-          border-radius: 16px;
+          border-radius: 8px;
           padding: 20px;
           margin-bottom: 16px;
+        }
+
+        .card-divider {
+          height: 1px;
+          background: #e5e7eb;
+          margin: 16px 0 20px 0;
         }
 
         /* Vendor Header */
@@ -334,14 +343,14 @@ const CartArea = () => {
         /* Delivery Section */
         .delivery-section {
           display: flex;
-          align-items: flex-start;
-          gap: 12px;
+          align-items: center;
+          gap: 10px;
           margin-bottom: 20px;
         }
 
         .delivery-icon {
-          width: 32px;
-          height: 32px;
+          width: 24px;
+          height: 24px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -349,27 +358,27 @@ const CartArea = () => {
         }
 
         .delivery-icon i {
-          font-size: 24px;
+          font-size: 20px;
           color: #86868b;
         }
 
         .delivery-text {
           font-size: 14px;
           color: #1d1d1f;
-          line-height: 1.4;
+          line-height: 1;
           margin: 0;
         }
 
         /* Checkout Button */
         .checkout-btn {
           width: 100%;
-          padding: 14px;
+          padding: 12px;
           background: #0071e3;
           color: #ffffff;
           font-size: 15px;
           font-weight: 500;
           border: none;
-          border-radius: 12px;
+          border-radius: 8px;
           cursor: pointer;
           margin-bottom: 12px;
           transition: background 0.2s ease;
