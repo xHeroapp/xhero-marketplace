@@ -42,6 +42,20 @@ const ShopGrid = () => {
         <div className="page-content-wrapper">
           <div className="py-3">
             <div className="container">
+              {/* Search Input */}
+              <div className="mb-3 mt-2">
+                <div className="form-group position-relative">
+                  <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search products..."
+                    disabled
+                    style={{ paddingLeft: '40px' }}
+                  />
+                </div>
+              </div>
+
               {/* Category filter skeleton */}
               <div className="d-flex gap-2 mb-3">
                 {[...Array(3)].map((_, i) => (
@@ -167,8 +181,23 @@ const ShopGrid = () => {
         <div className="page-content-wrapper ">
           <div className="py-3 ">
             <div className="container">
+              {/* Search Input */}
+              <div className="mb-3 mt-2">
+                <div className="form-group position-relative">
+                  <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search products..."
+                    value={Filters.searchTerm}
+                    onChange={Filters.handleSearchChange}
+                    style={{ paddingLeft: '40px' }}
+                  />
+                </div>
+              </div>
+
               <div className="row g-1 align-items-center rtl-flex-d-row-r mb-3">
-                <div className="" style={{ marginTop: "-15px" }}>
+                <div className="">
                   <Swiper
                     loop={true}
                     slidesPerView={2.5}
@@ -242,8 +271,23 @@ const ShopGrid = () => {
       <div className="page-content-wrapper">
         <div className="py-3">
           <div className="container">
+            {/* Search Input */}
+            <div className="mb-3 mt-2">
+              <div className="form-group position-relative">
+                <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search products..."
+                  value={Filters.searchTerm}
+                  onChange={Filters.handleSearchChange}
+                  style={{ paddingLeft: '40px' }}
+                />
+              </div>
+            </div>
+
             <div className="row g-1 align-items-center rtl-flex-d-row-r">
-              <div className="" style={{ marginTop: "-15px" }}>
+              <div className="">
                 <Swiper
                   loop={true}
                   slidesPerView={2.5}
