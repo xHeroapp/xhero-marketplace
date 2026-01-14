@@ -5462,6 +5462,14 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   color: #a1a1aa;
 }
 
+[theme-color="dark"] .card-body .text-muted {
+  color: #a1a1aa !important;
+}
+
+[theme-color="dark"] .card-body i.text-muted {
+  color: #ffffff !important;
+}
+
 [theme-color="dark"] a,
 [theme-color="dark"] a:hover,
 [theme-color="dark"] a:focus,
@@ -6086,6 +6094,26 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 [theme-color="dark"] .single-order-status.active .order-icon {
   color: #ffffff;
   background-color: #625afa;
+}
+
+
+[theme-color="dark"] .catagory-card span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 5px;
+}
+
+/* Ensure light mode also truncates */
+.catagory-card span {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 5px;
 }
 
 [theme-color="dark"] .shipping-method-choose-title-card,
