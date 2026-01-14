@@ -12,7 +12,6 @@ import { useAuthStore } from "@/store/authStore";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { toast } from "sonner";
 import { useAddToWishList } from "@/hooks/useAddToWishList";
-import MyTimer from "../common/MyTimer";
 
 const TopProducts = () => {
   // handleAdd to cart
@@ -208,12 +207,6 @@ const TopProducts = () => {
                           src={item.vendor_products_view.image_url}
                           alt={item.vendor_products_view.product_name}
                         />
-                        {/* Timer for 1st and 4th item */}
-                        {(i === 0 || i === 3) && (
-                          <ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
-                            <MyTimer />
-                          </ul>
-                        )}
                       </Link>
 
                       <Link

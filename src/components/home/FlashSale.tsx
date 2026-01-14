@@ -7,7 +7,7 @@ import { useGetFlashSale } from "@/queries/flashSales.queries";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
+const FlashSaleTimer = dynamic(() => import("../common/FlashSaleTimer"), { ssr: false });
 
 const FlashSale = () => {
   const { data, isLoading, isError } = useGetFlashSale();
@@ -39,9 +39,6 @@ const FlashSale = () => {
               <i className="ti ti-bolt-lightning me-1 text-danger lni-flashing-effect"></i>
               Flash Sale
             </h6>
-            <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
-              <MyTimer />
-            </ul>
           </div>
 
           <Swiper
@@ -117,10 +114,6 @@ const FlashSale = () => {
               Flash Sale
             </h6>
 
-            <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
-              <MyTimer />
-            </ul>
-
             {/* <div className="section-heading d-flex align-items-center justify-content-between dir-rtl"> */}
             <Link className="btn btn-sm btn-light" href="/flash-sale">
               View all<i className="ms-1 ti ti-arrow-right"></i>
@@ -148,10 +141,17 @@ const FlashSale = () => {
                 >
                   <div className="card-body">
                     <Link href={`/flash-sale-product/${item.product_id}`}>
-                      <ImageWithFallback
-                        src={item.image_url}
-                        alt={item.product_name}
-                      />
+                      <div className="flash-sale-image-container">
+                        <ImageWithFallback
+                          src={item.image_url}
+                          alt={item.product_name}
+                        />
+                        {item.end_time && (
+                          <ul className="flash-sale-timer d-flex align-items-center">
+                            <FlashSaleTimer endTime={item.end_time} />
+                          </ul>
+                        )}
+                      </div>
                       <span className="product-title">{item.product_name}</span>
                       <p className="sale-price">
                         {formatCurrency(item.flash_price)}
