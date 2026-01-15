@@ -112,3 +112,76 @@ The issue occurred because:
 The fix ensures the Cart component independently loads cart data when user is available.
 
 ---
+
+## 2026-01-15: Real-time Chat System
+
+### Overview
+Implemented a real-time chat system with support for live messaging and typing indicators between marketplace users and super admins.
+
+### Database Changes
+
+**New Table: `chat_conversations`**
+
+Tracks support conversations. One per user.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID | Primary key |
+| `user_id` | UUID | Marketplace user (FK to employees) |
+| `status` | TEXT | 'active', 'closed', 'archived' |
+| `last_message_at` | TIMESTAMPTZ | Timestamp of last activity |
+| `created_at` | TIMESTAMPTZ | Creation timestamp |
+
+**New Table: `chat_messages`**
+
+Stores individual messages.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | UUID | Primary key |
+| `conversation_id` | UUID | Message belongs to this conversation |
+| `sender_type` | TEXT | 'user' or 'admin' |
+| `sender_id` | UUID | user_id or super_admin id |
+| `content` | TEXT | Message body |
+| `is_read` | BOOLEAN | Read receipt |
+| `created_at` | TIMESTAMPTZ | Sent timestamp |
+
+**Realtime & Security:**
+- Enabled Supabase Realtime for `chat_messages` table via `supabase_realtime` publication
+- RLS enabled on both tables
+- Users can only access their own conversation and messages
+- Super Admins have full access
+
+### Frontend Changes
+
+**New Hook: `src/hooks/useChatMessages.ts`**
+- Manages conversation state and message history
+- Auto-creates conversation on first load if missing
+- Subscribes to `INSERT` events on `chat_messages` for live updates
+- Handles sending messages
+
+**New Hook: `src/hooks/useTypingIndicator.ts`**
+- Uses Supabase Realtime Broadcast channel (`typing:conversation_id`)
+- Broadcasts typing events when user types
+- Listens for typing events from valid participants (e.g., admin)
+- Auto-clears typing status after 3s debounce
+
+**Modified: `src/components/Message.tsx`**
+- Replaced mock data with `useChatMessages`
+- Integrated typing indicators
+- Auto-scroll to bottom behavior on new message or typing event
+- Secure integration with `useAuthStore`
+
+### Technical Details
+
+**Data Flow:**
+1. User loads chat → `useChatMessages` fetches/creates conversation
+2. Subscribe to `chat:conversation_id` via Supabase Realtime
+3. Sending message inserts to DB → Trigger `postgres_changes` event
+4. Typing inputs send ephemeral `broadcast` events (not stored in DB)
+
+**Verification:**
+- Verified sending messages works and persists
+- Verified real-time updates appear instantly
+- Verified typing indicators show/hide correctly
+
