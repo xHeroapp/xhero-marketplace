@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "@/layouts/Footer";
 import CartArea from "./common/CartArea";
 import EmptyBag from "./common/EmptyBag";
@@ -10,8 +10,16 @@ import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
 
 const Cart = () => {
-  const { cart, clearVendorCart } = useCartStore();
+  const { cart, clearVendorCart, loadCart } = useCartStore();
   const { user } = useAuthStore();
+
+  // Load cart from localStorage when user is available
+  // This ensures cart persists across page refreshes
+  useEffect(() => {
+    if (user?.id) {
+      loadCart(user.id);
+    }
+  }, [user?.id, loadCart]);
   const [activeTab, setActiveTab] = useState<"cart" | "ongoing" | "completed">("cart");
   const [showClearModal, setShowClearModal] = useState(false);
 
