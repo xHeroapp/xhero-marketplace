@@ -175,13 +175,15 @@ const FlashSale = () => {
                           </span>
 
                           <div className="progress">
+                            {/* Progress bar represents stock left: (current / total) * 100 */}
                             <div
                               className={`progress-bar ${progressColor}`}
                               role="progressbar"
-                              style={{ width: `${discount}%` }}
-                              aria-valuenow={discount}
+                              style={{ width: `${(item.flash_stock / item.total_quantity) * 100}%` }}
+                              aria-valuenow={(item.flash_stock / item.total_quantity) * 100}
                               aria-valuemin={0}
                               aria-valuemax={100}
+                              title={`${item.flash_stock} items left`}
                             ></div>
                           </div>
                         </Link>

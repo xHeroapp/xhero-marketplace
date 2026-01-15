@@ -22,6 +22,7 @@ export default async function Product({
     .from("active_flash_sale_products")
     .select()
     .eq("product_id", id)
+    .limit(1)
     .single();
 
   if (error) {
