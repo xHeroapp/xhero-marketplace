@@ -3,11 +3,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSupportStatus } from "@/hooks/useSupportStatus";
+import { useAuthStore } from "@/store/authStore";
+import { useChatMessages } from "@/hooks/useChatMessages";
+import { useTypingIndicator } from "@/hooks/useTypingIndicator";
 
 const Message = () => {
   const router = useRouter();
-  const { isOnline, isLoading } = useSupportStatus();
-  const [message, setMessage] = useState("");
+  const { user } = useAuthStore();
+  const { isOnline, isLoading: isStatusLoading } = useSupportStatus();
+  const { messages, isLoading: isChatLoading, sendMessage, conversationId } = useChatMessages(user?.id);
+  const { isOtherTyping, broadcastTyping } = useTypingIndicator(conversationId, user?.id);
+
+  const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -17,14 +24,13 @@ const Message = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, []);
+  }, [messages, isOtherTyping]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      // TODO: Send message logic
-      console.log("Sending:", message);
-      setMessage("");
+    if (inputText.trim()) {
+      await sendMessage(inputText);
+      setInputText("");
     }
   };
 
@@ -35,46 +41,10 @@ const Message = () => {
     }
   };
 
-  // Sample messages for demo
-  const messages = [
-    {
-      id: 1,
-      type: "agent",
-      text: "Hi there! 👋",
-      time: "12:00",
-    },
-    {
-      id: 2,
-      type: "agent",
-      text: "Welcome to xHero support. How can I help you today?",
-      time: "12:00",
-    },
-    {
-      id: 3,
-      type: "user",
-      text: "I have a question about my order",
-      time: "12:18",
-    },
-    {
-      id: 4,
-      type: "agent",
-      text: "Of course! I'd be happy to help you with your order. Could you please share your order number?",
-      time: "12:19",
-    },
-    {
-      id: 5,
-      type: "user",
-      text: "It's #XH-2024-0156",
-      time: "12:20",
-    },
-    {
-      id: 6,
-      type: "agent",
-      text: "Thank you! Let me look that up for you...",
-      time: "12:21",
-      isTyping: true,
-    },
-  ];
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputText(e.target.value);
+    broadcastTyping();
+  };
 
   return (
     <>
@@ -92,7 +62,7 @@ const Message = () => {
             <div className="agent-info">
               <h6>xHero Support</h6>
               <span className={`status-text ${isOnline ? 'online' : 'offline'}`}>
-                {isLoading ? '...' : isOnline ? 'Online' : 'Offline'}
+                {isStatusLoading ? '...' : isOnline ? 'Online' : 'Offline'}
               </span>
             </div>
           </div>
@@ -115,29 +85,45 @@ const Message = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`message-row ${msg.type === "user" ? "user" : "agent"}`}
+                className={`message-row ${msg.sender_type === "user" ? "user" : "agent"}`}
               >
-                {msg.type === "agent" && (
+                {msg.sender_type === "agent" && (
                   <div className="agent-avatar-small">
                     <img src="/assets/img/bg-img/9.jpg" alt="" />
                   </div>
                 )}
                 <div className="message-bubble-wrapper">
-                  <div className={`message-bubble ${msg.type}`}>
-                    {msg.isTyping ? (
-                      <div className="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                    ) : (
-                      <p>{msg.text}</p>
-                    )}
+                  <div className={`message-bubble ${msg.sender_type}`}>
+                    <p>{msg.content}</p>
                   </div>
-                  <span className="message-time">{msg.time}</span>
+                  <span className="message-time">
+                    {new Date(msg.created_at).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
                 </div>
               </div>
             ))}
+
+            {/* Typing Indicator */}
+            {isOtherTyping && (
+              <div className="message-row agent">
+                <div className="agent-avatar-small">
+                  <img src="/assets/img/bg-img/9.jpg" alt="" />
+                </div>
+                <div className="message-bubble-wrapper">
+                  <div className="message-bubble agent">
+                    <div className="typing-indicator">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
         </div>
@@ -153,15 +139,16 @@ const Message = () => {
                 ref={textareaRef}
                 className="message-input"
                 placeholder="Type a message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                value={inputText}
+                onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 rows={1}
+                disabled={isChatLoading || !conversationId}
               />
               <button
                 type="submit"
-                className={`send-btn ${message.trim() ? "active" : ""}`}
-                disabled={!message.trim()}
+                className={`send-btn ${inputText.trim() ? "active" : ""}`}
+                disabled={!inputText.trim() || isChatLoading || !conversationId}
               >
                 <i className="ti ti-send"></i>
               </button>
