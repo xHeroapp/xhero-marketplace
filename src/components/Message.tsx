@@ -2,9 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSupportStatus } from "@/hooks/useSupportStatus";
 
 const Message = () => {
   const router = useRouter();
+  const { isOnline, isLoading } = useSupportStatus();
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -85,11 +87,13 @@ const Message = () => {
             </button>
             <div className="agent-avatar">
               <img src="/assets/img/bg-img/9.jpg" alt="Support" />
-              <span className="status-dot"></span>
+              <span className={`status-dot ${isOnline ? 'online' : 'offline'}`}></span>
             </div>
             <div className="agent-info">
               <h6>xHero Support</h6>
-              <span className="status-text">Online</span>
+              <span className={`status-text ${isOnline ? 'online' : 'offline'}`}>
+                {isLoading ? '...' : isOnline ? 'Online' : 'Offline'}
+              </span>
             </div>
           </div>
           <div className="header-right">
@@ -250,9 +254,17 @@ const Message = () => {
           right: 1px;
           width: 12px;
           height: 12px;
-          background: #34c759;
           border: 2px solid white;
           border-radius: 50%;
+          transition: background-color 0.3s ease;
+        }
+
+        .status-dot.online {
+          background: #34c759;
+        }
+
+        .status-dot.offline {
+          background: #8e8e93;
         }
 
         .agent-info {
@@ -268,8 +280,16 @@ const Message = () => {
 
         .status-text {
           font-size: 12px;
-          color: #34c759;
           font-weight: 500;
+          transition: color 0.3s ease;
+        }
+
+        .status-text.online {
+          color: #34c759;
+        }
+
+        .status-text.offline {
+          color: #8e8e93;
         }
 
         /* ========== Messages Container ========== */
