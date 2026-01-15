@@ -107,12 +107,6 @@ const CartArea = () => {
                             <i className="ti ti-plus"></i>
                           </button>
                         </div>
-                        <button
-                          className="remove-btn"
-                          onClick={() => removeProductFromCart(vendorId, product.product_id, user?.id)}
-                        >
-                          <i className="ti ti-x"></i>
-                        </button>
                       </div>
                     </div>
                   ))}
@@ -323,22 +317,7 @@ const CartArea = () => {
           color: #1d1d1f;
         }
 
-        .remove-btn {
-          width: 28px;
-          height: 28px;
-          border: none;
-          background: transparent;
-          color: #86868b;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-        }
 
-        .remove-btn:hover {
-          color: #ff3b30;
-        }
 
         /* Delivery Section */
         .delivery-section {
