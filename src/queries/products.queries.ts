@@ -113,3 +113,22 @@ export const useGetProductItems = (filters = {}, limit: number) => {
     },
   });
 };
+
+// Get related products by category ID
+export const useGetRelatedProducts = (categoryId: string, excludeProductId: string) => {
+  return useQuery({
+    queryKey: ["get-related-products", categoryId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("vendor_products_view")
+        .select("*")
+        .eq("category_id", categoryId)
+        .neq("product_id", excludeProductId)
+        .limit(4);
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!categoryId,
+  });
+};
