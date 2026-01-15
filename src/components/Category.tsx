@@ -99,29 +99,25 @@ const Category = () => {
               <h6>Categories</h6>
             </div>
 
-            <div className="product-catagories-wrapper">
-              <div className="container">
-                <div className="row g-2 rtl-flex-d-row-r">
-                  {sortedCategories.map((item) => (
-                    <div key={item.id} className="col-3">
-                      <div className="category-item-wrapper h-100">
-                        <div
-                          onClick={() => handleActiveCategory(item)}
-                          className={`card catagory-card ${active === item.id ? "active" : ""
-                            } h-100`}
-                        >
-                          <div className="card-body px-2">
-                            <Link href={`/category?category_id=${item.id}`}>
-                              <img src={item.img} alt={item.name} />
-                              <span>{item.name}</span>
-                            </Link>
-                          </div>
-                        </div>
+            <div className="row g-2 rtl-flex-d-row-r">
+              {sortedCategories.map((item) => (
+                <div key={item.id} className="col-3">
+                  <div className="category-item-wrapper h-100">
+                    <div
+                      onClick={() => handleActiveCategory(item)}
+                      className={`card catagory-card ${active === item.id ? "active" : ""
+                        } h-100`}
+                    >
+                      <div className="card-body px-2">
+                        <Link href={`/category?category_id=${item.id}`}>
+                          <img src={item.img} alt={item.name} />
+                          <span>{item.name}</span>
+                        </Link>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -278,15 +274,6 @@ const Category = () => {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          overflow: hidden;
-        }
-
-        .category-item-wrapper .card-body a {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-          overflow: hidden;
         }
 
         .category-item-wrapper img {
@@ -294,17 +281,17 @@ const Category = () => {
           height: 50px;
           object-fit: contain;
           margin-bottom: 0.5rem;
-          flex-shrink: 0;
         }
 
         .category-item-wrapper span {
           font-size: 0.75rem;
           line-height: 1.2;
           display: block;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          width: 100%;
+          word-wrap: break-word;
+          word-break: break-word;
+          overflow-wrap: break-word;
+          max-width: 100%;
+          white-space: normal;
         }
       `}</style>
     </>
