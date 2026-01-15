@@ -11,7 +11,7 @@ const Message = () => {
   const router = useRouter();
   const { user } = useAuthStore();
   const { isOnline, isLoading: isStatusLoading } = useSupportStatus();
-  const { messages, isLoading: isChatLoading, sendMessage, conversationId } = useChatMessages(user?.id);
+  const { messages, isLoading: isChatLoading, error: chatError, sendMessage, conversationId } = useChatMessages(user?.id);
   const { isOtherTyping, broadcastTyping } = useTypingIndicator(conversationId, user?.id);
 
   const [inputText, setInputText] = useState("");
@@ -137,13 +137,14 @@ const Message = () => {
               </button>
               <textarea
                 ref={textareaRef}
-                className="message-input"
-                placeholder="Type a message..."
+                className={`message-input ${chatError ? "error" : ""}`}
+                placeholder={chatError || "Type a message..."}
                 value={inputText}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 rows={1}
-                disabled={isChatLoading || !conversationId}
+                disabled={isChatLoading || !!chatError || !conversationId}
+                style={chatError ? { borderColor: "#ef4444", cursor: "not-allowed" } : {}}
               />
               <button
                 type="submit"

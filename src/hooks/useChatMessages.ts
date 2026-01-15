@@ -18,39 +18,105 @@ export interface Message {
 export function useChatMessages(userId: string | undefined) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [conversationId, setConversationId] = useState<string | null>(null);
+    const [activeUserId, setActiveUserId] = useState<string | null>(null);
     const subscriptionRef = useRef<RealtimeChannel | null>(null);
     const supabase = createClient();
 
     // Initialize conversation and fetch messages
     useEffect(() => {
-        if (!userId) return;
+        // If userId is missing, we still try to fetch current user to be safe, 
+        // but typically we wait for the prop.
+        // However, to fix "Stale ID" issue, we always fetch fresh auth user.
 
         const initChat = async () => {
             setIsLoading(true);
+            setError(null);
             try {
+                // Get fresh user data from Supabase to ensure we have the correct ID
+                // (This handles cases where useAuthStore might be stale)
+                const { data: { user: currentUser } } = await supabase.auth.getUser();
+                const effectiveUserId = currentUser?.id || userId;
+
+                if (!effectiveUserId) {
+                    // Valid case: user not logged in yet
+                    return;
+                }
+
+                setActiveUserId(effectiveUserId);
+
+                // 0. Verify user exists in employees table
+                let { data: employee, error: empError } = await supabase
+                    .from("employees")
+                    .select("id")
+                    .eq("user_id", effectiveUserId)
+                    .maybeSingle();
+
+                // If not linked yet, try to link via RPC (Auto-Onboarding)
+                if (!employee) {
+                    console.log("User not linked to employee record. Attempting auto-link...");
+                    const { data: linked, error: linkError } = await supabase
+                        .rpc("link_employee_identity");
+
+                    if (linkError) {
+                        console.error("Auto-link failed:", linkError);
+                    } else if (linked) {
+                        console.log("Auto-link successful! Retrying verification...");
+                        // Retry verification with effectiveUserId
+                        const retry = await supabase
+                            .from("employees")
+                            .select("id")
+                            .eq("user_id", effectiveUserId)
+                            .maybeSingle();
+
+                        if (retry.data) {
+                            employee = retry.data;
+                            empError = null;
+                        }
+                    } else {
+                        console.warn("Auto-link returned false (no matching email found).");
+                    }
+                }
+
+                if (empError) {
+                    console.error("Error verifying employee:", empError);
+                    setError("Failed to verify employee status");
+                    return;
+                }
+
                 // 1. Check if conversation exists
                 let { data: conversation, error } = await supabase
                     .from("chat_conversations")
                     .select("id")
-                    .eq("user_id", userId)
-                    .single();
+                    .eq("user_id", effectiveUserId)
+                    .maybeSingle();
 
-                if (error && error.code !== "PGRST116") {
+                if (error) {
                     console.error("Error fetching conversation:", error);
+                    setError("Failed to load conversation");
                     return;
                 }
 
                 // 2. Create if not exists
                 if (!conversation) {
+                    // If user is not an employee, we cannot create a conversation due to FK constraint
+                    if (!employee) {
+                        console.warn("User not found in employees table. Cannot create conversation.");
+                        setError("You must be a verified employee to use support chat.");
+                        return;
+                    }
+
+                    console.log("Creating new conversation for user:", effectiveUserId);
                     const { data: newConv, error: createError } = await supabase
                         .from("chat_conversations")
-                        .insert({ user_id: userId })
+                        .insert({ user_id: effectiveUserId })
                         .select("id")
                         .single();
 
                     if (createError) {
-                        console.error("Error creating conversation:", createError);
+                        console.error("Error creating conversation validation:", JSON.stringify(createError, null, 2));
+                        setError("Failed to start conversation");
                         return;
                     }
                     conversation = newConv;
@@ -64,7 +130,7 @@ export function useChatMessages(userId: string | undefined) {
                         .from("chat_messages")
                         .select("*")
                         .eq("conversation_id", conversation.id)
-                        .order("created_at", { ascending: true }); // Oldest first
+                        .order("created_at", { ascending: true });
 
                     if (msgsError) {
                         console.error("Error fetching messages:", msgsError);
@@ -74,6 +140,7 @@ export function useChatMessages(userId: string | undefined) {
                 }
             } catch (err) {
                 console.error("Unexpected error initializing chat:", err);
+                setError("An unexpected error occurred");
             } finally {
                 setIsLoading(false);
             }
@@ -120,13 +187,14 @@ export function useChatMessages(userId: string | undefined) {
 
     // Send message function
     const sendMessage = async (content: string) => {
-        if (!conversationId || !userId || !content.trim()) return;
+        // Use activeUserId instead of userId prop to ensure we match the DB session
+        if (!conversationId || !activeUserId || !content.trim()) return;
 
         try {
             const { error } = await supabase.from("chat_messages").insert({
                 conversation_id: conversationId,
                 sender_type: "user",
-                sender_id: userId,
+                sender_id: activeUserId,
                 content: content.trim(),
             });
 
@@ -150,6 +218,7 @@ export function useChatMessages(userId: string | undefined) {
     return {
         messages,
         isLoading,
+        error,
         sendMessage,
         conversationId,
     };

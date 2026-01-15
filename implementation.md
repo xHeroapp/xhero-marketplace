@@ -185,3 +185,11 @@ Stores individual messages.
 - Verified real-time updates appear instantly
 - Verified typing indicators show/hide correctly
 
+### Auto-linking Logic (Added Fix)
+
+**RPC Function: `link_employee_identity`**
+- Purpose: Links an authenticated user's `auth.uid()` to their corresponding `employees` record based on email.
+- Logic: `UPDATE employees SET user_id = auth.uid() WHERE email = auth.email()`
+- Trigger: Called by frontend hook if employee verification fails initially.
+
+
