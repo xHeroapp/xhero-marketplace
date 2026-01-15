@@ -12,6 +12,14 @@ import Link from "next/link";
 const Cart = () => {
   const { cart, clearVendorCart, loadCart } = useCartStore();
   const { user } = useAuthStore();
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [activeTab, setActiveTab] = useState<"cart" | "ongoing" | "completed">("cart");
+  const [showClearModal, setShowClearModal] = useState(false);
+
+  // Handle hydration - wait for client-side to be ready
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Load cart from localStorage when user is available
   // This ensures cart persists across page refreshes
@@ -20,8 +28,6 @@ const Cart = () => {
       loadCart(user.id);
     }
   }, [user?.id, loadCart]);
-  const [activeTab, setActiveTab] = useState<"cart" | "ongoing" | "completed">("cart");
-  const [showClearModal, setShowClearModal] = useState(false);
 
   const hasItems = Object.values(cart).length > 0;
   const vendorCarts = Object.entries(cart);
@@ -30,6 +36,112 @@ const Cart = () => {
     vendorCarts.forEach(([vendorId]) => clearVendorCart(vendorId, user?.id));
     setShowClearModal(false);
   };
+
+  // Show loading skeleton during hydration to prevent FOUC
+  if (!isHydrated) {
+    return (
+      <>
+        <div className="orders-header">
+          <div className="header-content">
+            <div className="header-left">
+              <div className="skeleton-back" />
+              <div className="skeleton-title" />
+            </div>
+          </div>
+          <div className="tab-bar-container">
+            <div className="tab-bar">
+              <div className="skeleton-tab" />
+              <div className="skeleton-tab" />
+              <div className="skeleton-tab" />
+            </div>
+          </div>
+        </div>
+        <div className="orders-content skeleton-content">
+          <div className="skeleton-card" />
+          <div className="skeleton-card" />
+        </div>
+        <Footer />
+        <style jsx>{`
+          .orders-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            z-index: 100;
+          }
+          .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+          }
+          .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          .skeleton-back {
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+          .skeleton-title {
+            width: 80px;
+            height: 24px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+          .tab-bar-container {
+            padding: 16px 20px 20px;
+            max-width: 680px;
+            margin: 0 auto;
+            border-bottom: 1px solid #f0f0f0;
+          }
+          .tab-bar {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 5px;
+            gap: 4px;
+          }
+          .skeleton-tab {
+            flex: 1;
+            height: 44px;
+            background: #e5e5e5;
+            border-radius: 10px;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+          .orders-content {
+            padding-top: 160px;
+            min-height: calc(100vh - 60px);
+            background: #f5f5f7;
+          }
+          .skeleton-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+          }
+          .skeleton-card {
+            height: 120px;
+            background: #ffffff;
+            border-radius: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+        `}</style>
+      </>
+    );
+  }
 
   return (
     <>
