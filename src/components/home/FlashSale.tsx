@@ -16,6 +16,7 @@ const FlashSale = () => {
   const calculateDiscount = (normalPrice: string, flashPrice: string) => {
     const normal = parseFloat(normalPrice);
     const flash = parseFloat(flashPrice);
+    if (!normal || normal <= 0) return 0;
     return Math.round(((normal - flash) / normal) * 100);
   };
 
@@ -141,7 +142,7 @@ const FlashSale = () => {
                 >
                   <div className="card-body">
                     <Link href={`/flash-sale-product/${item.product_id}`}>
-                      <div className="flash-sale-image-container">
+                      <div className="flash-sale-image-container position-relative">
                         <ImageWithFallback
                           src={item.image_url}
                           alt={item.product_name}

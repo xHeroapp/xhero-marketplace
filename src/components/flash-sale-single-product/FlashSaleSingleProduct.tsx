@@ -58,6 +58,12 @@ const FlashSaleSingleProductArea = ({ product }: any) => {
                 {formatCurrency(product?.flash_price || product?.price)}
                 <span> {formatCurrency(product?.normal_price)}</span>
               </p>
+              {product.flash_sale_name && (
+                <p className="mb-0 text-primary" style={{ fontSize: "13px", fontWeight: "600" }}>
+                  <i className="ti ti-star me-1"></i>
+                  {product.flash_sale_name}
+                </p>
+              )}
               {discountPercentage > 0 && (
                 <span
                   className="badge bg-danger"
