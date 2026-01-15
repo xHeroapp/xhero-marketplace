@@ -51,6 +51,8 @@ const ShopGrid = () => {
                     className="form-control"
                     placeholder="Search products..."
                     disabled
+                    value=""
+                    readOnly
                     style={{ paddingLeft: '40px' }}
                   />
                 </div>
@@ -189,7 +191,7 @@ const ShopGrid = () => {
                     type="text"
                     className="form-control"
                     placeholder="Search products..."
-                    value={Filters.searchTerm}
+                    value={Filters.searchTerm || ""}
                     onChange={Filters.handleSearchChange}
                     style={{ paddingLeft: '40px' }}
                   />
@@ -279,7 +281,7 @@ const ShopGrid = () => {
                   type="text"
                   className="form-control"
                   placeholder="Search products..."
-                  value={Filters.searchTerm}
+                  value={Filters.searchTerm || ""}
                   onChange={Filters.handleSearchChange}
                   style={{ paddingLeft: '40px' }}
                 />

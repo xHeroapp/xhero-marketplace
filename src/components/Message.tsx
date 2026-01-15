@@ -15,8 +15,13 @@ const Message = () => {
   const { isOtherTyping, broadcastTyping } = useTypingIndicator(conversationId, user?.id);
 
   const [inputText, setInputText] = useState("");
+  const [isHydrated, setIsHydrated] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,6 +51,52 @@ const Message = () => {
     broadcastTyping();
   };
 
+  if (!isHydrated) {
+    return (
+      <div className="chat-page">
+        <div className="chat-header">
+          <div className="skeleton-avatar" />
+          <div className="skeleton-text" />
+        </div>
+        <style jsx>{`
+          .chat-page {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f5f5f7;
+          }
+          .chat-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #fff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            gap: 12px;
+          }
+          .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+          }
+          .skeleton-text {
+            width: 120px;
+            height: 16px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            animation: pulse 1.5s infinite;
+          }
+          @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="chat-page">
@@ -56,7 +107,7 @@ const Message = () => {
               <i className="ti ti-arrow-left"></i>
             </button>
             <div className="agent-avatar">
-              <img src="/assets/img/bg-img/9.jpg" alt="Support" />
+              <img src="/assets/img/bg-img/9.jpg" alt="Support" width={40} height={40} />
               <span className={`status-dot ${isOnline ? 'online' : 'offline'}`}></span>
             </div>
             <div className="agent-info">
@@ -87,9 +138,9 @@ const Message = () => {
                 key={msg.id}
                 className={`message-row ${msg.sender_type === "user" ? "user" : "agent"}`}
               >
-                {msg.sender_type === "agent" && (
+                {msg.sender_type === "admin" && (
                   <div className="agent-avatar-small">
-                    <img src="/assets/img/bg-img/9.jpg" alt="" />
+                    <img src="/assets/img/bg-img/9.jpg" alt="" width={28} height={28} />
                   </div>
                 )}
                 <div className="message-bubble-wrapper">
@@ -110,7 +161,7 @@ const Message = () => {
             {isOtherTyping && (
               <div className="message-row agent">
                 <div className="agent-avatar-small">
-                  <img src="/assets/img/bg-img/9.jpg" alt="" />
+                  <img src="/assets/img/bg-img/9.jpg" alt="" width={28} height={28} />
                 </div>
                 <div className="message-bubble-wrapper">
                   <div className="message-bubble agent">
