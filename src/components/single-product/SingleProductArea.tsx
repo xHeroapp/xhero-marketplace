@@ -12,6 +12,97 @@ import useServiceStore from "@/store/serviceStore";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { SERVICE_ORDER_TYPE } from "@/constant/constant";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+import reviews_data from "@/data/reviews_data";
+import { useGetTopProducts } from "@/queries/products.queries";
+import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
+
+// Related Products Section Component
+const RelatedProductsSection = ({ product }: { product: any }) => {
+  const { data: relatedProducts, isLoading } = useGetTopProducts();
+  const { addToWishList } = useAddToWishList();
+  const { handleAddToCart } = useAddToCart();
+
+  if (isLoading || !relatedProducts || relatedProducts.length === 0) {
+    return null;
+  }
+
+  // Filter out current product and limit to 6
+  const filteredProducts = relatedProducts
+    .filter((item: any) => item.vendor_products_view?.vendor_product_id !== product?.vendor_product_id)
+    .slice(0, 6);
+
+  if (filteredProducts.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="related-product-wrapper bg-white py-3 mb-3">
+      <div className="container">
+        <div className="section-heading d-flex align-items-center justify-content-between">
+          <h6>Related Products</h6>
+          <Link className="btn btn-sm btn-secondary" href="/shop-grid">
+            View all
+          </Link>
+        </div>
+        <Swiper
+          loop={filteredProducts.length > 2}
+          slidesPerView={2}
+          spaceBetween={10}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          modules={[Autoplay]}
+          className="related-product-slide"
+        >
+          {filteredProducts.map((item: any, i: number) => (
+            <SwiperSlide key={item.vendor_products_view?.vendor_product_id || i}>
+              <div className="card product-card">
+                <div className="card-body">
+                  <div
+                    onClick={() => addToWishList(item.vendor_products_view?.vendor_product_id)}
+                    className="wishlist-btn"
+                  >
+                    <i className="ti ti-heart"></i>
+                  </div>
+                  <Link
+                    className="product-thumbnail d-block"
+                    href={`/product/${item.vendor_products_view?.vendor_product_id}`}
+                  >
+                    <ImageWithFallback
+                      src={item.vendor_products_view?.image_url}
+                      alt={item.vendor_products_view?.product_name}
+                    />
+                  </Link>
+                  <Link
+                    className="product-title"
+                    href={`/product/${item.vendor_products_view?.vendor_product_id}`}
+                  >
+                    {item.vendor_products_view?.product_name}
+                  </Link>
+                  <p className="sale-price">
+                    {formatCurrency(item.vendor_products_view?.price)}
+                  </p>
+                  <div className="product-rating">
+                    {[...Array(5)].map((_, starIndex) => (
+                      <i key={starIndex} className="ti ti-star-filled"></i>
+                    ))}
+                  </div>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleAddToCart(item.vendor_products_view)}
+                  >
+                    <i className="ti ti-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    </div>
+  );
+};
 
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
@@ -88,16 +179,6 @@ const SingleProductArea = ({ product }: any) => {
                 <i className="ti ti-heart"></i>
               </div>
             </div>
-          </div>
-          <div className="container">
-            <h6>
-              Vendor
-              <span>
-                <p>
-                  <Link href={`/vendor-shop`}>{product.vendor_name}</Link>
-                </p>
-              </span>
-            </h6>
           </div>
           {/* Removed product rating for now */}
           {/* <div className="product-ratings">
@@ -251,7 +332,6 @@ const SingleProductArea = ({ product }: any) => {
                     step="1"
                     name="quantity"
                     value={quantity}
-                    defaultValue={0}
                     readOnly
                   />
                   <div className="quantity-button-handler" onClick={increment}>
@@ -331,6 +411,9 @@ const SingleProductArea = ({ product }: any) => {
           </div>
         </div> */}
         <div className="pb-3"></div>
+
+        {/* Related Products Section */}
+        <RelatedProductsSection product={product} />
 
         {/* removed related products for now */}
         {/* <div className="related-product-wrapper bg-white py-3 mb-3">
@@ -484,7 +567,80 @@ const SingleProductArea = ({ product }: any) => {
               </button>
             </form>
           </div>
-        </div> */}
+        {/* Ratings & Reviews Section */}
+        <div className="rating-and-review-wrapper bg-white py-3 mb-3">
+          <div className="container">
+            <h6>Ratings & Reviews</h6>
+            <div className="rating-review-content">
+              <ul className="ps-0">
+                {reviews_data.map((item, i) => (
+                  <li key={i} className="single-user-review d-flex">
+                    <div className="user-thumbnail">
+                      <img src={item.img} alt="" />
+                    </div>
+                    <div className="rating-comment">
+                      <div className="rating">
+                        <i className="ti ti-star-filled"></i>
+                        <i className="ti ti-star-filled"></i>
+                        <i className="ti ti-star-filled"></i>
+                        <i className="ti ti-star-filled"></i>
+                        <i className="ti ti-star-filled"></i>
+                      </div>
+                      <p className="comment mb-0">{item.title}</p>
+                      <span className="name-date">{item.date}</span>
+                      {item.images.map((image, index) => (
+                        <a
+                          key={index}
+                          className="review-image mt-2 border rounded"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <img
+                            className="rounded-3"
+                            src={image.img}
+                            alt=""
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Submit a Review Section */}
+        <div className="ratings-submit-form bg-white py-3">
+          <div className="container">
+            <h6>Submit A Review</h6>
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="stars mb-3">
+                <input className="star-1" type="radio" name="star" id="star1" />
+                <label className="star-1" htmlFor="star1"></label>
+                <input className="star-2" type="radio" name="star" id="star2" />
+                <label className="star-2" htmlFor="star2"></label>
+                <input className="star-3" type="radio" name="star" id="star3" />
+                <label className="star-3" htmlFor="star3"></label>
+                <input className="star-4" type="radio" name="star" id="star4" />
+                <label className="star-4" htmlFor="star4"></label>
+                <input className="star-5" type="radio" name="star" id="star5" />
+                <label className="star-5" htmlFor="star5"></label>
+                <span></span>
+              </div>
+              <textarea
+                className="form-control mb-3"
+                id="comments"
+                name="comment"
+                cols={30}
+                rows={5}
+                placeholder="Write your review..."
+              ></textarea>
+              <button className="btn btn-primary" type="submit">
+                Save Review
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </>
   );

@@ -17,11 +17,12 @@ export default async function Product({
 }) {
   const { id } = await params;
   console.log(id);
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("active_flash_sale_products")
     .select()
     .eq("product_id", id)
+    .limit(1)
     .single();
 
   if (error) {

@@ -7,7 +7,7 @@ import { useGetFlashSale } from "@/queries/flashSales.queries";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-const MyTimer = dynamic(() => import("../common/Timer"), { ssr: false });
+const FlashSaleTimer = dynamic(() => import("../common/FlashSaleTimer"), { ssr: false });
 
 const FlashSale = () => {
   const { data, isLoading, isError } = useGetFlashSale();
@@ -16,6 +16,7 @@ const FlashSale = () => {
   const calculateDiscount = (normalPrice: string, flashPrice: string) => {
     const normal = parseFloat(normalPrice);
     const flash = parseFloat(flashPrice);
+    if (!normal || normal <= 0) return 0;
     return Math.round(((normal - flash) / normal) * 100);
   };
 
@@ -39,34 +40,62 @@ const FlashSale = () => {
               <i className="ti ti-bolt-lightning me-1 text-danger lni-flashing-effect"></i>
               Flash Sale
             </h6>
-            {/* <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
-              <MyTimer />
-            </ul> */}
           </div>
 
           <Swiper
             loop={false}
             slidesPerView={3}
-            spaceBetween={5}
+            spaceBetween={8}
             className="flash-sale-slide owl-carousel"
           >
             {[...Array(3)].map((_, i) => (
               <SwiperSlide key={i} className="card flash-sale-card">
                 <div className="card-body">
+                  {/* Image placeholder */}
                   <div
-                    className="skeleton"
-                    style={{
-                      width: "100%",
-                      height: "150px",
-                      backgroundColor: "#e0e0e0",
-                      borderRadius: "4px",
-                    }}
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "100%", height: "80px" }}
+                  ></div>
+                  {/* Title placeholder */}
+                  <div
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "90%", height: "12px" }}
+                  ></div>
+                  {/* Price placeholder */}
+                  <div
+                    className="skeleton-box rounded mb-2"
+                    style={{ width: "60%", height: "14px" }}
+                  ></div>
+                  {/* Progress placeholder */}
+                  <div
+                    className="skeleton-box rounded"
+                    style={{ width: "100%", height: "6px" }}
                   ></div>
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -85,10 +114,6 @@ const FlashSale = () => {
               <i className="ti ti-bolt-lightning me-1 text-danger lni-flashing-effect"></i>
               Flash Sale
             </h6>
-
-            {/* <ul className="sales-end-timer ps-0 d-flex align-items-center rtl-flex-d-row-r">
-              <MyTimer />
-            </ul> */}
 
             {/* <div className="section-heading d-flex align-items-center justify-content-between dir-rtl"> */}
             <Link className="btn btn-sm btn-light" href="/flash-sale">
@@ -117,10 +142,17 @@ const FlashSale = () => {
                 >
                   <div className="card-body">
                     <Link href={`/flash-sale-product/${item.product_id}`}>
-                      <ImageWithFallback
-                        src={item.image_url}
-                        alt={item.product_name}
-                      />
+                      <div className="flash-sale-image-container position-relative">
+                        <ImageWithFallback
+                          src={item.image_url}
+                          alt={item.product_name}
+                        />
+                        {item.end_time && (
+                          <ul className="flash-sale-timer d-flex align-items-center">
+                            <FlashSaleTimer endTime={item.end_time} />
+                          </ul>
+                        )}
+                      </div>
                       <span className="product-title">{item.product_name}</span>
                       <p className="sale-price">
                         {formatCurrency(item.flash_price)}

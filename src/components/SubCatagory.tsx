@@ -44,7 +44,7 @@ const SubCatagory = () => {
 												className="product-thumbnail d-block"
 												href="/single-product"
 											>
-												<img className="mb-2" src={item.img} alt="" />
+												<img className="mb-2" src={item.img} alt="" style={{ borderRadius: "12px" }} />
 												{i === 0 || i === 3 ? (
 													<ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
 														<MyTimer />
@@ -92,7 +92,7 @@ const SubCatagory = () => {
 												className="product-thumbnail d-block"
 												href="/single-product"
 											>
-												<img className="mb-2" src={item.img} alt="" />
+												<img className="mb-2" src={item.img} alt="" style={{ borderRadius: "12px" }} />
 												{i === 0 || i === 3 ? (
 													<ul className="offer-countdown-timer d-flex align-items-center shadow-sm">
 														<MyTimer />

@@ -13,7 +13,7 @@ export default async function ServiceOrderPage({
 }) {
   const { id } = await params;
   console.log(id);
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("service_orders_view")
     .select()

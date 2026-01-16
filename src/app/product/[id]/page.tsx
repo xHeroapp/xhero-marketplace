@@ -16,7 +16,7 @@ export default async function Product({
 }) {
   const { id } = await params;
   console.log(id);
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("vendor_products_view")
     .select()
