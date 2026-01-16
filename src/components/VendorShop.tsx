@@ -2,7 +2,7 @@
 import top_product from "@/data/top_product";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +16,8 @@ import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import { useAddToCart } from "@/hooks/useAddToCart";
+import { useAddToWishList } from "@/hooks/useAddToWishList";
 
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
@@ -24,6 +26,14 @@ const VendorShop = ({ initialData }) => {
     require("bootstrap/dist/js/bootstrap");
   }
   const router = useRouter();
+
+  // Review form state
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+
+  // Cart and wishlist hooks
+  const { handleAddToCart } = useAddToCart();
+  const { addToWishList } = useAddToWishList();
 
   const Filters = useFilters();
 
@@ -58,6 +68,15 @@ const VendorShop = ({ initialData }) => {
     return <PageSuspense />;
   }
 
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement review submission logic
+    console.log({ rating: selectedRating, review: reviewText });
+    // Reset form
+    setSelectedRating(0);
+    setReviewText("");
+  };
+
   return (
     <>
       <HeaderTwo links="shop-grid" title="Vendors" />
@@ -65,10 +84,9 @@ const VendorShop = ({ initialData }) => {
         <div
           className="vendor-details-wrap bg-img bg-overlay py-4"
           style={{
-            backgroundImage: `url(${
-              VendorQuery.data.banner_url ||
+            backgroundImage: `url(${VendorQuery.data.banner_url ||
               "/assets/img/vendor/vendor-banner.png"
-            })`,
+              })`,
           }}
         >
           <div className="container">
@@ -90,26 +108,17 @@ const VendorShop = ({ initialData }) => {
                   {VendorQuery.data.vendor_name}
                 </h6>
                 <p className="mb-1 text-white">
-                  <i className="ti ti-mail me-1"></i>
-                  {VendorQuery.data.email}
-                </p>
-                <p className="mb-1 text-white">
-                  <i className="ti ti-phone me-1"></i>
-                  {VendorQuery.data.phone}
-                </p>
-                <p className="mb-1 text-white">
                   <i className="ti ti-map-pin me-1"></i>
-                  {VendorQuery.data.address}
+                  {VendorQuery.data.address || "Location not specified"}
                 </p>
-                {/* removed vendor rating for now */}
-                {/* <div className="ratings lh-1">
+                <div className="ratings lh-1">
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <i className="ti ti-star-filled"></i>
                   <span className="text-white">(99% Positive Seller)</span>
-                </div> */}
+                </div>
               </div>
             </div>
 
@@ -139,7 +148,6 @@ const VendorShop = ({ initialData }) => {
         <div className="vendor-tabs">
           <div className="container">
             <ul className="nav nav-tabs mb-3" id="vendorTab" role="tablist">
-              {/* removed About for now */}
               <li className="nav-item" role="presentation">
                 <button
                   className="nav-link"
@@ -168,8 +176,7 @@ const VendorShop = ({ initialData }) => {
                   Products
                 </button>
               </li>
-              {/* removed reviews for now */}
-              {/* <li className="nav-item" role="presentation">
+              <li className="nav-item" role="presentation">
                 <button
                   className="nav-link"
                   id="reviews-tab"
@@ -182,13 +189,13 @@ const VendorShop = ({ initialData }) => {
                 >
                   Reviews
                 </button>
-              </li> */}
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="tab-content" id="vendorTabContent">
-          {/* removed about tab content for now */}
+          {/* About Tab */}
           <div
             className="tab-pane fade"
             id="home"
@@ -251,6 +258,8 @@ const VendorShop = ({ initialData }) => {
               </div>
             </div>
           </div>
+
+          {/* Products Tab */}
           <div
             className="tab-pane fade show active"
             id="products"
@@ -260,38 +269,34 @@ const VendorShop = ({ initialData }) => {
             <div className="container">
               {/* Loading State */}
               {VendorProductsQuery.isLoading && (
-                <div className="row g-2 rtl-flex-d-row-r">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="col-6 col-md-4 col-lg-3">
-                      <div className="card product-card">
+                <div className="row g-2">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="col-6 col-md-4">
+                      <div className="card product-card h-100">
                         <div className="card-body">
-                          <div
-                            className="product-thumbnail d-block bg-light rounded mb-2"
-                            style={{ height: "200px" }}
-                          >
-                            <div className="d-flex align-items-center justify-content-center h-100">
-                              <div
-                                className="spinner-border text-primary"
-                                role="status"
-                              >
-                                <span className="visually-hidden">
-                                  Loading...
-                                </span>
-                              </div>
+                          <div className="skeleton-shimmer">
+                            <div
+                              className="skeleton-box rounded mb-3"
+                              style={{ height: "140px", width: "100%" }}
+                            ></div>
+                            <div
+                              className="skeleton-box rounded mb-2"
+                              style={{ height: "16px", width: "80%" }}
+                            ></div>
+                            <div
+                              className="skeleton-box rounded mb-2"
+                              style={{ height: "20px", width: "50%" }}
+                            ></div>
+                            <div className="d-flex align-items-center gap-1">
+                              {[...Array(5)].map((_, j) => (
+                                <div
+                                  key={j}
+                                  className="skeleton-box rounded-circle"
+                                  style={{ height: "10px", width: "10px" }}
+                                ></div>
+                              ))}
                             </div>
                           </div>
-                          <div
-                            className="bg-light rounded mb-2"
-                            style={{ height: "20px" }}
-                          ></div>
-                          <div
-                            className="bg-light rounded mb-2"
-                            style={{ height: "16px", width: "60%" }}
-                          ></div>
-                          <div
-                            className="bg-light rounded"
-                            style={{ height: "36px" }}
-                          ></div>
                         </div>
                       </div>
                     </div>
@@ -354,15 +359,35 @@ const VendorShop = ({ initialData }) => {
                   </div>
                 )}
 
-              {/* Products Grid */}
+              {/* Products Grid - Matching Top Products Structure */}
               {!VendorProductsQuery.isLoading &&
                 !VendorProductsQuery.isError &&
                 vendors.length > 0 && (
-                  <div className="row g-2 rtl-flex-d-row-r">
+                  <div className="row g-2">
                     {vendors.map((item, i) => (
-                      <div key={i} className="col-6 col-md-4 col-lg-3">
-                        <div className="card product-card">
-                          <div className="card-body">
+                      <div key={i} className="col-6 col-md-4">
+                        <div className="card product-card h-100">
+                          <div className="card-body d-flex flex-column position-relative">
+                            {/* Badge for first items */}
+                            {(i === 0 || i === 1) && (
+                              <span
+                                className={`badge rounded-pill ${i === 0 ? "badge-success" : "badge-warning"
+                                  }`}
+                              >
+                                {i === 0 ? "New" : "Sale"}
+                              </span>
+                            )}
+
+                            {/* Wishlist Button */}
+                            <div
+                              onClick={() =>
+                                addToWishList(item.vendor_product_id)
+                              }
+                              className="wishlist-btn"
+                            >
+                              <i className="ti ti-heart"></i>
+                            </div>
+
                             <Link
                               className="product-thumbnail d-block"
                               href={`/product/${item.vendor_product_id}`}
@@ -380,25 +405,29 @@ const VendorShop = ({ initialData }) => {
                               {item.product_name}
                             </Link>
 
-                            <p className="sale-price mb-0">
-                              {formatCurrency(item.price)}
-                            </p>
+                            <div className="mt-auto">
+                              <p className="sale-price mb-1">
+                                {formatCurrency(item.price)}
+                              </p>
 
-                            <button
-                              className="btn btn-primary btn-add-cart mt-2"
-                              // onClick={() => handleAddToCart(item)}
-                              disabled={VendorProductsQuery.isFetching}
-                            >
-                              {VendorProductsQuery.isFetching ? (
-                                <span
-                                  className="spinner-border spinner-border-sm"
-                                  role="status"
-                                  aria-hidden="true"
-                                ></span>
-                              ) : (
+                              {/* Star Ratings */}
+                              <div className="product-rating mb-2">
+                                {[...Array(5)].map((_, starIndex) => (
+                                  <i
+                                    key={starIndex}
+                                    className="ti ti-star-filled"
+                                  ></i>
+                                ))}
+                              </div>
+
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() => handleAddToCart(item)}
+                                disabled={VendorProductsQuery.isFetching}
+                              >
                                 <i className="ti ti-plus"></i>
-                              )}
-                            </button>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -420,8 +449,8 @@ const VendorShop = ({ initialData }) => {
             </div>
           </div>
 
-          {/* Removed reviews tab content for now */}
-          {/* <div
+          {/* Reviews Tab */}
+          <div
             className="tab-pane fade"
             id="reviews"
             role="tabpanel"
@@ -516,7 +545,7 @@ const VendorShop = ({ initialData }) => {
                           <i className="ti ti-star-filled"></i>
                         </div>
                         <p className="comment mb-0">
-                          What a nice product it is. I am looking it is.
+                          What a nice product it is. I am looking for it.
                         </p>
                         <span className="name-date">
                           Designing World 28 Nov 2024
@@ -531,43 +560,24 @@ const VendorShop = ({ initialData }) => {
             <div className="ratings-submit-form bg-white py-3 dir-rtl">
               <div className="container">
                 <h6>Submit A Review</h6>
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={handleReviewSubmit}>
                   <div className="stars mb-3">
-                    <input
-                      className="star-1"
-                      type="radio"
-                      name="star"
-                      id="star1"
-                    />
-                    <label className="star-1" htmlFor="star1"></label>
-                    <input
-                      className="star-2"
-                      type="radio"
-                      name="star"
-                      id="star2"
-                    />
-                    <label className="star-2" htmlFor="star2"></label>
-                    <input
-                      className="star-3"
-                      type="radio"
-                      name="star"
-                      id="star3"
-                    />
-                    <label className="star-3" htmlFor="star3"></label>
-                    <input
-                      className="star-4"
-                      type="radio"
-                      name="star"
-                      id="star4"
-                    />
-                    <label className="star-4" htmlFor="star4"></label>
-                    <input
-                      className="star-5"
-                      type="radio"
-                      name="star"
-                      id="star5"
-                    />
-                    <label className="star-5" htmlFor="star5"></label>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <React.Fragment key={star}>
+                        <input
+                          className={`star-${star}`}
+                          type="radio"
+                          name="star"
+                          id={`star${star}`}
+                          checked={selectedRating === star}
+                          onChange={() => setSelectedRating(star)}
+                        />
+                        <label
+                          className={`star-${star}`}
+                          htmlFor={`star${star}`}
+                        ></label>
+                      </React.Fragment>
+                    ))}
                     <span></span>
                   </div>
                   <textarea
@@ -578,6 +588,8 @@ const VendorShop = ({ initialData }) => {
                     rows={10}
                     data-max-length="200"
                     placeholder="Write your review..."
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
                   ></textarea>
                   <button className="btn btn-primary" type="submit">
                     Save Review
@@ -585,15 +597,40 @@ const VendorShop = ({ initialData }) => {
                 </form>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
 
       <div className="internet-connection-status" id="internetStatus"></div>
 
       <Footer />
+
+      <style jsx>{`
+        .skeleton-shimmer {
+          position: relative;
+        }
+        .skeleton-box {
+          background: linear-gradient(
+            90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%
+          );
+          background-size: 200% 100%;
+          animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+          0% {
+            background-position: 200% 0;
+          }
+          100% {
+            background-position: -200% 0;
+          }
+        }
+      `}</style>
     </>
   );
 };
 
 export default VendorShop;
+

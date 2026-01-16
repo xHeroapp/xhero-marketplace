@@ -16,7 +16,7 @@ export const useGetUserGifts = (
       const { data, error } = await supabase
         .from("users_reward_recognitions_view")
         .select("*", { count: "exact" })
-        .eq("recipient_id", recipient_id)
+        // .eq("recipient_id", recipient_id)
         .order("created_at", { ascending: false })
         .range(from, to);
 

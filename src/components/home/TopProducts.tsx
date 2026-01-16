@@ -34,19 +34,37 @@ const TopProducts = () => {
               View all<i className="ms-1 ti ti-arrow-right"></i>
             </Link>
           </div>
-          <div className="row g-3">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="col-6 col-md-4 col-lg-3">
-                <div className="card product-card">
+          <div className="row g-2">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="col-6 col-md-4">
+                <div className="card product-card h-100">
                   <div className="card-body">
-                    <div className="placeholder-glow">
+                    <div className="skeleton-shimmer">
+                      {/* Image placeholder */}
                       <div
-                        className="product-thumbnail d-block bg-secondary rounded mb-2"
-                        style={{ height: "150px" }}
+                        className="skeleton-box rounded mb-3"
+                        style={{ height: "140px", width: "100%" }}
                       ></div>
-                      <span className="placeholder col-8 d-block mb-2"></span>
-                      <span className="placeholder col-6 d-block mb-2"></span>
-                      <span className="placeholder col-12 btn btn-primary"></span>
+                      {/* Title placeholder */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "16px", width: "80%" }}
+                      ></div>
+                      {/* Price placeholder */}
+                      <div
+                        className="skeleton-box rounded mb-2"
+                        style={{ height: "20px", width: "50%" }}
+                      ></div>
+                      {/* Rating placeholder */}
+                      <div className="d-flex align-items-center gap-1">
+                        {[...Array(5)].map((_, j) => (
+                          <div
+                            key={j}
+                            className="skeleton-box rounded-circle"
+                            style={{ height: "10px", width: "10px" }}
+                          ></div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -54,6 +72,29 @@ const TopProducts = () => {
             ))}
           </div>
         </div>
+        <style jsx>{`
+          .skeleton-shimmer {
+            position: relative;
+          }
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -132,12 +173,32 @@ const TopProducts = () => {
               View all<i className="ms-1 ti ti-arrow-right"></i>
             </Link>
           </div>
-          <div className="row g-3">
+          <div className="row g-2">
             {GetTopProducts.data &&
               GetTopProducts.data.map((item, i) => (
-                <div key={i} className="col-6 col-md-4 col-lg-3">
-                  <div className="card product-card">
-                    <div className="card-body">
+                <div key={i} className="col-6 col-md-4">
+                  <div className="card product-card h-100">
+                    <div className="card-body d-flex flex-column position-relative">
+                      {(i === 0 || i === 1) && (
+                        <span
+                          className={`badge rounded-pill ${i === 0 ? "badge-success" : "badge-warning"
+                            }`}
+                        >
+                          {i === 0 ? "New" : "Sale"}
+                        </span>
+                      )}
+
+                      <div
+                        onClick={() =>
+                          addToWishList(
+                            item.vendor_products_view.vendor_product_id
+                          )
+                        }
+                        className="wishlist-btn"
+                      >
+                        <i className="ti ti-heart"></i>
+                      </div>
+
                       <Link
                         className="product-thumbnail d-block"
                         href={`/product/${item.vendor_products_view.vendor_product_id}`}
@@ -155,30 +216,30 @@ const TopProducts = () => {
                         {item.vendor_products_view.product_name}
                       </Link>
 
-                      <div
-                        onClick={() =>
-                          addToWishList(
-                            item.vendor_products_view.vendor_product_id
-                          )
-                        }
-                        className="wishlist-btn"
-                      >
-                        <i className="ti ti-heart"></i>
+                      <div className="mt-auto">
+                        <p className="sale-price mb-1">
+                          {formatCurrency(item.vendor_products_view.price)}
+                        </p>
+
+                        <div className="product-rating mb-2">
+                          {[...Array(5)].map((_, starIndex) => (
+                            <i
+                              key={starIndex}
+                              className="ti ti-star-filled"
+                            ></i>
+                          ))}
+                        </div>
+
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() =>
+                            handleAddToCart(item.vendor_products_view)
+                          }
+                          disabled={GetTopProducts.isFetching}
+                        >
+                          <i className="ti ti-plus"></i>
+                        </button>
                       </div>
-
-                      <p className="sale-price mb-0">
-                        {formatCurrency(item.vendor_products_view.price)}
-                      </p>
-
-                      <button
-                        className="btn btn-primary btn-add-cart mt-2"
-                        onClick={() =>
-                          handleAddToCart(item.vendor_products_view)
-                        }
-                        disabled={GetTopProducts.isFetching}
-                      >
-                        <i className="ti ti-plus"></i>
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -186,6 +247,8 @@ const TopProducts = () => {
           </div>
         </div>
       </div>
+
+
     </>
   );
 };

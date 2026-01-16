@@ -19,3 +19,19 @@ export function getOrderStatusTitle(status: string): string {
       return "Unknown Status";
   }
 }
+
+export function getServiceOrderStatusTitle(status: string): string {
+  switch (status) {
+    case "pending":
+      return "Order Placed";
+
+    case "confirmed":
+      return "Service Confirmed";
+
+    case "completed":
+      return "Service Completed";
+
+    default:
+      return "Unknown Status";
+  }
+}

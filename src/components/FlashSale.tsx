@@ -7,6 +7,10 @@ import React, { useEffect, useRef } from "react";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 
+import dynamic from "next/dynamic";
+
+const FlashSaleTimer = dynamic(() => import("./common/FlashSaleTimer"), { ssr: false });
+
 const FlashSale = () => {
   const {
     data,
@@ -42,6 +46,7 @@ const FlashSale = () => {
   const calculateDiscount = (normalPrice: string, flashPrice: string) => {
     const normal = parseFloat(normalPrice);
     const flash = parseFloat(flashPrice);
+    if (!normal || normal <= 0) return 0;
     return Math.round(((normal - flash) / normal) * 100);
   };
 
@@ -137,34 +142,48 @@ const FlashSale = () => {
 
                 return (
                   <div key={item.flash_sale_item_id} className="col-4">
-                    <div className="card flash-sale-card">
+                    <div className="card flash-sale-card h-100">
                       <div className="card-body">
                         <Link href={`/flash-sale-product/${item.product_id}`}>
-                          <ImageWithFallback
-                            src={item.image_url}
-                            alt={item.product_name}
-                          />
-                          <span className="product-title">
+                          <div
+                            className="flash-sale-image-container position-relative mb-2"
+                            style={{ height: "100px", overflow: "hidden" }}
+                          >
+                            <ImageWithFallback
+                              src={item.image_url}
+                              alt={item.product_name}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
+                            {item.end_time && (
+                              <ul className="flash-sale-timer d-flex align-items-center">
+                                <FlashSaleTimer endTime={item.end_time} />
+                              </ul>
+                            )}
+                          </div>
+                          <span className="product-title d-block mb-1">
                             {item.product_name}
                           </span>
-                          <p className="sale-price">
+                          <p className="sale-price mb-2">
                             {formatCurrency(item.flash_price)}
-                            <span className="real-price">
-                              {formatCurrency(item.normal_price)}
-                            </span>
                           </p>
-                          <span className="progress-title">
+                          <span className="progress-title d-block mb-1">
                             {discount}% OFF
                           </span>
 
                           <div className="progress">
+                            {/* Progress bar represents stock left: (current / total) * 100 */}
                             <div
                               className={`progress-bar ${progressColor}`}
                               role="progressbar"
-                              style={{ width: `${discount}%` }}
-                              aria-valuenow={discount}
+                              style={{ width: `${(item.flash_stock / item.total_quantity) * 100}%` }}
+                              aria-valuenow={(item.flash_stock / item.total_quantity) * 100}
                               aria-valuemin={0}
                               aria-valuemax={100}
+                              title={`${item.flash_stock} items left`}
                             ></div>
                           </div>
                         </Link>

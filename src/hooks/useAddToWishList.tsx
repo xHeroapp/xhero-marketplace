@@ -12,7 +12,7 @@ export const useAddToWishList = () => {
   function addToWishList(vendor_product_id) {
     try {
       const promise = AddToWishListQuery.mutateAsync({
-        user_id: user?.id,
+        user_id: user?.user_id,
         vendor_product_id,
       });
 

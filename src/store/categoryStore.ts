@@ -27,7 +27,8 @@ export const useCategoryStore = create<CategoryStore>()(
       fetched: false,
 
       fetchCategories: async () => {
-        if (get().fetched) return;
+        // Removed check for fetched to ensure we always get latest
+        // if (get().fetched) return;
 
         set({ loading: true });
 
@@ -57,7 +58,7 @@ export const useCategoryStore = create<CategoryStore>()(
       },
     }),
     {
-      name: "xhero-category-store",
+      name: "xhero-category-store-v2",
     }
   )
 );

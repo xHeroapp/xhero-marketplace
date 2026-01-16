@@ -17,7 +17,7 @@ import { useAddToCart } from "@/hooks/useAddToCart";
 import { ProductsGrid } from "./ProductsGrid";
 
 const ShopGrid = () => {
-  const selectHandler = (e: any) => {};
+  const selectHandler = (e: any) => { };
 
   // handle add to cart
   const { handleAddToCart } = useAddToCart();
@@ -42,37 +42,63 @@ const ShopGrid = () => {
         <div className="page-content-wrapper">
           <div className="py-3">
             <div className="container">
-              <div className="row g-1 align-items-center rtl-flex-d-row-r">
-                <div className="col-8" style={{ marginTop: "-15px" }}>
-                  <div className="placeholder-glow d-flex gap-2">
-                    {[...Array(3)].map((_, i) => (
-                      <span
-                        key={i}
-                        className="placeholder col-3 rounded"
-                      ></span>
-                    ))}
-                  </div>
-                </div>
-                <div className="col-4">
-                  <div className="placeholder-glow">
-                    <span className="placeholder col-12 rounded"></span>
-                  </div>
+              {/* Search Input */}
+              <div className="mb-3 mt-2">
+                <div className="form-group position-relative">
+                  <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search products..."
+                    disabled
+                    value=""
+                    readOnly
+                    style={{ paddingLeft: '40px' }}
+                  />
                 </div>
               </div>
-              <div className="mb-3"></div>
-              <div className="row g-2 rtl-flex-d-row-r">
+
+              {/* Category filter skeleton */}
+              <div className="d-flex gap-2 mb-3">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="skeleton-box rounded-pill"
+                    style={{ width: "80px", height: "32px" }}
+                  ></div>
+                ))}
+              </div>
+
+              {/* Product cards skeleton */}
+              <div className="row g-2">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="col-6 col-md-4">
-                    <div className="card product-card">
+                    <div className="card product-card h-100">
                       <div className="card-body">
-                        <div className="placeholder-glow">
-                          <div
-                            className="bg-secondary rounded mb-3"
-                            style={{ height: "200px" }}
-                          ></div>
-                          <span className="placeholder col-10 d-block mb-2"></span>
-                          <span className="placeholder col-6 d-block mb-2"></span>
-                          <span className="placeholder col-12 btn btn-primary"></span>
+                        {/* Image placeholder */}
+                        <div
+                          className="skeleton-box rounded mb-3"
+                          style={{ height: "140px", width: "100%" }}
+                        ></div>
+                        {/* Title placeholder */}
+                        <div
+                          className="skeleton-box rounded mb-2"
+                          style={{ height: "16px", width: "85%" }}
+                        ></div>
+                        {/* Price placeholder */}
+                        <div
+                          className="skeleton-box rounded mb-2"
+                          style={{ height: "20px", width: "50%" }}
+                        ></div>
+                        {/* Rating placeholder */}
+                        <div className="d-flex align-items-center gap-1">
+                          {[...Array(5)].map((_, j) => (
+                            <div
+                              key={j}
+                              className="skeleton-box rounded-circle"
+                              style={{ height: "10px", width: "10px" }}
+                            ></div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -82,6 +108,27 @@ const ShopGrid = () => {
             </div>
           </div>
         </div>
+
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
 
         <Footer />
         <ToastContainer position="top-right" />
@@ -136,8 +183,23 @@ const ShopGrid = () => {
         <div className="page-content-wrapper ">
           <div className="py-3 ">
             <div className="container">
+              {/* Search Input */}
+              <div className="mb-3 mt-2">
+                <div className="form-group position-relative">
+                  <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search products..."
+                    value={Filters.searchTerm || ""}
+                    onChange={Filters.handleSearchChange}
+                    style={{ paddingLeft: '40px' }}
+                  />
+                </div>
+              </div>
+
               <div className="row g-1 align-items-center rtl-flex-d-row-r mb-3">
-                <div className="" style={{ marginTop: "-15px" }}>
+                <div className="">
                   <Swiper
                     loop={true}
                     slidesPerView={2.5}
@@ -211,8 +273,23 @@ const ShopGrid = () => {
       <div className="page-content-wrapper">
         <div className="py-3">
           <div className="container">
+            {/* Search Input */}
+            <div className="mb-3 mt-2">
+              <div className="form-group position-relative">
+                <i className="ti ti-search position-absolute" style={{ left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#747794' }}></i>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search products..."
+                  value={Filters.searchTerm || ""}
+                  onChange={Filters.handleSearchChange}
+                  style={{ paddingLeft: '40px' }}
+                />
+              </div>
+            </div>
+
             <div className="row g-1 align-items-center rtl-flex-d-row-r">
-              <div className="" style={{ marginTop: "-15px" }}>
+              <div className="">
                 <Swiper
                   loop={true}
                   slidesPerView={2.5}

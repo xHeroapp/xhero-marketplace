@@ -1,10 +1,8 @@
 "use client";
-import { FLASH_SALE_ORDER_TYPE } from "@/constant/constant";
-import Footer from "@/layouts/Footer";
-import HeaderTwo from "@/layouts/HeaderTwo";
+import { FLASH_SALE_ORDER_TYPE, SERVICE_ORDER_TYPE } from "@/constant/constant";
 import useCheckoutStore from "@/store/checkoutStore";
 import useFlashSaleStore from "@/store/flashSaleStore";
-import Link from "next/link";
+import useServiceStore from "@/store/serviceStore";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
@@ -12,8 +10,15 @@ const CheckoutPayment = () => {
   const searchParams = useSearchParams();
   const order_type = searchParams.get("order_type");
 
-  const { setPaymentMethod } = useCheckoutStore();
-  const { setPaymentMethod: setFlashSalePaymentMethod } = useFlashSaleStore();
+  const setPaymentMethod = useCheckoutStore(
+    (state: any) => state.setPaymentMethod
+  );
+  const setFlashSalePaymentMethod = useFlashSaleStore(
+    (state: any) => state.setPaymentMethod
+  );
+  const setServicePaymentMethod = useServiceStore(
+    (state) => state.setPaymentMethod
+  );
   const router = useRouter();
 
   const handlePaymentMethod = (paymentMethod: string) => {
@@ -23,6 +28,12 @@ const CheckoutPayment = () => {
       paymentMethod == "wallet"
         ? router.push("checkout-flash-sale-wallet")
         : router.push("checkout-flash-sale-bank");
+    } else if (order_type == SERVICE_ORDER_TYPE) {
+      setServicePaymentMethod(paymentMethod as "wallet" | "bank_transfer");
+
+      paymentMethod == "wallet"
+        ? router.push("checkout-service-wallet")
+        : router.push("checkout-service-bank");
     } else {
       setPaymentMethod(paymentMethod);
 
@@ -33,7 +44,21 @@ const CheckoutPayment = () => {
   };
   return (
     <>
-      <HeaderTwo links="checkout" title="Choose Payment Method" />
+      {/* Minimal header without hamburger menu - keeps users focused on payment selection */}
+      <div className="header-area" id="headerArea">
+        <div className="container h-100 d-flex align-items-center justify-content-between rtl-flex-d-row-r">
+          <div className="back-button me-2">
+            <div onClick={() => router.back()}>
+              <i className="ti ti-arrow-left"></i>
+            </div>
+          </div>
+          <div className="page-heading">
+            <h6 className="mb-0">Choose Payment Method</h6>
+          </div>
+          {/* Hamburger menu removed to improve user journey */}
+          <div style={{ width: '24px' }}></div>
+        </div>
+      </div>
 
       <div className="page-content-wrapper">
         <div className="container">
@@ -89,8 +114,6 @@ const CheckoutPayment = () => {
       </div>
 
       <div className="internet-connection-status" id="internetStatus"></div>
-
-      <Footer />
     </>
   );
 };

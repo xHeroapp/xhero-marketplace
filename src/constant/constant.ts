@@ -20,8 +20,18 @@ export const ORDER_FLOW = [
   "delivered",
 ] as const;
 
+// used for the service order tracking
+export const SERVICE_ORDER_FLOW = [
+  "pending",
+  "confirmed",
+  "completed",
+] as const;
+
 // Flash sale order type
 export const FLASH_SALE_ORDER_TYPE = "flash_sale";
+
+// Service order type
+export const SERVICE_ORDER_TYPE = "service";
 
 // Bank Details
 export const BANK_NAME = "Example Bank Ltd";

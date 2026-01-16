@@ -33,15 +33,47 @@ const ProductCatagories = () => {
     return (
       <div className="product-catagories-wrapper py-3 px-3">
         <div className="container">
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: "120px" }}
-          >
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
+          <div className="row g-2">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="col-3">
+                <div className="card h-100">
+                  <div className="card-body d-flex flex-column align-items-center py-3">
+                    {/* Icon placeholder */}
+                    <div
+                      className="skeleton-box rounded-circle mb-2"
+                      style={{ width: "50px", height: "50px" }}
+                    ></div>
+                    {/* Text placeholder */}
+                    <div
+                      className="skeleton-box rounded"
+                      style={{ width: "60px", height: "12px" }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+        <style jsx>{`
+          .skeleton-box {
+            background: linear-gradient(
+              90deg,
+              #f0f0f0 25%,
+              #e0e0e0 50%,
+              #f0f0f0 75%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+          }
+          @keyframes shimmer {
+            0% {
+              background-position: 200% 0;
+            }
+            100% {
+              background-position: -200% 0;
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -103,20 +135,16 @@ const ProductCatagories = () => {
   // Success state with data
   return (
     <>
-      <div className="product-catagories-wrapper py-3 px-3">
+      <div className="product-catagories-wrapper py-3">
         <div className="container">
-          <div className="categories-scroll-container">
-            <div className="categories-scroll-wrapper">
-              {sortedCategories.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setActive(item.id)}
-                  className="category-item-wrapper"
-                >
+          <div className="row g-2 rtl-flex-d-row-r">
+            {sortedCategories.map((item) => (
+              <div key={item.id} className="col-3">
+                <div className="category-item-wrapper h-100">
                   <div
-                    className={`card catagory-card ${
-                      active === item.id ? "active" : ""
-                    }`}
+                    onClick={() => setActive(item.id)}
+                    className={`card catagory-card ${active === item.id ? "active" : ""
+                      } h-100`}
                   >
                     <div className="card-body px-2">
                       <Link
@@ -128,38 +156,19 @@ const ProductCatagories = () => {
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       <style jsx>{`
-        .categories-scroll-container {
-          overflow-x: auto;
-          overflow-y: hidden;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none; /* Firefox */
-          -ms-overflow-style: none; /* IE and Edge */
-        }
-
-        .categories-scroll-container::-webkit-scrollbar {
-          display: none; /* Chrome, Safari and Opera */
-        }
-
-        .categories-scroll-wrapper {
-          display: flex;
-          gap: 0.5rem;
-          padding-bottom: 0.5rem;
-        }
-
         .category-item-wrapper {
-          flex: 0 0 auto;
-          width: 100px;
+          /* No specific width needed, flexible by col class */
         }
 
         .category-item-wrapper .catagory-card {
-          height: 100%;
+           /* h-100 handles height */
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
@@ -192,7 +201,10 @@ const ProductCatagories = () => {
           line-height: 1.2;
           display: block;
           word-wrap: break-word;
+          word-break: break-word;
+          overflow-wrap: break-word;
           max-width: 100%;
+          white-space: normal;
         }
       `}</style>
     </>

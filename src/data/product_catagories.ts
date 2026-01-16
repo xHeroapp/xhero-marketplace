@@ -1,7 +1,7 @@
 const product_catagories = [
 	{
 		img: "/assets/img/core-img/woman-clothes.png",
-		title: "Womens Fashion",
+		title: "Fashion",
 	},
 	{
 		img: "/assets/img/core-img/grocery.png",
@@ -9,7 +9,7 @@ const product_catagories = [
 	},
 	{
 		img: "/assets/img/core-img/shampoo.png",
-		title: "Health & Beauty",
+		title: "Beauty & Wellness",
 	},
 	{
 		img: "/assets/img/core-img/rowboat.png",

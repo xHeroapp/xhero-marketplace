@@ -15,6 +15,7 @@ import {
 import { ParsedOrder, useGetUserOrders } from "@/queries/orders.queries";
 import { useAuthStore } from "@/store/authStore";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
+import Services from "./Services";
 
 interface OrderCardProps {
   order: ParsedOrder;
@@ -122,7 +123,7 @@ const Orders: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserOrders("f65c1a92-4dda-4fb6-bf2b-b71ad05561d5");
+  } = useGetUserOrders(user?.id ?? "");
 
   // Debug log
   useEffect(() => {
@@ -165,44 +166,44 @@ const Orders: React.FC = () => {
 
       <div className="page-content-wrapper py-3">
         <div className="container">
-          {/* Tabs */}
-          {/* <div className="order-tabs mb-3">
+          {/* Main Tabs for Products and Services */}
+          <div className="order-tabs mb-3">
             <ul className="nav nav-tabs border-0" role="tablist">
               <li className="nav-item flex-fill" role="presentation">
                 <button
                   className="nav-link active w-100 text-center"
                   data-bs-toggle="tab"
-                  data-bs-target="#ongoing"
+                  data-bs-target="#products"
                   type="button"
                   role="tab"
-                  aria-controls="ongoing"
+                  aria-controls="products"
                   aria-selected="true"
                 >
-                  ONGOING/DELIVERED
+                  Products
                 </button>
               </li>
               <li className="nav-item flex-fill" role="presentation">
                 <button
                   className="nav-link w-100 text-center"
                   data-bs-toggle="tab"
-                  data-bs-target="#cancelled"
+                  data-bs-target="#services"
                   type="button"
                   role="tab"
-                  aria-controls="cancelled"
+                  aria-controls="services"
                   aria-selected="false"
                 >
-                  CANCELLED/RETURNED
+                  Services
                 </button>
               </li>
             </ul>
-          </div> */}
+          </div>
 
           {/* Tab Content */}
           <div className="tab-content">
-            {/* Ongoing/Delivered Tab */}
+            {/* Products Tab */}
             <div
               className="tab-pane fade show active"
-              id="ongoing"
+              id="products"
               role="tabpanel"
             >
               {isLoading ? (
@@ -281,37 +282,9 @@ const Orders: React.FC = () => {
               )}
             </div>
 
-            {/* Cancelled/Returned Tab */}
-            <div className="tab-pane fade" id="cancelled" role="tabpanel">
-              {allOrders.filter((order) =>
-                ["cancelled", "refunded", "failed"].includes(
-                  order.status.toLowerCase()
-                )
-              ).length === 0 ? (
-                <div className="card">
-                  <div className="card-body text-center py-5">
-                    <i className="ti ti-circle-check fs-1 text-success mb-3"></i>
-                    <h5>No Cancelled Orders</h5>
-                    <p className="text-muted">
-                      You don't have any cancelled or returned orders.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                allOrders
-                  .filter((order) =>
-                    ["cancelled", "refunded", "failed"].includes(
-                      order.status.toLowerCase()
-                    )
-                  )
-                  .map((order) => (
-                    <OrderCard
-                      key={order.order_id}
-                      order={order}
-                      onClick={() => handleOrderClick(order.order_id)}
-                    />
-                  ))
-              )}
+            {/* Services Tab */}
+            <div className="tab-pane fade" id="services" role="tabpanel">
+              <Services />
             </div>
           </div>
         </div>

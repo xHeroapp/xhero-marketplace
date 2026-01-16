@@ -88,7 +88,7 @@ const CheckoutFlashSale = () => {
                       alt={item.product_name}
                       width={60}
                       height={60}
-                      className="rounded me-3"
+                      className="me-3"
                     />
                     <div className="flex-grow-1">
                       <p className="mb-1 fw-medium">{item.product_name}</p>
