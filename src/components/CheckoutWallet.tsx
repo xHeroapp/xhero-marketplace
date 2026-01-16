@@ -39,11 +39,13 @@ const CheckoutWallet = () => {
     setIsLoading,
     setIsSuccess,
     payment_method: "wallet",
-    redirect_link: `/payment-success?vendor_id=${vendorCart && vendorCart.vendor.vendor_id
-      }`,
+    redirect_link: `/payment-success?vendor_id=${
+      vendorCart && vendorCart.vendor.vendor_id
+    }`,
   });
 
-  const hasSufficientBalance = Number(user?.points_balance) >= orderAmount.total;
+  const hasSufficientBalance =
+    Number(user?.points_balance) >= orderAmount.total;
   const balanceAfterPayment = (user?.points_balance || 0) - orderAmount.total;
 
   if (!ready) return null;
@@ -55,7 +57,11 @@ const CheckoutWallet = () => {
       {/* Minimal Header - No hamburger menu for focused checkout experience */}
       <div className="wallet-header">
         <div className="header-container">
-          <button className="back-btn" onClick={() => router.back()} aria-label="Go back">
+          <button
+            className="back-btn"
+            onClick={() => router.back()}
+            aria-label="Go back"
+          >
             <i className="ti ti-arrow-left"></i>
           </button>
           <h1 className="header-title">Wallet Payment</h1>
@@ -65,7 +71,6 @@ const CheckoutWallet = () => {
 
       <div className="wallet-page">
         <div className="wallet-content">
-
           {/* Premium Wallet Card */}
           <div className="wallet-card-container">
             <div className="wallet-card">
@@ -75,7 +80,9 @@ const CheckoutWallet = () => {
                 <div className="card-header">
                   <div className="balance-section">
                     <span className="balance-label">Available Balance</span>
-                    <h2 className="balance-amount">{formatCurrency(user?.points_balance)}</h2>
+                    <h2 className="balance-amount">
+                      {formatCurrency(user?.points_balance)}
+                    </h2>
                   </div>
                   <div className="wallet-icon-wrapper">
                     <div className="wallet-icon">
@@ -89,11 +96,13 @@ const CheckoutWallet = () => {
                 <div className="user-details">
                   <div className="detail-item">
                     <span className="detail-label">Account Holder</span>
-                    <span className="detail-value">{user?.full_name || '—'}</span>
+                    <span className="detail-value">
+                      {user?.full_name || "—"}
+                    </span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Email</span>
-                    <span className="detail-value">{user?.email || '—'}</span>
+                    <span className="detail-value">{user?.email || "—"}</span>
                   </div>
                 </div>
               </div>
@@ -110,19 +119,27 @@ const CheckoutWallet = () => {
             <div className="summary-body">
               <div className="summary-row">
                 <span className="row-label">Order Amount</span>
-                <span className="row-value">{formatCurrency(orderAmount.total)}</span>
+                <span className="row-value">
+                  {formatCurrency(orderAmount.total)}
+                </span>
               </div>
 
               <div className="summary-row">
                 <span className="row-label">Wallet Balance</span>
-                <span className="row-value">{formatCurrency(user?.points_balance)}</span>
+                <span className="row-value">
+                  {formatCurrency(user?.points_balance)}
+                </span>
               </div>
 
               <div className="summary-divider"></div>
 
               <div className="summary-row total-row">
                 <span className="row-label">Balance After Payment</span>
-                <span className={`row-value ${balanceAfterPayment >= 0 ? 'positive' : 'negative'}`}>
+                <span
+                  className={`row-value ${
+                    balanceAfterPayment >= 0 ? "positive" : "negative"
+                  }`}
+                >
                   {formatCurrency(balanceAfterPayment)}
                 </span>
               </div>
@@ -136,14 +153,18 @@ const CheckoutWallet = () => {
             </div>
             <div className="security-text">
               <span className="security-title">Secure Payment</span>
-              <span className="security-subtitle">End-to-end encrypted transaction</span>
+              <span className="security-subtitle">
+                End-to-end encrypted transaction
+              </span>
             </div>
           </div>
 
           {/* Action Button */}
           <div className="action-container">
             <button
-              className={`pay-button ${!hasSufficientBalance ? 'insufficient' : ''} ${isLoading ? 'loading' : ''}`}
+              className={`pay-button ${
+                !hasSufficientBalance ? "insufficient" : ""
+              } ${isLoading ? "loading" : ""}`}
               type="button"
               disabled={!hasSufficientBalance || isLoading || isSuccess}
               onClick={(e) => handlePayment(e)}
@@ -168,11 +189,14 @@ const CheckoutWallet = () => {
 
             {!hasSufficientBalance && (
               <p className="insufficient-hint">
-                You need {formatCurrency(orderAmount.total - (user?.points_balance || 0))} more to complete this purchase
+                You need{" "}
+                {formatCurrency(
+                  orderAmount.total - (user?.points_balance || 0)
+                )}{" "}
+                more to complete this purchase
               </p>
             )}
           </div>
-
         </div>
       </div>
 
@@ -253,12 +277,16 @@ const CheckoutWallet = () => {
 
         .wallet-card {
           position: relative;
-          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+          background: linear-gradient(
+            135deg,
+            #6366f1 0%,
+            #8b5cf6 50%,
+            #a855f7 100%
+          );
           border-radius: 24px;
           padding: 28px;
           overflow: hidden;
-          box-shadow: 
-            0 20px 40px rgba(99, 102, 241, 0.3),
+          box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3),
             0 8px 16px rgba(99, 102, 241, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
           transform-style: preserve-3d;
@@ -266,8 +294,13 @@ const CheckoutWallet = () => {
         }
 
         @keyframes cardFloat {
-          0%, 100% { transform: translateY(0) rotateX(0); }
-          50% { transform: translateY(-4px) rotateX(1deg); }
+          0%,
+          100% {
+            transform: translateY(0) rotateX(0);
+          }
+          50% {
+            transform: translateY(-4px) rotateX(1deg);
+          }
         }
 
         .card-shimmer {
@@ -286,8 +319,12 @@ const CheckoutWallet = () => {
         }
 
         @keyframes shimmer {
-          0% { left: -100%; }
-          100% { left: 100%; }
+          0% {
+            left: -100%;
+          }
+          100% {
+            left: 100%;
+          }
         }
 
         .card-pattern {
@@ -296,7 +333,11 @@ const CheckoutWallet = () => {
           right: 0;
           width: 200px;
           height: 200px;
-          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          background: radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 70%
+          );
           transform: translate(30%, -30%);
         }
 
@@ -359,7 +400,12 @@ const CheckoutWallet = () => {
 
         .card-divider {
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+          );
           margin: 20px 0;
         }
 
@@ -397,8 +443,7 @@ const CheckoutWallet = () => {
           background: #ffffff;
           border-radius: 20px;
           overflow: hidden;
-          box-shadow: 
-            0 4px 20px rgba(0, 0, 0, 0.04),
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04),
             0 1px 3px rgba(0, 0, 0, 0.02);
           margin-bottom: 20px;
         }
@@ -533,15 +578,13 @@ const CheckoutWallet = () => {
           border-radius: 16px;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 
-            0 8px 24px rgba(99, 102, 241, 0.35),
+          box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35),
             0 4px 8px rgba(99, 102, 241, 0.2);
         }
 
         .pay-button:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 
-            0 12px 32px rgba(99, 102, 241, 0.4),
+          box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4),
             0 6px 12px rgba(99, 102, 241, 0.25);
         }
 
@@ -556,8 +599,7 @@ const CheckoutWallet = () => {
 
         .pay-button.insufficient {
           background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-          box-shadow: 
-            0 8px 24px rgba(251, 191, 36, 0.35),
+          box-shadow: 0 8px 24px rgba(251, 191, 36, 0.35),
             0 4px 8px rgba(251, 191, 36, 0.2);
         }
 
@@ -585,7 +627,9 @@ const CheckoutWallet = () => {
         }
 
         @keyframes spin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .insufficient-hint {

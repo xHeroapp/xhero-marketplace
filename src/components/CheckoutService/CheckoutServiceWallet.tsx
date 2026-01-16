@@ -70,7 +70,7 @@ const CheckoutServiceWallet = () => {
       p_payment_method: paymentMethod || "wallet",
       // p_end_date: booking.booking_details.end_date || null, we are only using one time service for now, so no end date is needed
       p_start_time: booking.booking_details.start_time || null,
-      p_duration_minutes: durationMinutes,
+      // p_duration_minutes: durationMinutes, we are only using one time service for now, so no duration is needed
       p_note: booking.booking_details.note || null,
       p_reference: txRef || null,
     });
