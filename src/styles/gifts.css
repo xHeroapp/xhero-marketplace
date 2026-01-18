@@ -1310,3 +1310,29 @@
     background: rgba(44, 44, 46, 0.95);
     color: #ffffff;
 }
+
+/* My Gifts Page - Header and Filters Legibility Fix */
+[theme-color="dark"] .gifts-header-stats h4 {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gifts-filter-tab {
+    border-color: #38383a !important;
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gifts-filter-tab .filter-count {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gifts-filter-tab.active {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+[theme-color="dark"] .gifts-filter-tab.active .filter-count {
+    background: rgba(0, 0, 0, 0.2) !important;
+    color: #000000 !important;
+}

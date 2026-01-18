@@ -227,6 +227,52 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
           z-index: 10;
         }
+
+        /* Dark Mode Styles */
+        :global([theme-color="dark"]) .product-image-container {
+          background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+        }
+
+        :global([theme-color="dark"]) .product-image-wrapper {
+          background: #1c1c1e;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        :global([theme-color="dark"]) .vendor-badge {
+          background: rgba(28, 28, 30, 0.95);
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .bg-white {
+          background-color: #1c1c1e !important;
+        }
+
+        :global([theme-color="dark"]) .bg-light {
+          background-color: #2c2c2e !important;
+        }
+
+        :global([theme-color="dark"]) h5,
+        :global([theme-color="dark"]) h6,
+        :global([theme-color="dark"]) .fw-bold,
+        :global([theme-color="dark"]) .text-dark {
+          color: #ffffff !important;
+        }
+
+        :global([theme-color="dark"]) .text-muted {
+          color: #98989d !important;
+        }
+
+        :global([theme-color="dark"]) .border-bottom {
+          border-color: #38383a !important;
+        }
+
+        :global([theme-color="dark"]) .sale-price {
+          color: #ffffff !important;
+        }
+
+        :global([theme-color="dark"]) p {
+          color: #ebebf5;
+        }
       `}</style>
 
       <Footer />
