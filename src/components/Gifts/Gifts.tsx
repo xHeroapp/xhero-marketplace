@@ -4,18 +4,16 @@ import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import { useAuthStore } from "@/store/authStore";
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useGetUserGifts } from "@/queries/gifts.queries";
-import RewardListItem from "./RewardListItems";
-import { useRouter } from "next/navigation";
 import RewardGridItem from "./RewardGridItem";
+import { useRouter } from "next/navigation";
 
-type ViewMode = "list" | "grid";
+type FilterStatus = "all" | "pending" | "redeemed" | "expired";
 
 const Gifts = () => {
   const { user } = useAuthStore();
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
 
   const {
     data,
@@ -24,163 +22,171 @@ const Gifts = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useGetUserGifts(user?.id);
 
-  const rewards = useMemo(
+  const allRewards = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data]
   );
+
+  // Filter rewards based on active filter
+  const rewards = useMemo(() => {
+    if (activeFilter === "all") return allRewards;
+    return allRewards.filter(
+      (reward) => reward.status?.toLowerCase() === activeFilter
+    );
+  }, [allRewards, activeFilter]);
+
+  // Count by status
+  const statusCounts = useMemo(() => {
+    return {
+      all: allRewards.length,
+      pending: allRewards.filter((r) => r.status?.toLowerCase() === "pending")
+        .length,
+      redeemed: allRewards.filter((r) => r.status?.toLowerCase() === "redeemed")
+        .length,
+      expired: allRewards.filter((r) => r.status?.toLowerCase() === "expired")
+        .length,
+    };
+  }, [allRewards]);
+
+  const filterTabs: { key: FilterStatus; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "pending", label: "Pending" },
+    { key: "redeemed", label: "Redeemed" },
+    { key: "expired", label: "Expired" },
+  ];
 
   return (
     <>
       <HeaderTwo links="home" title="My Gifts" />
 
-      <div className="page-content-wrapper">
-        <div className="container py-3">
-          {/* View Toggle Buttons */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 16,
-              gap: 8,
-            }}
-          >
-            {/* <button
-              onClick={() => setViewMode("list")}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: 8,
-                background: viewMode === "list" ? "#2563eb" : "#fff",
-                color: viewMode === "list" ? "#fff" : "#6b7280",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                fontSize: 14,
-                fontWeight: 500,
-                transition: "all 0.2s",
-              }}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
-              </svg>
-              List
-            </button>
-
-            <button
-              onClick={() => setViewMode("grid")}
-              style={{
-                padding: "8px 12px",
-                border: "1px solid #e5e7eb",
-                borderRadius: 8,
-                background: viewMode === "grid" ? "#2563eb" : "#fff",
-                color: viewMode === "grid" ? "#fff" : "#6b7280",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                fontSize: 14,
-                fontWeight: 500,
-                transition: "all 0.2s",
-              }}
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
-              Grid
-            </button> */}
+      <div className="page-content-wrapper gifts-page">
+        <div className="container">
+          {/* Header Stats */}
+          <div className="gifts-header-stats">
+            <h4>
+              Your Gifts{" "}
+              <span className="gifts-count">({allRewards.length})</span>
+            </h4>
           </div>
 
-          {isLoading && <p>Loading gifts...</p>}
-          {isError && <p>Failed to load gifts</p>}
+          {/* Filter Tabs */}
+          <div className="gifts-filter-tabs">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.key}
+                className={`gifts-filter-tab ${activeFilter === tab.key ? "active" : ""
+                  }`}
+                onClick={() => setActiveFilter(tab.key)}
+              >
+                {tab.label}
+                {statusCounts[tab.key] > 0 && (
+                  <span className="filter-count">{statusCounts[tab.key]}</span>
+                )}
+              </button>
+            ))}
+          </div>
 
-          {!isLoading && rewards.length === 0 && <p>No rewards received yet</p>}
-
-          {/* List View */}
-          {viewMode === "list" && (
-            <div className="row g-2">
-              {rewards.map((reward) => (
-                <div key={reward.recognition_id} className="col-12">
-                  <RewardListItem
-                    reward={reward}
-                    onClick={() =>
-                      router.push(`/gifts/${reward.recognition_id}`)
-                    }
+          {/* Loading State */}
+          {isLoading && (
+            <div className="gifts-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="gift-card" style={{ opacity: 0.7 }}>
+                  <div
+                    className="gift-card-image gift-skeleton"
+                    style={{ paddingTop: "75%" }}
                   />
+                  <div className="gift-card-content">
+                    <div
+                      className="gift-skeleton"
+                      style={{ height: 16, width: "80%", marginBottom: 12 }}
+                    />
+                    <div
+                      className="gift-skeleton"
+                      style={{ height: 12, width: "60%", marginBottom: 8 }}
+                    />
+                    <div
+                      className="gift-skeleton"
+                      style={{ height: 12, width: "40%" }}
+                    />
+                  </div>
                 </div>
               ))}
-
-              {hasNextPage && (
-                <div className="col-12">
-                  <button
-                    className="btn btn-primary w-100"
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                  >
-                    {isFetchingNextPage ? "Loading..." : "Load more"}
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
-          {/* Grid View */}
-          {viewMode === "grid" && (
-            <div className="row g-3">
-              {rewards.map((reward) => (
-                <div
-                  key={reward.recognition_id}
-                  className="col-6 col-md-4 col-lg-3"
-                >
+          {/* Error State */}
+          {isError && (
+            <div className="gift-section-card" style={{ textAlign: "center" }}>
+              <i
+                className="ti ti-alert-circle"
+                style={{ fontSize: 48, color: "#ff3b30", marginBottom: 16 }}
+              />
+              <h5
+                style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}
+              >
+                Unable to Load Gifts
+              </h5>
+              <p
+                style={{
+                  fontSize: 14,
+                  color: "#86868b",
+                  marginBottom: 16,
+                }}
+              >
+                Something went wrong. Please try again.
+              </p>
+              <button
+                onClick={() => refetch()}
+                className="gift-cta-button"
+                style={{ position: "static" }}
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && !isError && rewards.length === 0 && (
+            <div className="gifts-empty-state">
+              <i className="ti ti-gift" />
+              <h5>No Gifts Yet</h5>
+              <p>
+                {activeFilter === "all"
+                  ? "You haven't received any gifts yet. When someone sends you a reward, it will appear here."
+                  : `You don't have any ${activeFilter} gifts at the moment.`}
+              </p>
+            </div>
+          )}
+
+          {/* Gift Grid */}
+          {!isLoading && !isError && rewards.length > 0 && (
+            <>
+              <div className="gifts-grid">
+                {rewards.map((reward) => (
                   <RewardGridItem
+                    key={reward.recognition_id}
                     reward={reward}
                     onClick={() =>
                       router.push(`/gifts/${reward.recognition_id}`)
                     }
                   />
-                </div>
-              ))}
+                ))}
+              </div>
 
+              {/* Load More */}
               {hasNextPage && (
-                <div className="col-12">
-                  <button
-                    className="btn btn-primary w-100"
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                  >
-                    {isFetchingNextPage ? "Loading..." : "Load more"}
-                  </button>
-                </div>
+                <button
+                  className="gifts-load-more"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                >
+                  {isFetchingNextPage ? "Loading..." : "Load More Gifts"}
+                </button>
               )}
-            </div>
+            </>
           )}
         </div>
       </div>

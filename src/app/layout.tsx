@@ -2,6 +2,7 @@
 import Providers from "@/Provider/Provider";
 import "../styles/style.css";
 import "../styles/style.scss";
+import "../styles/gifts.css";
 
 import store from "@/redux/store";
 import { Provider } from "react-redux";

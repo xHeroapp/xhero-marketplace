@@ -3,59 +3,41 @@
 import HeaderTwo from "@/layouts/HeaderTwo";
 import Footer from "@/layouts/Footer";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useGetGiftById } from "@/queries/gifts.queries";
 import { useEffect } from "react";
 import useRewardCartStore from "@/store/rewardCartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
+import ImageWithFallback from "../reuseable/ImageWithFallback";
 
 type GiftDetailsPageProps = {
-  params: {
-    id: string;
-  };
+  gift: any;
 };
 
-const getStatusBadgeClass = (status: string) => {
-  switch (status) {
-    case "pending":
-      return "badge-warning";
-    case "redeemed":
-      return "badge-success";
-    case "expired":
-      return "badge-danger";
-    default:
-      return "badge-secondary";
+const getInitials = (name: string): string => {
+  if (!name) return "?";
+  const parts = name.split(" ").filter(Boolean);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
+  return parts[0]?.[0]?.toUpperCase() || "?";
 };
 
-const GiftDetailsPage = ({ gift }) => {
-  //   const { data: gift, isLoading, isError } = useGetGiftById(params.id);
+const formatDate = (dateString: string): string => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
-  //   if (isLoading) {
-  //     return (
-  //       <>
-  //         <HeaderTwo title="Gift Details" links="home" />
-  //         <div className="container py-5 text-center">Loading gift...</div>
-  //         <Footer />
-  //       </>
-  //     );
-  //   }
-
-  //   if (isError || !gift) {
-  //     return (
-  //       <>
-  //         <HeaderTwo title="Gift Details" links="home" />
-  //         <div className="container py-5 text-center text-danger">
-  //           Failed to load gift details
-  //         </div>
-  //         <Footer />
-  //       </>
-  //     );
-  //   }
-
+const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
   const { user } = useAuthStore();
   const { redeemReward } = useRewardCartStore();
   const router = useRouter();
+
+  const status = gift?.status?.toLowerCase() || "pending";
 
   // Function to handle redeeming gift
   const handleRedeemGift = () => {
@@ -69,7 +51,7 @@ const GiftDetailsPage = ({ gift }) => {
       image_url: gift.image_url,
       price: 0, // force zero
       vendor: {
-        vendor_id: gift.vendor_id ?? "unknown", // fallback
+        vendor_id: gift.vendor_id ?? "unknown",
         vendor_name: gift.vendor_name,
         vendor_img:
           gift.vendor_avatar ?? "/assets/img/vendor/vendor-avatar.png",
@@ -82,153 +64,166 @@ const GiftDetailsPage = ({ gift }) => {
     };
 
     redeemReward(reward);
-
-    // redirect
     router.push("/checkout-reward");
-  };
-
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "badge-warning";
-      case "redeemed":
-        return "badge-success";
-      case "expired":
-        return "badge-danger";
-      default:
-        return "badge-secondary";
-    }
   };
 
   useEffect(() => {
     console.log(gift);
   }, [gift]);
+
   return (
     <>
       <HeaderTwo title="Gift Details" links="home" />
 
-      <div className="page-content-wrapper">
-        <div className="container py-3">
-          {/* PRODUCT */}
-          <div className="card mb-3">
-            <img
-              src={gift.image_url}
-              alt={gift.product_name}
-              className="card-img-top"
-              style={{ maxHeight: 280, objectFit: "cover" }}
-            />
-            <div className="card-body">
-              <h5 className="mb-1">{gift.product_name}</h5>
-              <p className="text-muted mb-2">
-                {gift.vendor_name} • {gift.category_name}
-              </p>
-              <p>{gift.product_description}</p>
-              <h6 className="fw-bold">{formatCurrency(gift.product_price)}</h6>
-            </div>
-          </div>
+      <div className="page-content-wrapper gift-details-page">
+        {/* Hero Section */}
+        <div className="gift-hero">
+          <ImageWithFallback
+            src={gift.image_url}
+            alt={gift.product_name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
 
-          {/* PROGRAM */}
-          <div className="card mb-3">
-            <div className="card-body">
-              <h6 className="fw-bold">{gift.program_name}</h6>
-              <p className="text-muted mb-2">{gift.program_description}</p>
+          {/* Status Badge */}
+          <span className={`gift-detail-status ${status}`}>{status}</span>
 
-              {gift.message && (
-                <blockquote className="blockquote mb-0">
-                  “{gift.message}”
-                </blockquote>
-              )}
-            </div>
-          </div>
-
-          {/* PEOPLE */}
-          <div className="card mb-3">
-            <div className="card-body">
-              <p className="mb-1">
-                <strong>From:</strong> {gift.sender_name}
-              </p>
-              <p className="mb-1">
-                <strong>To:</strong> {gift.recipient_name}
-              </p>
-              <p className="mb-1">
-                <strong>Email:</strong> {gift.recipient_email}
-              </p>
-              <p className="mb-0">
-                <strong>Department:</strong> {gift.department_name}
-              </p>
-            </div>
-          </div>
-
-          {/* REDEMPTION */}
-          <div className="card mb-3">
-            <div className="card-body">
-              <p className="mb-2">
-                <strong>Status:</strong>{" "}
-                <span className={`badge ${getStatusBadgeClass(gift.status)}`}>
-                  {gift.status}
-                </span>
-              </p>
-
-              {/* PENDING */}
-              {gift.status === "pending" && (
-                <>
-                  {gift.redemption_code && (
-                    <p className="fw-bold">
-                      Redemption Code: {gift.redemption_code}
-                    </p>
-                  )}
-
-                  {gift.expires_at && (
-                    <p className="text-muted">
-                      Expires on:{" "}
-                      {new Date(gift.expires_at).toLocaleDateString()}
-                    </p>
-                  )}
-
-                  <button
-                    className="btn btn-primary w-100 mt-2"
-                    disabled={!gift.redemption_code}
-                    onClick={handleRedeemGift}
-                  >
-                    Redeem Gift
-                  </button>
-                </>
-              )}
-
-              {/* REDEEMED */}
-              {gift.status === "redeemed" && (
-                <>
-                  <p className="text-success fw-semibold">
-                    This gift has already been redeemed.
-                  </p>
-
-                  {gift.redemption_date && (
-                    <p>
-                      Redeemed on:{" "}
-                      {new Date(gift.redemption_date).toLocaleDateString()}
-                    </p>
-                  )}
-                </>
-              )}
-
-              {/* EXPIRED */}
-              {gift.status === "expired" && (
-                <>
-                  <p className="text-danger fw-semibold">
-                    This gift has expired and can no longer be redeemed.
-                  </p>
-
-                  {gift.expires_at && (
-                    <p>
-                      Expired on:{" "}
-                      {new Date(gift.expires_at).toLocaleDateString()}
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
+          {/* Gradient Overlay with Title */}
+          <div className="gift-hero-overlay">
+            <h1 className="gift-hero-title">{gift.product_name}</h1>
+            <span className="gift-hero-vendor">
+              {gift.vendor_name} • {gift.category_name}
+            </span>
           </div>
         </div>
+
+        {/* Content */}
+        <div className="gift-details-content">
+          {/* Product Info Card */}
+          <div className="gift-section-card">
+            <div className="gift-product-info">
+              <div>
+                <span className="gift-product-category">
+                  {gift.category_name}
+                </span>
+                <p className="gift-product-description">
+                  {gift.product_description}
+                </p>
+              </div>
+              <span className="gift-product-price">
+                {formatCurrency(gift.product_price)}
+              </span>
+            </div>
+          </div>
+
+          {/* Recognition Message */}
+          {(gift.message || gift.program_description) && (
+            <div className="gift-section-card gift-message-card">
+              <p className="gift-message-text">
+                {gift.message || gift.program_description}
+              </p>
+              <span className="gift-program-name">
+                <i className="ti ti-award"></i>
+                {gift.program_name}
+              </span>
+            </div>
+          )}
+
+          {/* Sender Card */}
+          <div className="gift-section-card">
+            <div className="gift-sender-card">
+              <div className="gift-sender-lg-avatar">
+                {getInitials(gift.sender_name)}
+              </div>
+              <div className="gift-sender-info">
+                <h6>{gift.sender_name}</h6>
+                <p>
+                  To: {gift.recipient_name} • {gift.department_name}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Section */}
+          <div className="gift-section-card">
+            {/* Pending Status */}
+            {status === "pending" && (
+              <>
+                {gift.redemption_code && (
+                  <div className="gift-redemption-code">
+                    <div className="label">Redemption Code</div>
+                    <div className="code">{gift.redemption_code}</div>
+                  </div>
+                )}
+
+                {gift.expires_at && (
+                  <div className="gift-expiry-warning">
+                    <i className="ti ti-clock"></i>
+                    <span>Expires on {formatDate(gift.expires_at)}</span>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Redeemed Status */}
+            {status === "redeemed" && (
+              <div className="gift-status-section redeemed">
+                <i className="ti ti-circle-check"></i>
+                <p>This gift has been successfully redeemed!</p>
+                {gift.redemption_date && (
+                  <span className="date">
+                    Redeemed on {formatDate(gift.redemption_date)}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Expired Status */}
+            {status === "expired" && (
+              <div className="gift-status-section expired">
+                <i className="ti ti-clock-x"></i>
+                <p>This gift has expired and can no longer be redeemed.</p>
+                {gift.expires_at && (
+                  <span className="date">
+                    Expired on {formatDate(gift.expires_at)}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Details List */}
+            <ul className="gift-details-list" style={{ marginTop: 16 }}>
+              <li>
+                <span className="label">Status</span>
+                <span className="value" style={{ textTransform: "capitalize" }}>
+                  {status}
+                </span>
+              </li>
+              <li>
+                <span className="label">Program</span>
+                <span className="value">{gift.program_name}</span>
+              </li>
+              <li>
+                <span className="label">From</span>
+                <span className="value">{gift.sender_name}</span>
+              </li>
+              <li>
+                <span className="label">Recipient</span>
+                <span className="value">{gift.recipient_email}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* CTA Button - Only for Pending */}
+        {status === "pending" && (
+          <button
+            className="gift-cta-button"
+            onClick={handleRedeemGift}
+            disabled={!gift.redemption_code}
+          >
+            Redeem Gift
+          </button>
+        )}
       </div>
 
       <Footer />
