@@ -49,17 +49,6 @@ export default function AuthCallback() {
 
           if (data.session) {
             console.log("Session established:", data.session);
-
-            // Update employee's last_seen for engagement tracking
-            // NOTE: We update the 'employees' table, NOT the 'users' table,
-            // because employee accounts are stored in 'employees', not 'users'
-            if (data.user?.email) {
-              await supabase
-                .from("employees")
-                .update({ last_seen: new Date().toISOString() })
-                .eq("email", data.user.email);
-            }
-
             router.replace("/home");
             return;
           }
@@ -104,17 +93,6 @@ export default function AuthCallback() {
           if (data.session) {
             console.log(data);
             await storeUserData(data.user?.email);
-
-            // Update employee's last_seen for engagement tracking
-            // NOTE: We update the 'employees' table, NOT the 'users' table,
-            // because employee accounts are stored in 'employees', not 'users'
-            if (data.user?.email) {
-              await supabase
-                .from("employees")
-                .update({ last_seen: new Date().toISOString() })
-                .eq("email", data.user.email);
-            }
-
             router.replace("/home");
             return;
           }
