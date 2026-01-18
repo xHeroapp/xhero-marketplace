@@ -3,7 +3,6 @@
 import HeaderTwo from "@/layouts/HeaderTwo";
 import Footer from "@/layouts/Footer";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useEffect } from "react";
 import useRewardCartStore from "@/store/rewardCartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
@@ -11,15 +10,6 @@ import ImageWithFallback from "../reuseable/ImageWithFallback";
 
 type GiftDetailsPageProps = {
   gift: any;
-};
-
-const getInitials = (name: string): string => {
-  if (!name) return "?";
-  const parts = name.split(" ").filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return parts[0]?.[0]?.toUpperCase() || "?";
 };
 
 const formatDate = (dateString: string): string => {
@@ -39,22 +29,19 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
 
   const status = gift?.status?.toLowerCase() || "pending";
 
-  // Function to handle redeeming gift
   const handleRedeemGift = () => {
     if (!gift || !user) return;
 
-    // Map gift to rewardCart format
     const reward = {
       product_id: gift.vendor_product_id,
       product_name: gift.product_name,
       product_description: gift.product_description,
       image_url: gift.image_url,
-      price: 0, // force zero
+      price: 0,
       vendor: {
         vendor_id: gift.vendor_id ?? "unknown",
         vendor_name: gift.vendor_name,
-        vendor_img:
-          gift.vendor_avatar ?? "/assets/img/vendor/vendor-avatar.png",
+        vendor_img: gift.vendor_avatar ?? "/assets/img/vendor/vendor-avatar.png",
       },
       redemption_code: gift.redemption_code,
       recognition_id: gift.recognition_id,
@@ -67,162 +54,113 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
     router.push("/checkout-reward");
   };
 
-  useEffect(() => {
-    console.log(gift);
-  }, [gift]);
-
   return (
     <>
-      <HeaderTwo title="Gift Details" links="home" />
+      <HeaderTwo title="Gift Details" links="gifts" />
 
-      <div className="page-content-wrapper gift-details-page">
-        {/* Hero Section */}
-        <div className="gift-hero">
-          <ImageWithFallback
-            src={gift.image_url}
-            alt={gift.product_name}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+      <div className="page-content-wrapper gift-details-page-v3">
+        {/* Product Image Container - Apple-style minimalism matching regular product page */}
+        <div className="gift-image-container">
+          <div className="gift-image-wrapper">
+            <ImageWithFallback src={gift.image_url} alt={gift.product_name} />
 
-          {/* Status Badge */}
-          <span className={`gift-detail-status ${status}`}>{status}</span>
+            {/* Vendor Badge - Top Right */}
+            {gift.vendor_name && (
+              <div className="gift-vendor-badge">
+                {gift.vendor_name}
+              </div>
+            )}
 
-          {/* Gradient Overlay with Title */}
-          <div className="gift-hero-overlay">
-            <h1 className="gift-hero-title">{gift.product_name}</h1>
-            <span className="gift-hero-vendor">
-              {gift.vendor_name} • {gift.category_name}
-            </span>
+            {/* Status Badge removed as per request */}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="gift-details-content">
-          {/* Product Info Card */}
-          <div className="gift-section-card">
-            <div className="gift-product-info">
-              <div>
-                <span className="gift-product-category">
-                  {gift.category_name}
-                </span>
-                <p className="gift-product-description">
-                  {gift.product_description}
-                </p>
+        {/* Product Meta Section */}
+        <div className="gift-details-content-v3">
+
+          {/* Main Info Card */}
+          <div className="gift-meta-card mb-3">
+            <div className="container">
+              <div className="gift-header-row">
+                <div className="gift-title-price">
+                  <h5 className="gift-product-name">{gift.product_name}</h5>
+                  <p className="gift-price mb-2">
+                    {formatCurrency(gift.product_price)}
+                    <span className="gift-category ms-2">• {gift.category_name}</span>
+                  </p>
+                  {gift.product_description && (
+                    <p className="gift-description">{gift.product_description}</p>
+                  )}
+                </div>
               </div>
-              <span className="gift-product-price">
-                {formatCurrency(gift.product_price)}
-              </span>
             </div>
           </div>
 
-          {/* Recognition Message */}
-          {(gift.message || gift.program_description) && (
-            <div className="gift-section-card gift-message-card">
-              <p className="gift-message-text">
-                {gift.message || gift.program_description}
-              </p>
-              <span className="gift-program-name">
-                <i className="ti ti-award"></i>
-                {gift.program_name}
-              </span>
+          {/* Gift Source & Message Card */}
+          <div className="gift-source-card mb-3">
+            <div className="container">
+              <h6 className="section-label">Gift Details</h6>
+
+              <div className="gift-source-row">
+                <span className="label">From</span>
+                <span className="value fw-bold">{gift.sender_name}</span>
+              </div>
+
+              {gift.program_name && (
+                <div className="gift-source-row">
+                  <span className="label">Program</span>
+                  <span className="value text-primary">{gift.program_name}</span>
+                </div>
+              )}
+
+              {gift.message && (
+                <div className="gift-message-box mt-3">
+                  <i className="ti ti-quote text-muted mb-1 d-block"></i>
+                  <p className="mb-0 fst-italic text-dark">"{gift.message}"</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Status Specific Card */}
+          {(status === "redeemed" || status === "expired") && (
+            <div className={`gift-status-card mb-3 ${status}`}>
+              <div className="container d-flex align-items-center gap-3">
+                <i className={`ti ${status === 'redeemed' ? 'ti-circle-check' : 'ti-clock-x'} fs-2`}></i>
+                <div>
+                  <h6 className="mb-0 text-capitalize">{status}</h6>
+                  <small>
+                    {status === "redeemed"
+                      ? `Redeemed on ${formatDate(gift.redemption_date)}`
+                      : `Expired on ${formatDate(gift.expires_at)}`
+                    }
+                  </small>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Sender Card */}
-          <div className="gift-section-card">
-            <div className="gift-sender-card">
-              <div className="gift-sender-lg-avatar">
-                {getInitials(gift.sender_name)}
-              </div>
-              <div className="gift-sender-info">
-                <h6>{gift.sender_name}</h6>
-                <p>
-                  To: {gift.recipient_name} • {gift.department_name}
-                </p>
+          {/* Expiry Warning for Pending */}
+          {status === "pending" && gift.expires_at && (
+            <div className="container mb-3">
+              <div className="gift-expiry-simple">
+                <i className="ti ti-clock me-1"></i> Expires {formatDate(gift.expires_at)}
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Status Section */}
-          <div className="gift-section-card">
-            {/* Pending Status */}
-            {status === "pending" && (
-              <>
-                {gift.redemption_code && (
-                  <div className="gift-redemption-code">
-                    <div className="label">Redemption Code</div>
-                    <div className="code">{gift.redemption_code}</div>
-                  </div>
-                )}
-
-                {gift.expires_at && (
-                  <div className="gift-expiry-warning">
-                    <i className="ti ti-clock"></i>
-                    <span>Expires on {formatDate(gift.expires_at)}</span>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Redeemed Status */}
-            {status === "redeemed" && (
-              <div className="gift-status-section redeemed">
-                <i className="ti ti-circle-check"></i>
-                <p>This gift has been successfully redeemed!</p>
-                {gift.redemption_date && (
-                  <span className="date">
-                    Redeemed on {formatDate(gift.redemption_date)}
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Expired Status */}
-            {status === "expired" && (
-              <div className="gift-status-section expired">
-                <i className="ti ti-clock-x"></i>
-                <p>This gift has expired and can no longer be redeemed.</p>
-                {gift.expires_at && (
-                  <span className="date">
-                    Expired on {formatDate(gift.expires_at)}
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Details List */}
-            <ul className="gift-details-list" style={{ marginTop: 16 }}>
-              <li>
-                <span className="label">Status</span>
-                <span className="value" style={{ textTransform: "capitalize" }}>
-                  {status}
-                </span>
-              </li>
-              <li>
-                <span className="label">Program</span>
-                <span className="value">{gift.program_name}</span>
-              </li>
-              <li>
-                <span className="label">From</span>
-                <span className="value">{gift.sender_name}</span>
-              </li>
-              <li>
-                <span className="label">Recipient</span>
-                <span className="value">{gift.recipient_email}</span>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        {/* CTA Button - Only for Pending */}
+        {/* Floating Action Button */}
         {status === "pending" && (
-          <button
-            className="gift-cta-button"
-            onClick={handleRedeemGift}
-            disabled={!gift.redemption_code}
-          >
-            Redeem Gift
-          </button>
+          <div className="gift-action-container">
+            <button
+              className="gift-redeem-btn-fixed"
+              onClick={handleRedeemGift}
+            >
+              Redeem Gift
+            </button>
+          </div>
         )}
       </div>
 

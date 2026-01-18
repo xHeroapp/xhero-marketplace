@@ -885,3 +885,244 @@
     color: #c7c7cc;
     cursor: not-allowed;
 }
+
+/* ==========================================
+   GIFT DETAILS PAGE V3 - Regular Product Page Match
+   ========================================== */
+
+.gift-details-page-v3 {
+    background: #f8f9fa;
+    /* Light grey bg for contrast with white cards */
+    min-height: 100vh;
+    padding-bottom: 100px;
+}
+
+/* 1. Image Container - Matches SingleProduct */
+.gift-image-container {
+    padding: 16px 16px 24px 16px;
+    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    margin-bottom: 16px;
+}
+
+.gift-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 400px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 15px -3px rgba(0, 0, 0, 0.08),
+        0 20px 25px -5px rgba(0, 0, 0, 0.04);
+}
+
+.gift-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.gift-image-wrapper:hover img {
+    transform: scale(1.02);
+}
+
+/* Badges inside Image */
+.gift-vendor-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    /* Reduced shadow */
+    z-index: 10;
+}
+
+.gift-status-badge-v3 {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+}
+
+.gift-status-badge-v3.pending {
+    color: #cc7a00;
+}
+
+.gift-status-badge-v3.redeemed {
+    color: #1b8a3e;
+}
+
+.gift-status-badge-v3.expired {
+    color: #636366;
+}
+
+/* 2. Content Sections - Clean White Cards */
+.gift-meta-card,
+.gift-source-card,
+.gift-status-card {
+    background: #ffffff;
+    padding: 24px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gift-meta-card {
+    border-top: 1px solid #f0f0f0;
+}
+
+/* Product Meta */
+.gift-product-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+    line-height: 1.25;
+}
+
+.gift-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1d1d1f;
+    display: flex;
+    align-items: center;
+}
+
+.gift-category {
+    font-size: 15px;
+    color: #86868b;
+    font-weight: 400;
+}
+
+.gift-description {
+    font-size: 15px;
+    color: #48484a;
+    line-height: 1.6;
+    margin-top: 12px;
+}
+
+/* Source / Details */
+.section-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #86868b;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.gift-source-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f7;
+    font-size: 15px;
+}
+
+.gift-source-row:last-child {
+    border-bottom: none;
+}
+
+.gift-source-row .label {
+    color: #6e6e73;
+}
+
+.gift-source-row .value {
+    color: #1d1d1f;
+    text-align: right;
+}
+
+.gift-message-box {
+    background: #f5f5f7;
+    padding: 16px;
+    border-radius: 16px;
+    margin-top: 16px;
+}
+
+/* Status Cards */
+.gift-status-card.redeemed {
+    background: rgba(48, 209, 88, 0.05);
+}
+
+.gift-status-card.redeemed h6 {
+    color: #1b8a3e;
+    font-weight: 700;
+}
+
+.gift-status-card.redeemed i {
+    color: #30D158;
+}
+
+.gift-status-card.expired {
+    background: rgba(142, 142, 147, 0.05);
+}
+
+.gift-status-card.expired h6 {
+    color: #636366;
+    font-weight: 700;
+}
+
+.gift-status-card.expired i {
+    color: #8E8E93;
+}
+
+.gift-expiry-simple {
+    font-size: 14px;
+    color: #cc7a00;
+    font-weight: 500;
+}
+
+/* Fixed CTA Button */
+.gift-action-container {
+    position: fixed;
+    bottom: 70px;
+    /* Positioned above the bottom nav */
+    left: 0;
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+}
+
+.gift-redeem-btn-fixed {
+    width: 100%;
+    max-width: 600px;
+    background: #007AFF;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.gift-redeem-btn-fixed:hover {
+    background: #0066d6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
+}
+
+.gift-redeem-btn-fixed:active {
+    transform: translateY(0);
+}
