@@ -16,7 +16,7 @@ const CheckoutReward = () => {
   const ready = useClientReady();
   const router = useRouter();
   const { user } = useAuthStore();
-  const { rewardCart, getItems, clearRewardCart } = useRewardCartStore();
+  const { rewardCart, getItems, getTotal, clearRewardCart } = useRewardCartStore();
 
   const [txRef] = useState(generateTxRef());
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
@@ -165,11 +165,11 @@ const CheckoutReward = () => {
             <div className="summary-card">
               <div className="summary-row">
                 <span>Reward Value</span>
-                <span>{formatCurrency(rewardCart?.price || 0)}</span>
+                <span>{formatCurrency(getTotal().subtotal)}</span>
               </div>
               <div className="summary-row discount">
                 <span>Gift Discount</span>
-                <span>-{formatCurrency(rewardCart?.price || 0)}</span>
+                <span>-{formatCurrency(getTotal().discount)}</span>
               </div>
               <div className="summary-row">
                 <span>Delivery</span>

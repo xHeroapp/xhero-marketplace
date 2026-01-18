@@ -37,7 +37,7 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
       product_name: gift.product_name,
       product_description: gift.product_description,
       image_url: gift.image_url,
-      price: 0,
+      price: gift.product_price || 0,
       vendor: {
         vendor_id: gift.vendor_id ?? "unknown",
         vendor_name: gift.vendor_name,
