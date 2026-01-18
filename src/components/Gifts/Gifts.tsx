@@ -164,15 +164,16 @@ const Gifts = () => {
           {/* Gift Grid */}
           {!isLoading && !isError && rewards.length > 0 && (
             <>
-              <div className="gifts-grid">
+              <div className="row g-2 rtl-flex-d-row-r">
                 {rewards.map((reward) => (
-                  <RewardGridItem
-                    key={reward.recognition_id}
-                    reward={reward}
-                    onClick={() =>
-                      router.push(`/gifts/${reward.recognition_id}`)
-                    }
-                  />
+                  <div key={reward.recognition_id} className="col-6 col-md-4">
+                    <RewardGridItem
+                      reward={reward}
+                      onClick={() =>
+                        router.push(`/gifts/${reward.recognition_id}`)
+                      }
+                    />
+                  </div>
                 ))}
               </div>
 
