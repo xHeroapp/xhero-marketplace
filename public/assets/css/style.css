@@ -3437,7 +3437,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 .product-title-meta-data {
-  border-top-left-radius: 2rem;
+  /* border-top-left-radius: 2rem; */
   padding-top: 1.5rem !important;
 }
 
