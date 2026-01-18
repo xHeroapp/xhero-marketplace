@@ -58,83 +58,77 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
     <>
       <HeaderTwo title="Gift Details" links="gifts" />
 
-      <div className="page-content-wrapper gift-details-page-v3">
-        {/* Product Image Container - Apple-style minimalism matching regular product page */}
-        <div className="gift-image-container">
-          <div className="gift-image-wrapper">
+      <div className="page-content-wrapper">
+        {/* Product Image Container - Matches SingleProduct exactly */}
+        <div className="product-image-container">
+          <div className="product-image-wrapper">
             <ImageWithFallback src={gift.image_url} alt={gift.product_name} />
-
-            {/* Vendor Badge - Top Right */}
+            {/* Vendor Badge */}
             {gift.vendor_name && (
-              <div className="gift-vendor-badge">
+              <div className="vendor-badge">
                 {gift.vendor_name}
               </div>
             )}
-
-            {/* Status Badge removed as per request */}
           </div>
         </div>
 
-        {/* Product Meta Section */}
-        <div className="gift-details-content-v3">
-
-          {/* Main Info Card */}
-          <div className="gift-meta-card mb-3">
-            <div className="container">
-              <div className="gift-header-row">
-                <div className="gift-title-price">
-                  <h5 className="gift-product-name">{gift.product_name}</h5>
-                  <p className="gift-price mb-2">
-                    {formatCurrency(gift.product_price)}
-                    <span className="gift-category ms-2">• {gift.category_name}</span>
-                  </p>
-                  {gift.product_description && (
-                    <p className="gift-description">{gift.product_description}</p>
-                  )}
-                </div>
+        {/* Product Meta Section - Uses same classes as SingleProductArea */}
+        <div className="product-description pb-3">
+          <div className="product-title-meta-data bg-white mb-3 py-3">
+            <div className="container d-flex justify-content-between rtl-flex-d-row-r">
+              <div className="p-title-price">
+                <h5 className="mb-1">{gift.product_name}</h5>
+                <p className="sale-price mb-0 lh-1">
+                  {formatCurrency(gift.product_price)}
+                </p>
+                {gift.product_description && (
+                  <p className="mt-2 mb-0">{gift.product_description}</p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Gift Source & Message Card */}
-          <div className="gift-source-card mb-3">
+          {/* Gift Details Section */}
+          <div className="bg-white mb-3 py-3">
             <div className="container">
-              <h6 className="section-label">Gift Details</h6>
+              <h6 className="mb-3">Gift Details</h6>
 
-              <div className="gift-source-row">
-                <span className="label">From</span>
-                <span className="value fw-bold">{gift.sender_name}</span>
+              <div className="d-flex justify-content-between py-2 border-bottom">
+                <span className="text-muted">From</span>
+                <span className="fw-bold">{gift.sender_name}</span>
               </div>
 
               {gift.program_name && (
-                <div className="gift-source-row">
-                  <span className="label">Program</span>
-                  <span className="value text-primary">{gift.program_name}</span>
+                <div className="d-flex justify-content-between py-2 border-bottom">
+                  <span className="text-muted">Program</span>
+                  <span className="text-primary">{gift.program_name}</span>
                 </div>
               )}
 
-              {gift.message && (
-                <div className="gift-message-box mt-3">
-                  <i className="ti ti-quote text-muted mb-1 d-block"></i>
-                  <p className="mb-0 fst-italic text-dark">"{gift.message}"</p>
+              {gift.category_name && (
+                <div className="d-flex justify-content-between py-2 border-bottom">
+                  <span className="text-muted">Category</span>
+                  <span>{gift.category_name}</span>
                 </div>
               )}
+
+              <div className="d-flex justify-content-between py-2">
+                <span className="text-muted">Status</span>
+                <span className={`text-capitalize ${status === 'pending' ? 'text-warning' : status === 'redeemed' ? 'text-success' : 'text-secondary'}`}>
+                  {status}
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Status Specific Card */}
-          {(status === "redeemed" || status === "expired") && (
-            <div className={`gift-status-card mb-3 ${status}`}>
-              <div className="container d-flex align-items-center gap-3">
-                <i className={`ti ${status === 'redeemed' ? 'ti-circle-check' : 'ti-clock-x'} fs-2`}></i>
-                <div>
-                  <h6 className="mb-0 text-capitalize">{status}</h6>
-                  <small>
-                    {status === "redeemed"
-                      ? `Redeemed on ${formatDate(gift.redemption_date)}`
-                      : `Expired on ${formatDate(gift.expires_at)}`
-                    }
-                  </small>
+          {/* Message Section */}
+          {gift.message && (
+            <div className="bg-white mb-3 py-3">
+              <div className="container">
+                <h6 className="mb-3">Message</h6>
+                <div className="bg-light p-3 rounded-3">
+                  <i className="ti ti-quote text-muted d-block mb-2"></i>
+                  <p className="mb-0 fst-italic">"{gift.message}"</p>
                 </div>
               </div>
             </div>
@@ -142,27 +136,98 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
 
           {/* Expiry Warning for Pending */}
           {status === "pending" && gift.expires_at && (
-            <div className="container mb-3">
-              <div className="gift-expiry-simple">
-                <i className="ti ti-clock me-1"></i> Expires {formatDate(gift.expires_at)}
+            <div className="bg-white mb-3 py-3">
+              <div className="container">
+                <div className="d-flex align-items-center text-warning">
+                  <i className="ti ti-clock me-2"></i>
+                  <span>Expires {formatDate(gift.expires_at)}</span>
+                </div>
               </div>
             </div>
           )}
 
-        </div>
+          {/* Status Notice for Redeemed/Expired */}
+          {(status === "redeemed" || status === "expired") && (
+            <div className={`bg-white mb-3 py-3`}>
+              <div className="container">
+                <div className={`d-flex align-items-center gap-3 ${status === 'redeemed' ? 'text-success' : 'text-secondary'}`}>
+                  <i className={`ti ${status === 'redeemed' ? 'ti-circle-check' : 'ti-clock-x'} fs-3`}></i>
+                  <div>
+                    <h6 className="mb-0 text-capitalize">{status}</h6>
+                    <small className="text-muted">
+                      {status === "redeemed"
+                        ? `Redeemed on ${formatDate(gift.redemption_date)}`
+                        : `Expired on ${formatDate(gift.expires_at)}`
+                      }
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Floating Action Button */}
-        {status === "pending" && (
-          <div className="gift-action-container">
-            <button
-              className="gift-redeem-btn-fixed"
-              onClick={handleRedeemGift}
-            >
-              Redeem Gift
-            </button>
-          </div>
-        )}
+          {/* Action Button - Inline like Add to Cart */}
+          {status === "pending" && (
+            <div className="bg-white mb-3 py-3">
+              <div className="container">
+                <button
+                  className="btn btn-primary w-100"
+                  onClick={handleRedeemGift}
+                  style={{ padding: "14px", borderRadius: "12px", fontWeight: 600 }}
+                >
+                  Redeem Gift
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Inline styles matching SingleProduct exactly */}
+      <style jsx>{`
+        .product-image-container {
+          padding: 16px;
+          background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+        .product-image-wrapper {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          max-width: 400px;
+          margin: 0 auto;
+          background: #ffffff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 
+            0 4px 6px -1px rgba(0, 0, 0, 0.05),
+            0 10px 15px -3px rgba(0, 0, 0, 0.08),
+            0 20px 25px -5px rgba(0, 0, 0, 0.04);
+        }
+        .product-image-wrapper :global(img) {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .product-image-wrapper:hover :global(img) {
+          transform: scale(1.02);
+        }
+        .vendor-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          padding: 6px 14px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          border-radius: 20px;
+          font-size: 12px;
+          font-weight: 500;
+          color: #1a1a1a;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          z-index: 10;
+        }
+      `}</style>
 
       <Footer />
     </>
