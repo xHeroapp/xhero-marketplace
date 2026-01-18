@@ -1126,3 +1126,187 @@
 .gift-redeem-btn-fixed:active {
     transform: translateY(0);
 }
+
+/* ==========================================
+   DARK MODE STYLES FOR GIFT PAGES
+   ========================================== */
+
+/* Dark Mode Variables Override */
+[theme-color="dark"] {
+    --gift-card-bg: #1c1c1e;
+    --gift-page-bg: #000000;
+}
+
+/* My Gifts Page - Dark Mode */
+[theme-color="dark"] .my-gifts-page {
+    background-color: #000000;
+}
+
+[theme-color="dark"] .my-gifts-header h4,
+[theme-color="dark"] .my-gifts-header span {
+    color: #ffffff !important;
+}
+
+/* Gift Cards Grid - Dark Mode */
+[theme-color="dark"] .gift-product-card {
+    background-color: #1c1c1e !important;
+    border-color: #38383a !important;
+}
+
+[theme-color="dark"] .gift-product-card .product-title {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gift-product-card .product-title:hover {
+    color: #0a84ff !important;
+}
+
+/* Status Badges - Already light colored, just enhance contrast */
+[theme-color="dark"] .gift-status-badge {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Filter Pills - Dark Mode */
+[theme-color="dark"] .gift-filter-pills .filter-pill {
+    background-color: #2c2c2e !important;
+    color: #ffffff !important;
+    border-color: #48484a !important;
+}
+
+[theme-color="dark"] .gift-filter-pills .filter-pill.active {
+    background-color: #0a84ff !important;
+    border-color: #0a84ff !important;
+    color: #ffffff !important;
+}
+
+/* Gift Details Page V3 - Dark Mode */
+[theme-color="dark"] .gift-details-page-v3 {
+    background: #000000;
+}
+
+[theme-color="dark"] .gift-image-container {
+    background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+}
+
+[theme-color="dark"] .gift-image-wrapper {
+    background: #1c1c1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[theme-color="dark"] .gift-vendor-badge {
+    background: rgba(44, 44, 46, 0.95);
+    color: #ffffff;
+}
+
+/* Gift Meta Cards - Dark Mode */
+[theme-color="dark"] .gift-meta-card,
+[theme-color="dark"] .gift-source-card,
+[theme-color="dark"] .gift-status-card {
+    background-color: #1c1c1e;
+}
+
+[theme-color="dark"] .gift-product-name {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gift-price {
+    color: #0a84ff !important;
+}
+
+[theme-color="dark"] .gift-category {
+    color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .gift-description {
+    color: #ebebf5 !important;
+}
+
+[theme-color="dark"] .section-label {
+    color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .gift-source-row .label {
+    color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .gift-source-row .value {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .gift-message-box {
+    background: #2c2c2e;
+}
+
+[theme-color="dark"] .gift-message-box p {
+    color: #ebebf5 !important;
+}
+
+[theme-color="dark"] .gift-expiry-simple {
+    color: #ff9f0a !important;
+}
+
+/* Gift Details Page - Using Product Template Classes - Dark Mode */
+[theme-color="dark"] .product-title-meta-data {
+    background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .product-title-meta-data h5,
+[theme-color="dark"] .product-title-meta-data .sale-price {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .product-title-meta-data p {
+    color: #ebebf5 !important;
+}
+
+[theme-color="dark"] .product-description {
+    background: #000000;
+}
+
+[theme-color="dark"] .product-description .bg-white {
+    background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .product-description h6 {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .product-description .text-muted {
+    color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .product-description .fw-bold {
+    color: #ffffff !important;
+}
+
+[theme-color="dark"] .product-description .border-bottom {
+    border-color: #38383a !important;
+}
+
+[theme-color="dark"] .product-description .bg-light {
+    background-color: #2c2c2e !important;
+}
+
+[theme-color="dark"] .product-description .fst-italic {
+    color: #ebebf5 !important;
+}
+
+/* Fixed Action Container - Dark Mode */
+[theme-color="dark"] .gift-action-container {
+    background: linear-gradient(to top, #1c1c1e 80%, rgba(28, 28, 30, 0));
+}
+
+/* Image Container - Dark Mode */
+[theme-color="dark"] .product-image-container {
+    background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
+}
+
+[theme-color="dark"] .product-image-wrapper {
+    background: #1c1c1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[theme-color="dark"] .vendor-badge {
+    background: rgba(44, 44, 46, 0.95);
+    color: #ffffff;
+}

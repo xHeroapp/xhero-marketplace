@@ -6,6 +6,7 @@ import "../styles/gifts.css";
 
 import store from "@/redux/store";
 import { Provider } from "react-redux";
+import ThemeInitializer from "@/components/ThemeInitializer";
 
 export default function RootLayout({
   children,
@@ -13,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // set the default them to white
-    <html lang="en" theme-color="light">
+    // set the default theme to dark
+    <html lang="en" theme-color="dark">
       <head>
         <title>xHero - Market Place</title>
         <link
@@ -25,7 +26,10 @@ export default function RootLayout({
       <body>
         <Provider store={store}>
           {/* this second provider is currently used to provide the query client tanstack query and the Toast from sooner */}
-          <Providers>{children}</Providers>
+          <Providers>
+            <ThemeInitializer />
+            {children}
+          </Providers>
         </Provider>
       </body>
     </html>

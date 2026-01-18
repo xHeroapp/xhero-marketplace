@@ -563,6 +563,125 @@ const CheckoutReward = () => {
         .confirm-btn:hover {
           background: #16a34a;
         }
+
+        /* Dark Mode Styles */
+        :global([theme-color="dark"]) .checkout-header {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .back-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .header-row h1 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .progress-item span {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .progress-item.active span {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .progress-line {
+          background: #38383a;
+        }
+
+        :global([theme-color="dark"]) .progress-line.active {
+          background: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .checkout-content {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .section-header {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .section-header h2 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .vendor-card,
+        :global([theme-color="dark"]) .delivery-card,
+        :global([theme-color="dark"]) .summary-card {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .vendor-details h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .vendor-details span {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .toggle-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .items-list {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .item-row {
+          border-color: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .item-marker {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .item-info h4 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .item-price {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .card-header h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .address-row i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .address-text strong {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .address-text p {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .summary-row {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .summary-row.total {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .checkout-footer {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .terms-text {
+          color: #8e8e93;
+        }
       `}</style>
     </>
   );

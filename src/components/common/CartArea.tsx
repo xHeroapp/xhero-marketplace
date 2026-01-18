@@ -384,6 +384,83 @@ const CartArea = () => {
         .clear-selection-btn:hover {
           color: #0077ed;
         }
+
+        /* ========== Dark Mode ========== */
+        :global([theme-color="dark"]) .vendor-card {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .card-divider {
+          background: #38383a;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .vendor-details h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .vendor-meta {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .view-selection-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .items-section {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .item-row {
+          border-color: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .item-image {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .item-info h4 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .item-price {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .qty-stepper {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .qty-stepper button {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .qty-stepper span {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .delivery-icon i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .delivery-text {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .clear-selection-btn {
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .clear-selection-btn:hover {
+          color: #409cff;
+        }
       `}</style>
     </>
   );
