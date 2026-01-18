@@ -41,7 +41,7 @@ const GiftDetailsPage = ({ gift }: GiftDetailsPageProps) => {
       vendor: {
         vendor_id: gift.vendor_id ?? "unknown",
         vendor_name: gift.vendor_name,
-        vendor_img: gift.vendor_avatar ?? "/assets/img/vendor/vendor-avatar.png",
+        vendor_img: gift.vendor_avatar_url || gift.avatar_url || gift.vendor_image || "/assets/img/vendor/vendor-avatar.png",
       },
       redemption_code: gift.redemption_code,
       recognition_id: gift.recognition_id,
