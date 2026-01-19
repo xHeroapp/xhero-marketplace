@@ -1,16 +1,13 @@
 "use client";
 
-import Footer from "@/layouts/Footer";
-import HeaderTwo from "@/layouts/HeaderTwo";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAuthStore } from "@/store/authStore";
 import { useClientReady } from "@/hooks/useClientReady";
 import useRewardCartStore from "@/store/rewardCartStore";
-import { processOrder } from "@/services/processOrder.service";
 import { generateTxRef } from "@/utils/generateTxRef";
 import { toast } from "sonner";
 import { processRewardOrder } from "@/services/processRewardOrder.service";
@@ -19,243 +16,673 @@ const CheckoutReward = () => {
   const ready = useClientReady();
   const router = useRouter();
   const { user } = useAuthStore();
-  const { rewardCart, getItems, getTotal, clearRewardCart } =
-    useRewardCartStore();
+  const { rewardCart, getItems, getTotal, clearRewardCart } = useRewardCartStore();
 
-  const [txRef, setTxRef] = useState(generateTxRef());
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [currentStep, setCurrentStep] = useState<"order" | "delivery">("order");
+  const [txRef] = useState(generateTxRef());
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [showItems, setShowItems] = useState(true);
 
   const items = getItems();
-  const { subtotal, discount, deliveryFee, total } = getTotal();
-
-  // useEffect(() => {
-  //   if (!rewardCart) {
-  //     router.push("/gifts"); // redirect if no reward selected
-  //   }
-  // }, [rewardCart]);
+  const vendor = rewardCart?.vendor;
 
   const handleCheckOutReward = () => {
     try {
       const promise = processRewardOrder({
         p_reward_recognition_id: rewardCart.recognition_id,
-        // p_items: Object.values(rewardCart.items),
-        // p_payment_method: "REWARD_REDEM", //reward redemption
         p_reference: txRef,
       });
 
       toast.promise(promise, {
         loading: "Redeeming Reward...",
-
         success: () => {
-          setIsLoading(false);
-          setIsSuccess(true);
           router.push("/reward-success");
           clearRewardCart();
-
           return "Reward Redeemed Successfully";
         },
-
         error: () => {
-          setIsLoading(false);
-          setIsSuccess(false);
-          return `There was an error while trying to process your. Please try again later`;
+          return `There was an error while trying to process your reward. Please try again later`;
         },
       });
     } catch (error) {
-      setIsLoading(false);
       console.error(error);
     }
-
-    console.log(rewardCart);
   };
 
   if (!ready || !rewardCart) return null;
 
-  const vendor = rewardCart.vendor;
-
   return (
     <>
-      <HeaderTwo links="cart" title="Reward Checkout" />
+      {/* Custom Header - Matches Checkout */}
+      <div className="checkout-header">
+        <div className="header-row">
+          <Link href="/gifts" className="back-btn">
+            <i className="ti ti-arrow-left"></i>
+          </Link>
+          <h1>Reward Checkout</h1>
+          <div className="header-spacer"></div>
+        </div>
 
-      <div className="page-content-wrapper">
-        <div className="container">
-          <div className="checkout-wrapper-area py-3">
-            {/* Progress tabs */}
-            <div className="card mb-3">
-              <div className="card-body p-2">
-                <div className="d-flex">
-                  <div className="flex-fill text-center">
-                    <div
-                      className={`progress-step ${
-                        currentStep === "order" ? "active" : ""
-                      }`}
-                    >
-                      <div
-                        className="step-indicator"
-                        onClick={() => setCurrentStep("order")}
-                      >
-                        <span>Your Reward</span>
-                        <div className="progress-bar">
-                          <div
-                            className={`progress-fill ${
-                              currentStep === "order" ? "active" : ""
-                            }`}
-                          ></div>
-                        </div>
+        {/* Progress Bar */}
+        <div className="progress-bar">
+          <div className={`progress-item ${currentStep >= 1 ? 'active' : ''}`}>
+            <span>Your Reward</span>
+          </div>
+          <div className={`progress-item ${currentStep >= 2 ? 'active' : ''}`}>
+            <span>Delivery & Confirm</span>
+          </div>
+        </div>
+        <div className="progress-lines">
+          <div className={`progress-line ${currentStep >= 1 ? 'active' : ''}`}></div>
+          <div className={`progress-line ${currentStep >= 2 ? 'active' : ''}`}></div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="checkout-content">
+        {currentStep === 1 && (
+          <>
+            {/* Reward Summary Section */}
+            <div className="section-header">
+              <h2>Reward Summary</h2>
+            </div>
+
+            {/* Vendor Card */}
+            <div className="vendor-card">
+              <div className="vendor-row">
+                <div className="vendor-info">
+                  <div className="vendor-logo">
+                    {vendor?.vendor_img ? (
+                      <img src={vendor.vendor_img} alt={vendor.vendor_name} />
+                    ) : (
+                      <i className="ti ti-building-store"></i>
+                    )}
+                  </div>
+                  <div className="vendor-details">
+                    <h3>{vendor?.vendor_name}</h3>
+                    <span>{items.length} Reward Item{items.length !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+                <button
+                  className="toggle-btn"
+                  onClick={() => setShowItems(!showItems)}
+                >
+                  {showItems ? 'Hide' : 'View'} Selection
+                  <i className={`ti ti-chevron-${showItems ? 'up' : 'down'}`}></i>
+                </button>
+              </div>
+
+              {/* Items List - No Quantity Controls */}
+              {showItems && (
+                <div className="items-list">
+                  {items.map((product: any) => (
+                    <div key={product.product_id} className="item-row">
+                      <div className="item-marker">★</div>
+                      <div className="item-info">
+                        <h4>{product.product_name}</h4>
+                        <span className="item-price reward-tag">🎁 Reward Item</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex-fill text-center">
-                    <div
-                      className={`progress-step ${
-                        currentStep === "delivery" ? "active" : ""
-                      }`}
-                    >
-                      <div
-                        className="step-indicator"
-                        onClick={() => setCurrentStep("delivery")}
-                      >
-                        <span>Delivery & Confirm</span>
-                        <div className="progress-bar">
-                          <div
-                            className={`progress-fill ${
-                              currentStep === "delivery" ? "active" : ""
-                            }`}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Continue Button */}
+            <div className="checkout-footer">
+              <p className="terms-text">
+                By proceeding, you agree to our <Link href="/terms">Terms of Use</Link> and <Link href="/privacy">Privacy Policy</Link>
+              </p>
+              <button className="payment-btn" onClick={() => setCurrentStep(2)}>
+                Continue
+              </button>
+            </div>
+          </>
+        )}
+
+        {currentStep === 2 && (
+          <>
+            {/* Delivery Section */}
+            <div className="section-header">
+              <h2>Delivery & Confirm</h2>
+            </div>
+
+            {/* Delivery Address */}
+            <div className="delivery-card">
+              <div className="card-header">
+                <h3>Delivery Address</h3>
+                <Link href="/edit-profile" className="edit-link">Edit</Link>
+              </div>
+              <div className="address-row">
+                <i className="ti ti-map-pin"></i>
+                <div className="address-text">
+                  <strong>{user?.full_name}</strong>
+                  <p>{user?.delivery_address || "No address added"}</p>
                 </div>
               </div>
             </div>
 
-            {/* Order Summary Step */}
-            {currentStep === "order" && (
-              <div className="order-summary-section">
-                <h5 className="mb-3">Reward Summary</h5>
-
-                <div className="card mb-3">
-                  <div className="card-body d-flex align-items-center">
-                    {vendor.vendor_img ? (
-                      <img
-                        src={vendor.vendor_img}
-                        alt={vendor.vendor_name}
-                        width={40}
-                        height={40}
-                        className="rounded me-2"
-                      />
-                    ) : (
-                      <div
-                        className="bg-light rounded d-flex align-items-center justify-content-center me-2"
-                        style={{ width: 40, height: 40 }}
-                      >
-                        <i className="ti ti-building-store"></i>
-                      </div>
-                    )}
-                    <div>
-                      <h6 className="mb-0">{vendor.vendor_name}</h6>
-                      <small className="text-muted">
-                        {items.length} Reward Item
-                      </small>
-                    </div>
-                  </div>
-                </div>
-
-                {items.map((product, index) => (
-                  <div key={product.product_id} className="card mb-3">
-                    <div className="card-body d-flex align-items-center">
-                      <ImageWithFallback
-                        src={product.image_url}
-                        alt={product.product_name}
-                        width={60}
-                        height={60}
-                        className="rounded me-3"
-                      />
-                      <div className="flex-grow-1">
-                        <p className="mb-1 fw-medium">{product.product_name}</p>
-                        <small className="text-success">Reward Item</small>
-                        {product.product_description && (
-                          <p className="mb-0">{product.product_description}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <button
-                  className="btn btn-primary w-100"
-                  onClick={() => setCurrentStep("delivery")}
-                >
-                  Continue
-                </button>
+            {/* Order Summary */}
+            <div className="summary-card">
+              <div className="summary-row">
+                <span>Reward Value</span>
+                <span>{formatCurrency(getTotal().subtotal)}</span>
               </div>
-            )}
-
-            {/* Delivery & Confirm Step */}
-            {currentStep === "delivery" && (
-              <div className="delivery-payment-section">
-                <div className="billing-information-card mb-3">
-                  <div className="card user-data-card">
-                    <div className="card-body">
-                      <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
-                        <span>Full Name</span>
-                        <span>{user.full_name}</span>
-                      </div>
-                      <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
-                        <span>Email</span>
-                        <span>{user.email}</span>
-                      </div>
-                      <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
-                        <span>Phone</span>
-                        <span>{user.phone}</span>
-                      </div>
-                      <div className="single-profile-data d-flex align-items-center justify-content-between mb-3">
-                        <span>Shipping:</span>
-                        <span>
-                          {user.delivery_address ?? "Add a delivery address"}
-                        </span>
-                      </div>
-                      <Link
-                        className="btn btn-primary w-100"
-                        href="/edit-profile"
-                      >
-                        Edit Billing Information
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card cart-amount-area">
-                  <div className="card-body d-flex align-items-center justify-content-between">
-                    <h5>Total</h5>
-                    <h5>{formatCurrency(total)}</h5>
-                  </div>
-                  {user.delivery_address && (
-                    <div className="card-body mt-2">
-                      <button
-                        className="btn btn-success w-100"
-                        onClick={handleCheckOutReward}
-                      >
-                        Confirm & Redeem Reward
-                      </button>
-                    </div>
-                  )}
-                  {!user.delivery_address && (
-                    <div className="card-body mt-2">
-                      <p>Add a delivery address to continue</p>
-                    </div>
-                  )}
-                </div>
+              <div className="summary-row discount">
+                <span>Gift Discount</span>
+                <span>-{formatCurrency(getTotal().discount)}</span>
               </div>
-            )}
-          </div>
-        </div>
+              <div className="summary-row">
+                <span>Delivery</span>
+                <span>Free</span>
+              </div>
+              <div className="summary-row total">
+                <span>Total</span>
+                <span className="text-success">₦0 (Gift)</span>
+              </div>
+            </div>
+
+            {/* Confirm Button */}
+            <div className="checkout-footer">
+              {user?.delivery_address ? (
+                <>
+                  <p className="terms-text">
+                    By proceeding, you agree to our <Link href="/terms">Terms of Use</Link> and <Link href="/privacy">Privacy Policy</Link>
+                  </p>
+                  <button className="payment-btn confirm-btn" onClick={handleCheckOutReward}>
+                    Confirm & Redeem Reward
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="terms-text warning">
+                    Please add a delivery address to continue
+                  </p>
+                  <Link href="/edit-profile" className="payment-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+                    Add Delivery Address
+                  </Link>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
-      <Footer />
+      <style jsx>{`
+        /* Header - Copied from Checkout.tsx */
+        .checkout-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: #ffffff;
+          z-index: 100;
+        }
+
+        .header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          max-width: 680px;
+          margin: 0 auto;
+        }
+
+        .back-btn {
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #1d1d1f;
+          text-decoration: none;
+          font-size: 20px;
+        }
+
+        .header-row h1 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin: 0;
+        }
+
+        .header-spacer {
+          width: 32px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          padding: 0 20px;
+          max-width: 680px;
+          margin: 0 auto 8px;
+        }
+
+        .progress-item {
+          flex: 1;
+        }
+
+        .progress-item span {
+          font-size: 14px;
+          color: #86868b;
+        }
+
+        .progress-item.active span {
+          color: #1d1d1f;
+          font-weight: 500;
+        }
+
+        .progress-lines {
+          display: flex;
+          gap: 8px;
+          padding: 0 20px 16px;
+          max-width: 680px;
+          margin: 0 auto;
+        }
+
+        .progress-line {
+          flex: 1;
+          height: 6px;
+          background: #e5e7eb;
+          border-radius: 3px;
+        }
+
+        .progress-line.active {
+          background: #0071e3;
+        }
+
+        /* Content */
+        .checkout-content {
+          padding-top: 130px;
+          min-height: calc(100vh - 60px);
+          background: #f5f5f7;
+          padding-bottom: 180px;
+        }
+
+        /* Section Header */
+        .section-header {
+          background: #f5f5f7;
+          padding: 16px 20px;
+        }
+
+        .section-header h2 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin: 0;
+        }
+
+        /* Vendor Card */
+        .vendor-card {
+          background: #ffffff;
+          padding: 20px;
+          margin: 0 16px 16px;
+          border-radius: 8px;
+        }
+
+        .vendor-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+
+        .vendor-info {
+          display: flex;
+          gap: 12px;
+        }
+
+        .vendor-logo {
+          width: 44px;
+          height: 44px;
+          border-radius: 10px;
+          background: #f5f5f7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .vendor-logo img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .vendor-logo i {
+          font-size: 20px;
+          color: #86868b;
+        }
+
+        .vendor-details h3 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin: 0 0 4px;
+        }
+
+        .vendor-details span {
+          font-size: 13px;
+          color: #86868b;
+        }
+
+        .toggle-btn {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background: none;
+          border: none;
+          color: #1d1d1f;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        .toggle-btn i {
+          font-size: 14px;
+        }
+
+        /* Items List */
+        .items-list {
+          margin-top: 20px;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 16px;
+        }
+
+        .item-row {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 12px 0;
+          border-bottom: 1px solid #f5f5f7;
+        }
+
+        .item-row:last-child {
+          border-bottom: none;
+        }
+
+        .item-marker {
+          font-size: 12px;
+          color: #1d1d1f;
+          margin-top: 2px;
+        }
+
+        .item-info {
+          flex: 1;
+        }
+
+        .item-info h4 {
+          font-size: 15px;
+          font-weight: 500;
+          color: #1d1d1f;
+          margin: 0 0 4px;
+        }
+
+        .item-price {
+          font-size: 13px;
+          color: #86868b;
+        }
+
+        .reward-tag {
+          color: #22c55e;
+          font-weight: 500;
+        }
+
+        /* Delivery Card */
+        .delivery-card {
+          background: #ffffff;
+          padding: 20px;
+          margin: 16px;
+          border-radius: 8px;
+        }
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+
+        .card-header h3 {
+          font-size: 15px;
+          font-weight: 600;
+          color: #1d1d1f;
+          margin: 0;
+        }
+
+        .edit-link {
+          font-size: 14px;
+          color: #0071e3;
+          text-decoration: none;
+        }
+
+        .address-row {
+          display: flex;
+          gap: 12px;
+        }
+
+        .address-row i {
+          font-size: 20px;
+          color: #86868b;
+          margin-top: 2px;
+        }
+
+        .address-text strong {
+          font-size: 15px;
+          color: #1d1d1f;
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        .address-text p {
+          font-size: 14px;
+          color: #86868b;
+          margin: 0;
+          line-height: 1.4;
+        }
+
+        /* Summary Card */
+        .summary-card {
+          background: #ffffff;
+          padding: 20px;
+          margin: 16px;
+          border-radius: 8px;
+        }
+
+        .summary-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0;
+          font-size: 14px;
+          color: #1d1d1f;
+        }
+
+        .summary-row.discount span:last-child {
+          color: #22c55e;
+        }
+
+        .summary-row.total {
+          border-top: 1px solid #e5e7eb;
+          margin-top: 8px;
+          padding-top: 16px;
+          font-weight: 600;
+          font-size: 16px;
+        }
+
+        .text-success {
+          color: #22c55e;
+        }
+
+        /* Footer */
+        .checkout-footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #ffffff;
+          padding: 16px 20px;
+        }
+
+        .terms-text {
+          font-size: 12px;
+          color: #86868b;
+          text-align: center;
+          margin: 0 0 12px;
+        }
+
+        .terms-text.warning {
+          color: #dc2626;
+        }
+
+        .terms-text :global(a) {
+          color: #0071e3;
+          text-decoration: none;
+        }
+
+        .payment-btn {
+          width: 100%;
+          padding: 14px;
+          background: #0071e3;
+          color: #ffffff;
+          font-size: 15px;
+          font-weight: 500;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .payment-btn:hover {
+          background: #005bb5;
+        }
+
+        .confirm-btn {
+          background: #22c55e;
+        }
+
+        .confirm-btn:hover {
+          background: #16a34a;
+        }
+
+        /* Dark Mode Styles */
+        :global([theme-color="dark"]) .checkout-header {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .back-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .header-row h1 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .progress-item span {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .progress-item.active span {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .progress-line {
+          background: #38383a;
+        }
+
+        :global([theme-color="dark"]) .progress-line.active {
+          background: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .checkout-content {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .section-header {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .section-header h2 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .vendor-card,
+        :global([theme-color="dark"]) .delivery-card,
+        :global([theme-color="dark"]) .summary-card {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .vendor-logo i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .vendor-details h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .vendor-details span {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .toggle-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .items-list {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .item-row {
+          border-color: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .item-marker {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .item-info h4 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .item-price {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .card-header h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .address-row i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .address-text strong {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .address-text p {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .summary-row {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .summary-row.total {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .checkout-footer {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .terms-text {
+          color: #8e8e93;
+        }
+      `}</style>
     </>
   );
 };

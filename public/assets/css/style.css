@@ -46,7 +46,7 @@ Created: December 15, 2019
 
 body,
 html {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Inter", sans-serif;
   color: #747794;
   overflow-x: hidden;
   background-color: #f0f0f5;
@@ -1256,35 +1256,7 @@ textarea:invalid {
   line-height: 1rem;
 }
 
-.user-profile-icon {
-  width: 2rem;
-  height: 2rem;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 2rem;
-  flex: 0 0 2rem;
-  max-width: 2rem;
-}
-
-.user-profile-icon a {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: 0.125rem solid #f1f1f2;
-  border-radius: 50%;
-}
-
-.user-profile-icon a img {
-  max-width: 24px;
-  border-radius: 50%;
-}
+/* User profile icon styles moved to component */
 
 .search-form {
   display: -webkit-box;
@@ -3437,7 +3409,7 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
 }
 
 .product-title-meta-data {
-  border-top-left-radius: 2rem;
+  /* border-top-left-radius: 2rem; */
   padding-top: 1.5rem !important;
 }
 
@@ -5878,9 +5850,39 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   background-color: #1c1c1c;
 }
 
+[theme-color="dark"] .single-payment-method div {
+  background-color: #1c1c1e;
+  border: 1px solid #38383a;
+}
+
+[theme-color="dark"] .single-payment-method {
+  background-color: transparent;
+}
+
+[theme-color="dark"] .choose-payment-method {
+  background-color: transparent !important;
+}
+
+[theme-color="dark"] .choose-payment-method .row {
+  background-color: transparent !important;
+}
+
+[theme-color="dark"] .single-payment-method div i {
+  color: #6366f1;
+}
+
+[theme-color="dark"] .single-payment-method div h6 {
+  color: #ffffff;
+}
+
 [theme-color="dark"] .single-payment-method a.active h6,
 [theme-color="dark"] .single-payment-method a:hover h6 {
   color: #625afa;
+}
+
+[theme-color="dark"] .single-payment-method div.active h6,
+[theme-color="dark"] .single-payment-method div:hover h6 {
+  color: #6366f1;
 }
 
 [theme-color="dark"] .list-group-item {
@@ -6978,4 +6980,177 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   top: 50%;
   left: 16px;
   transform: translateY(-50%);
+}
+
+/* ==========================================
+   DARK MODE - ORDERS PAGE
+   ========================================== */
+
+[theme-color="dark"] .order-card .card {
+  background-color: #1c1c1e !important;
+  border-color: #38383a !important;
+}
+
+[theme-color="dark"] .order-card h6 {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .order-card .text-dark {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .order-card .text-muted {
+  color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .order-card .bg-light {
+  background-color: #2c2c2e !important;
+}
+
+[theme-color="dark"] .order-card .ti-chevron-right {
+  color: #8e8e93 !important;
+}
+
+/* Order Tabs - Dark Mode */
+[theme-color="dark"] .order-tabs .nav-tabs {
+  background-color: #1c1c1e;
+  border-radius: 8px;
+}
+
+[theme-color="dark"] .order-tabs .nav-link {
+  color: #8e8e93 !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+[theme-color="dark"] .order-tabs .nav-link.active {
+  color: #ffffff !important;
+  background-color: #0a84ff !important;
+  border-radius: 6px !important;
+}
+
+[theme-color="dark"] .order-tabs .nav-link:hover:not(.active) {
+  color: #ffffff !important;
+}
+
+/* Cart/Orders Empty State - Dark Mode */
+[theme-color="dark"] .ti-shopping-bag,
+[theme-color="dark"] .ti-package,
+[theme-color="dark"] .ti-alert-circle {
+  color: #8e8e93 !important;
+}
+
+/* Page Content - Dark Mode */
+[theme-color="dark"] .page-content-wrapper {
+  background-color: #000000;
+}
+
+/* Text Utilities - Dark Mode Override */
+[theme-color="dark"] .text-dark {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] h5,
+[theme-color="dark"] h6 {
+  color: #ffffff;
+}
+
+/* Cart Page - Dark Mode */
+[theme-color="dark"] .cart-wrapper-area .card {
+  background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .cart-wrapper-area h5,
+[theme-color="dark"] .cart-wrapper-area h6 {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .cart-wrapper-area .text-muted {
+  color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .cart-amount-area {
+  background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .cart-amount-area h5 {
+  color: #ffffff !important;
+}
+
+/* ==========================================
+   DARK MODE - BANK TRANSFER / CHECKOUT
+   ========================================== */
+
+[theme-color="dark"] .bank-ac-info p {
+  color: #ebebf5 !important;
+}
+
+[theme-color="dark"] .list-group-item {
+  background-color: #1c1c1e !important;
+  color: #ffffff !important;
+  border-color: #38383a !important;
+}
+
+[theme-color="dark"] .list-group-item span {
+  color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .credit-card-info-wrapper {
+  background-color: #1c1c1e;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+[theme-color="dark"] .checkout-wrapper-area {
+  background-color: #000000;
+}
+
+/* ==========================================
+   DARK MODE - PROFILE / SETTINGS PAGES
+   ========================================== */
+
+[theme-color="dark"] .settings-wrapper .card {
+  background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .settings-wrapper h6 {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .settings-wrapper p {
+  color: #8e8e93 !important;
+}
+
+[theme-color="dark"] .user-info-card {
+  background-color: #1c1c1e !important;
+}
+
+[theme-color="dark"] .user-info-card h5 {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .user-info-card p {
+  color: #8e8e93 !important;
+}
+
+/* Form Controls in Dark Mode */
+[theme-color="dark"] .form-control {
+  background-color: #2c2c2e !important;
+  border-color: #38383a !important;
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .form-label {
+  color: #ffffff !important;
+}
+
+[theme-color="dark"] .form-select {
+  background-color: #2c2c2e !important;
+  border-color: #38383a !important;
+  color: #ffffff !important;
+}
+
+/* Login Page Dark Mode */
+[theme-color="dark"] .login-wrapper {
+  background: #000000 !important;
 }

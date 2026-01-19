@@ -355,13 +355,9 @@ const SingleProductArea = ({ product }: any) => {
         <div className="p-specification bg-white mb-3 py-3">
           <div className="container">
             <h6>Description</h6>
-            {/* return the product long descriptions here */}
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
-              eum? Id, culpa? At officia quisquam laudantium nisi mollitia
-              nesciunt, qui porro asperiores cum voluptates placeat similique
-              recusandae in facere quos vitae?
-            </p>
+            <div className="product-description-content">
+              <p>{product.product_description}</p>
+            </div>
             <ul className="mb-3 ps-3">
               <li>
                 <i className="ti ti-check me-1"></i> 100% Good Reviews
@@ -378,12 +374,6 @@ const SingleProductArea = ({ product }: any) => {
                 <i className="ti ti-check me-1"></i> 100% Brand New Product
               </li>
             </ul>
-            <p className="mb-0">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi,
-              eum? Id, culpa? At officia quisquam laudantium nisi mollitia
-              nesciunt, qui porro asperiores cum voluptates placeat similique
-              recusandae in facere quos vitae?
-            </p>
           </div>
         </div>
 

@@ -39,9 +39,8 @@ const CheckoutWallet = () => {
     setIsLoading,
     setIsSuccess,
     payment_method: "wallet",
-    redirect_link: `/payment-success?vendor_id=${
-      vendorCart && vendorCart.vendor.vendor_id
-    }`,
+    redirect_link: `/payment-success?vendor_id=${vendorCart && vendorCart.vendor.vendor_id
+      }`,
   });
 
   const hasSufficientBalance =
@@ -136,9 +135,8 @@ const CheckoutWallet = () => {
               <div className="summary-row total-row">
                 <span className="row-label">Balance After Payment</span>
                 <span
-                  className={`row-value ${
-                    balanceAfterPayment >= 0 ? "positive" : "negative"
-                  }`}
+                  className={`row-value ${balanceAfterPayment >= 0 ? "positive" : "negative"
+                    }`}
                 >
                   {formatCurrency(balanceAfterPayment)}
                 </span>
@@ -162,9 +160,8 @@ const CheckoutWallet = () => {
           {/* Action Button */}
           <div className="action-container">
             <button
-              className={`pay-button ${
-                !hasSufficientBalance ? "insufficient" : ""
-              } ${isLoading ? "loading" : ""}`}
+              className={`pay-button ${!hasSufficientBalance ? "insufficient" : ""
+                } ${isLoading ? "loading" : ""}`}
               type="button"
               disabled={!hasSufficientBalance || isLoading || isSuccess}
               onClick={(e) => handlePayment(e)}
@@ -669,6 +666,82 @@ const CheckoutWallet = () => {
             font-size: 15px;
             border-radius: 14px;
           }
+        }
+
+        /* ========== Dark Mode ========== */
+        :global([theme-color="dark"]) .wallet-header {
+          background: rgba(28, 28, 30, 0.95);
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .back-btn {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .back-btn:hover {
+          background: #3c3c3e;
+        }
+
+        :global([theme-color="dark"]) .back-btn i {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .header-title {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .wallet-page {
+          background: linear-gradient(180deg, #000000 0%, #1c1c1e 100%);
+        }
+
+        :global([theme-color="dark"]) .summary-card {
+          background: #1c1c1e;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        :global([theme-color="dark"]) .summary-header {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .summary-header h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .row-label {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .row-value {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .total-row .row-label {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .summary-divider {
+          background: #38383a;
+        }
+
+        :global([theme-color="dark"]) .security-badge {
+          background: linear-gradient(135deg, #0a2a1a 0%, #0d2818 100%);
+          border-color: #166534;
+        }
+
+        :global([theme-color="dark"]) .security-icon {
+          background: #14532d;
+        }
+
+        :global([theme-color="dark"]) .security-title {
+          color: #4ade80;
+        }
+
+        :global([theme-color="dark"]) .security-subtitle {
+          color: #22c55e;
+        }
+
+        :global([theme-color="dark"]) .insufficient-hint {
+          color: #8e8e93;
         }
       `}</style>
     </>

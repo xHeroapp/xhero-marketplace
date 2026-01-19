@@ -40,3 +40,6 @@ next-env.d.ts
 
 # template reference
 /suha/
+/banner.md
+/integration.md
+/chat.md

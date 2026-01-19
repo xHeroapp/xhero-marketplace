@@ -453,6 +453,101 @@ const Cart = () => {
         .modal-btn.confirm:hover {
           background: #dc2626;
         }
+
+        /* ========== Dark Mode ========== */
+        :global([theme-color="dark"]) .orders-header {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .back-btn {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .header-content h1 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .clear-cart-btn {
+          background: rgba(10, 132, 255, 0.15);
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .tab-bar-container {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .tab-bar {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .tab {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .tab.active {
+          background: #0a84ff;
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .tab:not(.active):hover {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .orders-content {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .empty-tab-state i {
+          color: #48484a;
+        }
+
+        :global([theme-color="dark"]) .empty-tab-state h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .empty-tab-state p {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .modal-content {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .modal-icon {
+          background: #3a1a1a;
+        }
+
+        :global([theme-color="dark"]) .modal-content h3 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .modal-content p {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .modal-btn.cancel {
+          background: #2c2c2e;
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .modal-btn.cancel:hover {
+          background: #3c3c3e;
+        }
+
+        /* Skeleton loading - dark mode */
+        :global([theme-color="dark"]) .skeleton-back,
+        :global([theme-color="dark"]) .skeleton-title,
+        :global([theme-color="dark"]) .skeleton-tab {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .skeleton-card {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .skeleton-content {
+          background: #000000;
+        }
       `}</style>
     </>
   );

@@ -604,6 +604,64 @@ const Message = () => {
             height: 24px;
           }
         }
+
+        /* Dark Mode Overrides */
+        :global([theme-color="dark"]) .chat-page {
+          background: #000000;
+        }
+
+        :global([theme-color="dark"]) .chat-header {
+          background: rgba(28, 28, 30, 0.95);
+          border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        :global([theme-color="dark"]) .agent-info h6 {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .back-btn i,
+        :global([theme-color="dark"]) .action-btn i {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .date-divider span {
+          background: rgba(255, 255, 255, 0.1);
+          color: #98989d;
+        }
+
+        :global([theme-color="dark"]) .message-bubble.agent {
+          background: #2c2c2e;
+          box-shadow: none;
+        }
+
+        :global([theme-color="dark"]) .message-bubble.agent p {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .input-area {
+          background: rgba(28, 28, 30, 0.95);
+          border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        :global([theme-color="dark"]) .input-wrapper {
+          background: #1c1c1e;
+        }
+
+        :global([theme-color="dark"]) .message-input {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .message-input::placeholder {
+          color: #98989d;
+        }
+
+        :global([theme-color="dark"]) .attach-btn i {
+          color: #98989d;
+        }
+
+        :global([theme-color="dark"]) .send-btn:not(.active) {
+          background: #3a3a3c;
+        }
       `}</style>
     </>
   );
