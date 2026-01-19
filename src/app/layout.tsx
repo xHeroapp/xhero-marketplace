@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     // set the default theme to dark
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>xHero - Market Place</title>
         <link
