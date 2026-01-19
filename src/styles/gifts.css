@@ -1259,9 +1259,7 @@
     color: #ebebf5 !important;
 }
 
-[theme-color="dark"] .product-description {
-    background: #000000;
-}
+
 
 [theme-color="dark"] .product-description .bg-white {
     background-color: #1c1c1e !important;

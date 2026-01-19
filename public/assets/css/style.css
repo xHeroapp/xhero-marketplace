@@ -7177,3 +7177,8 @@ li.suha-dropdown-menu .dropdown-trigger-btn.active i {
   border-color: #38383a !important;
   color: #ffffff !important;
 }
+
+/* Login Page Dark Mode */
+[theme-color="dark"] .login-wrapper {
+  background: #000000 !important;
+}
