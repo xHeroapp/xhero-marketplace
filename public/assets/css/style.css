@@ -1256,35 +1256,7 @@ textarea:invalid {
   line-height: 1rem;
 }
 
-.user-profile-icon {
-  width: 2rem;
-  height: 2rem;
-  -webkit-box-flex: 0;
-  -ms-flex: 0 0 2rem;
-  flex: 0 0 2rem;
-  max-width: 2rem;
-}
-
-.user-profile-icon a {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border: 0.125rem solid #f1f1f2;
-  border-radius: 50%;
-}
-
-.user-profile-icon a img {
-  max-width: 24px;
-  border-radius: 50%;
-}
+/* User profile icon styles moved to component */
 
 .search-form {
   display: -webkit-box;
