@@ -544,28 +544,18 @@ const SingleProductArea = ({ product }: any) => {
                       <img src={item.img} alt="" />
                     </div>
                     <div className="rating-comment">
-                      <div className="rating">
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
+                      <p className="reviewer-name mb-1 fw-semibold">{item.name}</p>
+                      <div className="d-flex align-items-center gap-2 mb-1">
+                        <div className="rating">
+                          <i className="ti ti-star-filled"></i>
+                          <i className="ti ti-star-filled"></i>
+                          <i className="ti ti-star-filled"></i>
+                          <i className="ti ti-star-filled"></i>
+                          <i className="ti ti-star-filled"></i>
+                        </div>
+                        <span className="review-date text-muted small">{item.date}</span>
                       </div>
                       <p className="comment mb-0">{item.title}</p>
-                      <span className="name-date">{item.date}</span>
-                      {item.images.map((image, index) => (
-                        <a
-                          key={index}
-                          className="review-image mt-2 border rounded"
-                          style={{ cursor: "pointer" }}
-                        >
-                          <img
-                            className="rounded-3"
-                            src={image.img}
-                            alt=""
-                          />
-                        </a>
-                      ))}
                     </div>
                   </li>
                 ))}
