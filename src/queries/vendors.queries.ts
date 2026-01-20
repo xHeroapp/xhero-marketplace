@@ -3,10 +3,10 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 // Get vendors
 export const useGetVendors = (filters = {}) => {
-  const { search, limit } = filters;
+  const { search, limit, category } = filters;
 
   return useInfiniteQuery({
-    queryKey: ["get-vendors", search],
+    queryKey: ["get-vendors", search, category ?? null],
     queryFn: async ({ pageParam = 0 }) => {
       const currentPage = typeof pageParam === "number" ? pageParam : 0;
       const from = currentPage * limit;
@@ -21,6 +21,11 @@ export const useGetVendors = (filters = {}) => {
       // Search filter
       if (search && search.trim() !== "") {
         query = query.or(`vendor_name.ilike.%${search}%`);
+      }
+
+      // Category filter
+      if (category && category.trim() !== "") {
+        query = query.eq("category_name", category);
       }
 
       const { data, count, error } = await query;
