@@ -1,12 +1,10 @@
 "use client";
-import vendors_data from "@/data/vendors_data";
 import { useFilters } from "@/hooks/useFilters";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import { useGetVendors } from "@/queries/vendors.queries";
 import Link from "next/link";
 import React, { useEffect, useRef } from "react";
-import ImageWithFallback from "./reuseable/ImageWithFallback";
 
 const Vendors = () => {
   const loadMoreRef = useRef(null);
@@ -87,14 +85,15 @@ const Vendors = () => {
                     <i className="ti ti-arrow-right ms-1"></i>
                   </Link>
                   {/* <!-- Vendor Profile--> */}
-                  <div className="vendor-profile shadow">
-                    <figure className="m-0">
-                      <ImageWithFallback
-                        src={vendor.avatar_url}
-                        fallback="/assets/img/vendor/vendor-avatar.png"
-                        alt={vendor.vendor_name}
-                      />
-                    </figure>
+                  <div className="vendor-profile shadow" style={{ padding: 0, overflow: 'hidden' }}>
+                    <img
+                      src={vendor.avatar_url || "/assets/img/vendor/vendor-avatar.png"}
+                      onError={(e) => {
+                        e.currentTarget.src = "/assets/img/vendor/vendor-avatar.png";
+                      }}
+                      alt={vendor.vendor_name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                   </div>
                 </div>
               </div>
