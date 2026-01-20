@@ -12,6 +12,24 @@ export const useAddToWishListQuery = () => {
   });
 };
 
+export const useCheckItemInWishlist = (user_id: string, vendor_product_id: string) => {
+  return useQuery({
+    queryKey: ["check-wishlist", user_id, vendor_product_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("wishlists")
+        .select("id")
+        .eq("user_id", user_id)
+        .eq("vendor_product_id", vendor_product_id)
+        .single();
+
+      if (error && error.code !== "PGRST116") throw error; // PGRST116 is "no rows found"
+      return data?.id || null;
+    },
+    enabled: !!user_id && !!vendor_product_id,
+  });
+};
+
 export const useGetUserWishlist = (user_id: string, limit = PRODUCT_LIMIT) => {
   return useInfiniteQuery({
     queryKey: ["user-wishlist", user_id],

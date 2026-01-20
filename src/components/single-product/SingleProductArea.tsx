@@ -104,10 +104,13 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
   );
 };
 
+
+import { useCheckItemInWishlist } from "@/queries/wishlist.queries";
+
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
   const { addBooking } = useServiceStore();
-  const userId = useAuthStore((state) => state.user?.id);
+  const userId = useAuthStore((state) => state.user?.user_id);
   const router = useRouter();
 
   const {
@@ -115,6 +118,24 @@ const SingleProductArea = ({ product }: any) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  // Wishlist Logic
+  const { addToWishList, removeFromWishList } = useAddToWishList();
+  const { data: wishlistId, isLoading: isWishlistLoading } = useCheckItemInWishlist(userId, product.vendor_product_id);
+
+  const handleWishlistClick = () => {
+    if (!userId) {
+      alert("Please login to use wishlist");
+      return;
+    }
+
+    if (wishlistId) {
+      removeFromWishList(wishlistId, product.vendor_product_id);
+    } else {
+      addToWishList(product.vendor_product_id);
+    }
+  };
+
 
   const onSubmitBooking = (data: any) => {
     if (!userId) {
@@ -153,8 +174,7 @@ const SingleProductArea = ({ product }: any) => {
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart(quantity);
 
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
+  // handle add to wishlist is now destructured above
 
   //   console.log(totalItems?.quantity);
 
@@ -172,11 +192,12 @@ const SingleProductArea = ({ product }: any) => {
               <p className="">{product.short_description || product.product_description}</p>
             </div>
             <div
-              onClick={() => addToWishList(product.vendor_product_id)}
+              onClick={handleWishlistClick}
               className="p-wishlist-share"
+              style={{ cursor: "pointer" }}
             >
               <div>
-                <i className="ti ti-heart"></i>
+                <i className={wishlistId ? "ti ti-heart-filled text-danger" : "ti ti-heart"}></i>
               </div>
             </div>
           </div>
