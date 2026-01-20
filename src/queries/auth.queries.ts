@@ -82,3 +82,16 @@ export const useGetUser = () => {
     // enabled: !!user?.id, // only fetch if userId exists
   });
 };
+
+export const UseUpdateLastSeen = () => {
+  return useMutation({
+    mutationFn: async () =>{
+      const {data, error} = await supabase.rpc("update_employee_last_seen")
+
+      if(error) {
+        throw error
+      }
+      return data
+    }
+  })
+}
