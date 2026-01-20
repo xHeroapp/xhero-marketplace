@@ -54,9 +54,9 @@ const Vendors = () => {
                 <div
                   className="single-vendor-wrap bg-img p-4 bg-overlay"
                   style={{
-                    backgroundImage: `url(${vendor.vendor_banner_url
-                        ? vendor.vendor_banner_url
-                        : "/assets/img/vendor/vendor-banner.png"
+                    backgroundImage: `url(${vendor.banner_url
+                      ? vendor.banner_url
+                      : "/assets/img/vendor/vendor-banner.png"
                       })`,
                   }}
                 >
@@ -65,8 +65,19 @@ const Vendors = () => {
                   </h6>
                   <div className="vendor-info">
                     <p className="mb-1 text-white">
-                      {vendor.category_name}
+                      <i className="ti ti-map-pin me-1"></i>
+                      {vendor.address || "Location not specified"}
                     </p>
+                    <div className="ratings lh-1">
+                      <i className="ti ti-star-filled"></i>
+                      <i className="ti ti-star-filled"></i>
+                      <i className="ti ti-star-filled"></i>
+                      <i className="ti ti-star-filled"></i>
+                      <i className="ti ti-star-filled"></i>
+                      <span className="text-white">
+                        {"("} 99% Positive Seller {")"}
+                      </span>
+                    </div>
                   </div>
                   <Link
                     className="btn btn-primary btn-sm mt-3"
@@ -79,11 +90,10 @@ const Vendors = () => {
                   <div className="vendor-profile shadow">
                     <figure className="m-0">
                       <ImageWithFallback
-                        src={vendor.profile_img}
+                        src={vendor.avatar_url}
                         fallback="/assets/img/vendor/vendor-avatar.png"
                         alt={vendor.vendor_name}
                       />
-                      {/* <img src={vendor.profile_img} alt="" /> */}
                     </figure>
                   </div>
                 </div>
