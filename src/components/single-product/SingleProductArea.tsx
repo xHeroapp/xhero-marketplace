@@ -165,7 +165,7 @@ const SingleProductArea = ({ product }: any) => {
           <div className="container d-flex justify-content-between rtl-flex-d-row-r">
             <div className="p-title-price">
               <h5 className="mb-1"> {product.product_name}</h5>
-              <p className="sale-price mb-0 lh-1">
+              <p className="sale-price mb-1 lh-1">
                 {formatCurrency(product?.price)}
                 {/* <span> $ {product?.old_price ? product.old_price : "67"}</span> */}
               </p>
