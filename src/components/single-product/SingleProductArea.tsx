@@ -169,7 +169,7 @@ const SingleProductArea = ({ product }: any) => {
                 {formatCurrency(product?.price)}
                 {/* <span> $ {product?.old_price ? product.old_price : "67"}</span> */}
               </p>
-              <p className="">{product.product_description}</p>
+              <p className="">{product.short_description || product.product_description}</p>
             </div>
             <div
               onClick={() => addToWishList(product.vendor_product_id)}
@@ -356,7 +356,7 @@ const SingleProductArea = ({ product }: any) => {
           <div className="container">
             <h6>Description</h6>
             <div className="product-description-content">
-              <p>{product.product_description}</p>
+              <p>{product.long_description || "No description available"}</p>
             </div>
             <ul className="mb-3 ps-3">
               <li>
