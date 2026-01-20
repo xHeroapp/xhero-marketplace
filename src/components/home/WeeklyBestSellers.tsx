@@ -5,16 +5,13 @@ import Link from "next/link";
 import React from "react";
 import ImageWithFallback from "../reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "../reuseable/WishlistButton";
 import { useAuthStore } from "@/store/authStore";
 
 const WeeklyBestSellers = () => {
   const { user } = useAuthStore();
   //   data fetching
   const GetWeeklyProducts = useGetWeeklyProducts();
-
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
 
   // Loading state
   if (GetWeeklyProducts.isLoading) {
@@ -179,16 +176,7 @@ const WeeklyBestSellers = () => {
                           />
                         </Link>
 
-                        <div
-                          onClick={() =>
-                            addToWishList(
-                              item.vendor_products_view.vendor_product_id
-                            )
-                          }
-                          className="wishlist-btn"
-                        >
-                          <i className="ti ti-heart"></i>
-                        </div>
+                        <WishlistButton vendorProductId={item.vendor_products_view.vendor_product_id} />
                       </div>
                       <div className="product-description">
                         <Link

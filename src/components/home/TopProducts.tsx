@@ -11,14 +11,11 @@ import useCartStore from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useAddToCart } from "@/hooks/useAddToCart";
 import { toast } from "sonner";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "../reuseable/WishlistButton";
 
 const TopProducts = () => {
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart();
-
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
 
   //   data fetching
   const GetTopProducts = useGetTopProducts();
@@ -188,16 +185,7 @@ const TopProducts = () => {
                         </span>
                       )}
 
-                      <div
-                        onClick={() =>
-                          addToWishList(
-                            item.vendor_products_view.vendor_product_id
-                          )
-                        }
-                        className="wishlist-btn"
-                      >
-                        <i className="ti ti-heart"></i>
-                      </div>
+                      <WishlistButton vendorProductId={item.vendor_products_view.vendor_product_id} />
 
                       <Link
                         className="product-thumbnail d-block"

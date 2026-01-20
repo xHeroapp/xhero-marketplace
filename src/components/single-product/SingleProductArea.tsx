@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "@/components/reuseable/WishlistButton";
 import { useForm } from "react-hook-form";
 import useServiceStore from "@/store/serviceStore";
 import { useAuthStore } from "@/store/authStore";
@@ -22,7 +22,6 @@ import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 // Related Products Section Component
 const RelatedProductsSection = ({ product }: { product: any }) => {
   const { data: relatedProducts, isLoading } = useGetTopProducts();
-  const { addToWishList } = useAddToWishList();
   const { handleAddToCart } = useAddToCart();
 
   if (isLoading || !relatedProducts || relatedProducts.length === 0) {
@@ -59,12 +58,7 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
             <SwiperSlide key={item.vendor_products_view?.vendor_product_id || i}>
               <div className="card product-card">
                 <div className="card-body">
-                  <div
-                    onClick={() => addToWishList(item.vendor_products_view?.vendor_product_id)}
-                    className="wishlist-btn"
-                  >
-                    <i className="ti ti-heart"></i>
-                  </div>
+                  <WishlistButton vendorProductId={item.vendor_products_view?.vendor_product_id} />
                   <Link
                     className="product-thumbnail d-block"
                     href={`/product/${item.vendor_products_view?.vendor_product_id}`}
@@ -104,9 +98,6 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
   );
 };
 
-
-import { useCheckItemInWishlist } from "@/queries/wishlist.queries";
-
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
   const { addBooking } = useServiceStore();
@@ -118,23 +109,6 @@ const SingleProductArea = ({ product }: any) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  // Wishlist Logic
-  const { addToWishList, removeFromWishList } = useAddToWishList();
-  const { data: wishlistId, isLoading: isWishlistLoading } = useCheckItemInWishlist(userId, product.vendor_product_id);
-
-  const handleWishlistClick = () => {
-    if (!userId) {
-      alert("Please login to use wishlist");
-      return;
-    }
-
-    if (wishlistId) {
-      removeFromWishList(wishlistId, product.vendor_product_id);
-    } else {
-      addToWishList(product.vendor_product_id);
-    }
-  };
 
 
   const onSubmitBooking = (data: any) => {
@@ -191,15 +165,10 @@ const SingleProductArea = ({ product }: any) => {
               </p>
               <p className="">{product.short_description || product.product_description}</p>
             </div>
-            <div
-              onClick={handleWishlistClick}
+            <WishlistButton
+              vendorProductId={product.vendor_product_id}
               className="p-wishlist-share"
-              style={{ cursor: "pointer" }}
-            >
-              <div>
-                <i className={wishlistId ? "ti ti-heart-filled text-danger" : "ti ti-heart"}></i>
-              </div>
-            </div>
+            />
           </div>
           {/* Removed product rating for now */}
           {/* <div className="product-ratings">
