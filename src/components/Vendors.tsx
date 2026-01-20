@@ -14,7 +14,7 @@ const Vendors = () => {
   const Filters = useFilters();
 
   // data fetching
-  const VendorsQuery = useGetVendors(Filters);
+  const VendorsQuery = useGetVendors({ ...Filters.filters, limit: Filters.limit });
   const ProductCategoriesQuery = useGetProductCategories();
 
   //   flat map the items in the pages
