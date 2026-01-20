@@ -29,7 +29,7 @@ const Wishlist = () => {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useGetUserWishlist(user?.id);
+  } = useGetUserWishlist(user?.user_id);
 
   const DeleteItem = useDeleteItemWhishList();
 
@@ -48,9 +48,9 @@ const Wishlist = () => {
     });
   }
 
-  useEffect(() =>{
-   isSuccess && console.log(data)
-  },[isSuccess])
+  useEffect(() => {
+    isSuccess && console.log(data)
+  }, [isSuccess])
 
   // flatten infinite pages
   const wishlistItems = useMemo(
@@ -101,7 +101,7 @@ const Wishlist = () => {
             {viewMode === "grid" && wishlistItems.length > 0 && (
               <div className="row g-2 rtl-flex-d-row-r">
                 {wishlistItems.map((item) => (
-                  <div key={item.vendor_product_id} className="col-6 col-md-4">
+                  <div key={item.wishlist_id} className="col-6 col-md-4">
                     <div className="card product-card">
                       <div className="card-body">
                         <div
@@ -165,7 +165,7 @@ const Wishlist = () => {
             {viewMode === "list" && wishlistItems.length > 0 && (
               <div className="row g-2">
                 {wishlistItems.map((item) => (
-                  <div key={item.vendor_product_id} className="col-12">
+                  <div key={item.wishlist_id} className="col-12">
                     <div className="card horizontal-product-card">
                       <div className="d-flex align-items-center">
                         <div className="product-thumbnail-side">
