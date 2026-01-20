@@ -108,7 +108,7 @@ const Wishlist = () => {
                           className="delete-btn"
                           onClick={() => handleDeleteItem(item.wishlist_id)}
                         >
-                          <i className="ti ti-trash"></i>
+                          <i className="ti ti-trash text-danger"></i>
                         </div>
 
                         <Link
@@ -183,7 +183,7 @@ const Wishlist = () => {
                             className="delete-btn"
                             onClick={() => handleDeleteItem(item.wishlist_id)}
                           >
-                            <i className="ti ti-trash"></i>
+                            <i className="ti ti-trash text-danger"></i>
                           </div>
                         </div>
 
