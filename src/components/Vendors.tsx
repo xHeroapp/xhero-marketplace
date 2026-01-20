@@ -85,14 +85,29 @@ const Vendors = () => {
                     <i className="ti ti-arrow-right ms-1"></i>
                   </Link>
                   {/* <!-- Vendor Profile--> */}
-                  <div className="vendor-profile shadow" style={{ padding: 0, overflow: 'hidden' }}>
+                  <div
+                    className="vendor-profile shadow"
+                    style={{
+                      padding: 0,
+                      overflow: 'hidden',
+                      position: 'absolute'
+                    }}
+                  >
                     <img
                       src={vendor.avatar_url || "/assets/img/vendor/vendor-avatar.png"}
                       onError={(e) => {
                         e.currentTarget.src = "/assets/img/vendor/vendor-avatar.png";
                       }}
                       alt={vendor.vendor_name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        maxWidth: 'none'
+                      }}
                     />
                   </div>
                 </div>
