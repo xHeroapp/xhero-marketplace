@@ -2,7 +2,7 @@
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { useAuthStore } from "@/store/authStore";
 import {
@@ -23,6 +23,7 @@ const Wishlist = () => {
   const {
     data,
     isLoading,
+    isSuccess,
     isError,
     fetchNextPage,
     hasNextPage,
@@ -32,7 +33,7 @@ const Wishlist = () => {
 
   const DeleteItem = useDeleteItemWhishList();
 
-  function handleDeleteItem(item_id) {
+  function handleDeleteItem(item_id: string) {
     const promise = DeleteItem.mutateAsync(item_id);
 
     toast.promise(promise, {
@@ -46,6 +47,10 @@ const Wishlist = () => {
       },
     });
   }
+
+  useEffect(() =>{
+   isSuccess && console.log(data)
+  },[isSuccess])
 
   // flatten infinite pages
   const wishlistItems = useMemo(
@@ -108,7 +113,7 @@ const Wishlist = () => {
 
                         <Link
                           className="product-thumbnail d-block"
-                          href={`/single-product/${item.product_id}`}
+                          href={`/product/${item.vendor_product_id}`}
                         >
                           <ImageWithFallback
                             src={item.image_url}
@@ -118,7 +123,7 @@ const Wishlist = () => {
 
                         <Link
                           className="product-title"
-                          href={`/single-product/${item.product_id}`}
+                          href={`/product/${item.vendor_product_id}`}
                         >
                           {item.product_name}
                         </Link>
@@ -166,7 +171,7 @@ const Wishlist = () => {
                         <div className="product-thumbnail-side">
                           <Link
                             className="product-thumbnail d-block"
-                            href={`/single-product/${item.product_id}`}
+                            href={`/product/${item.vendor_product_id}`}
                           >
                             <ImageWithFallback
                               src={item.image_url}
@@ -185,7 +190,7 @@ const Wishlist = () => {
                         <div className="product-description">
                           <Link
                             className="product-title d-block"
-                            href={`/single-product/${item.product_id}`}
+                            href={`/product/${item.vendor_product_id}`}
                           >
                             {item.product_name}
                           </Link>
@@ -195,7 +200,7 @@ const Wishlist = () => {
                           </p>
 
                           <button
-                            className="btn btn-primary btn-add-cart "
+                            className="btn btn-primary btn-add-cart"
                             onClick={
                               () => handleAddToCart(item) // passing the full wishlist to the cart cause it contains the same data the cart needs
                             }
