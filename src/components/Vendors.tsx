@@ -67,11 +67,20 @@ const Vendors = () => {
           <div className="row g-1 align-items-center rtl-flex-d-row-r mb-3">
             <div className="">
               <Swiper
-                loop={true}
+                loop={false}
                 slidesPerView={2.5}
                 spaceBetween={5}
                 className="product-catagories owl-carousel catagory-slides"
               >
+                {/* All option to clear filter */}
+                <SwiperSlide>
+                  <div
+                    className={`catg-btn shadow-sm ${!Filters.filters.category ? 'active' : ''}`}
+                    onClick={() => Filters.setCategory("")}
+                  >
+                    All
+                  </div>
+                </SwiperSlide>
                 {ProductCategoriesQuery.data &&
                   ProductCategoriesQuery.data.map((item) => (
                     <SwiperSlide key={item.id}>
