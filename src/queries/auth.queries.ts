@@ -85,13 +85,34 @@ export const useGetUser = () => {
 
 export const UseUpdateLastSeen = () => {
   return useMutation({
-    mutationFn: async () =>{
-      const {data, error} = await supabase.rpc("update_employee_last_seen")
+    mutationFn: async () => {
+      const { data, error } = await supabase.rpc("update_employee_last_seen")
 
-      if(error) {
+      if (error) {
         throw error
       }
       return data
     }
   })
-}
+  // Upload profile image
+  export const UseUploadProfileImage = () => {
+    return useMutation({
+      mutationFn: async ({ file, userId }: { file: File; userId: string }) => {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${userId}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("users_avatar")
+          .upload(filePath, file, { upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from("users_avatar")
+          .getPublicUrl(filePath);
+
+        return data.publicUrl;
+      },
+    });
+  };

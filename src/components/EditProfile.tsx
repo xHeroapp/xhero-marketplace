@@ -2,7 +2,7 @@
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
 import { useAuthStore } from "@/store/authStore";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -10,13 +10,15 @@ import {
   EditProfileFormData,
   editProfileSchema,
 } from "@/schema/editProfileSchema";
-import { UpdateProfile } from "@/queries/auth.queries";
+import { UpdateProfile, UseUploadProfileImage } from "@/queries/auth.queries";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 
 const EditProfile = () => {
   const { user, setUser } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const UpdateProfileQuery = UpdateProfile();
+  const UploadProfileImageMutation = UseUploadProfileImage();
 
   const {
     register,
@@ -44,6 +46,44 @@ const EditProfile = () => {
       });
     }
   }, [user, reset]);
+
+  // Handle Image Upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate size (e.g., 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    try {
+      const uploadPromise = UploadProfileImageMutation.mutateAsync({
+        file,
+        userId: user.id || user.user_id, // Ensure we have an ID
+      });
+
+      toast.promise(uploadPromise, {
+        loading: "Uploading image...",
+        success: (url) => {
+          // Update profile with new avatar URL
+          UpdateProfileQuery.mutate({
+            user_id: user.id,
+            avatar_url: url,
+          });
+
+          // Update local state immediately for better UX
+          setUser({ ...user, avatar_url: url });
+          return "Profile picture updated!";
+        },
+        error: "Failed to upload image",
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong with the upload");
+    }
+  };
 
   // Form submission handler
   const onSubmit = async (data: EditProfileFormData) => {
@@ -89,8 +129,15 @@ const EditProfile = () => {
                   />
                   <div className="change-user-thumb">
                     <form onSubmit={(e) => e.preventDefault()}>
-                      <input className="form-control-file" type="file" />
-                      <button type="button">
+                      <input
+                        className="form-control-file"
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                        style={{ display: 'none' }} // Hide standard input
+                        accept="image/*"
+                      />
+                      <button type="button" onClick={() => fileInputRef.current?.click()}>
                         <i className="ti ti-pencil"></i>
                       </button>
                     </form>
@@ -116,9 +163,8 @@ const EditProfile = () => {
                       <span>Full Name</span>
                     </div>
                     <input
-                      className={`form-control ${
-                        errors.full_name ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.full_name ? "is-invalid" : ""
+                        }`}
                       type="text"
                       {...register("full_name")}
                     />
@@ -135,9 +181,8 @@ const EditProfile = () => {
                       <span>Phone</span>
                     </div>
                     <input
-                      className={`form-control ${
-                        errors.phone ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.phone ? "is-invalid" : ""
+                        }`}
                       type="text"
                       {...register("phone")}
                     />
@@ -154,9 +199,8 @@ const EditProfile = () => {
                       <span>Email Address</span>
                     </div>
                     <input
-                      className={`form-control ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.email ? "is-invalid" : ""
+                        }`}
                       type="email"
                       {...register("email")}
                     />
@@ -173,9 +217,8 @@ const EditProfile = () => {
                       <span>Shipping Address</span>
                     </div>
                     <input
-                      className={`form-control ${
-                        errors.delivery_address ? "is-invalid" : ""
-                      }`}
+                      className={`form-control ${errors.delivery_address ? "is-invalid" : ""
+                        }`}
                       type="text"
                       {...register("delivery_address")}
                     />
