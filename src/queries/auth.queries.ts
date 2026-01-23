@@ -94,25 +94,27 @@ export const UseUpdateLastSeen = () => {
       return data
     }
   })
-  // Upload profile image
-  export const UseUploadProfileImage = () => {
-    return useMutation({
-      mutationFn: async ({ file, userId }: { file: File; userId: string }) => {
-        const fileExt = file.name.split(".").pop();
-        const fileName = `${userId}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `${fileName}`;
+}
 
-        const { error: uploadError } = await supabase.storage
-          .from("users_avatar")
-          .upload(filePath, file, { upsert: true });
+// Upload profile image
+export const UseUploadProfileImage = () => {
+  return useMutation({
+    mutationFn: async ({ file, userId }: { file: File; userId: string }) => {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${userId}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
 
-        if (uploadError) throw uploadError;
+      const { error: uploadError } = await supabase.storage
+        .from("users_avatar")
+        .upload(filePath, file, { upsert: true });
 
-        const { data } = supabase.storage
-          .from("users_avatar")
-          .getPublicUrl(filePath);
+      if (uploadError) throw uploadError;
 
-        return data.publicUrl;
-      },
-    });
-  };
+      const { data } = supabase.storage
+        .from("users_avatar")
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    },
+  });
+};
