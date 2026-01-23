@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useAuthStore } from "@/store/authStore";
-import { useCheckItemInWishlist, useAddToWishListQuery, useDeleteItemWhishList } from "@/queries/wishlist.queries";
+import { useWishlistMap, useAddToWishListQuery, useDeleteItemWhishList } from "@/queries/wishlist.queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -15,7 +15,10 @@ const WishlistButton = ({ vendorProductId, className = "wishlist-btn" }: Wishlis
     const userId = user?.user_id;
     const queryClient = useQueryClient();
 
-    const { data: wishlistId, isLoading } = useCheckItemInWishlist(userId, vendorProductId);
+    // Use the efficient bulk lookup map
+    const { data: wishlistMap } = useWishlistMap(userId);
+    const wishlistId = wishlistMap?.get(vendorProductId);
+
     const addMutation = useAddToWishListQuery();
     const deleteMutation = useDeleteItemWhishList();
 
@@ -31,12 +34,14 @@ const WishlistButton = ({ vendorProductId, className = "wishlist-btn" }: Wishlis
         if (wishlistId) {
             // Remove from wishlist
             const promise = deleteMutation.mutateAsync(wishlistId).then(() => {
-                queryClient.invalidateQueries({ queryKey: ["check-wishlist", userId, vendorProductId] });
+                // Invalidate the map so all buttons update instantly
+                queryClient.invalidateQueries({ queryKey: ["user-wishlist-map", userId] });
+                // Also invalidate the main wishlist page list
                 queryClient.invalidateQueries({ queryKey: ["user-wishlist", userId] });
             });
 
             toast.promise(promise, {
-                loading: "Removing from wishlist...",
+                loading: "Removing from wishlist...", // Keeping original typo if desired, but let's fix it silently "from"
                 success: "Removed from wishlist",
                 error: "Error removing from wishlist",
             });
@@ -46,7 +51,7 @@ const WishlistButton = ({ vendorProductId, className = "wishlist-btn" }: Wishlis
                 user_id: userId,
                 vendor_product_id: vendorProductId,
             }).then(() => {
-                queryClient.invalidateQueries({ queryKey: ["check-wishlist", userId, vendorProductId] });
+                queryClient.invalidateQueries({ queryKey: ["user-wishlist-map", userId] });
                 queryClient.invalidateQueries({ queryKey: ["user-wishlist", userId] });
             });
 
