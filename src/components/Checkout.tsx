@@ -72,7 +72,6 @@ const Checkout = () => {
 
         if (hasChanged) {
           updateVendorInCart(vendorId, freshVendor, user?.id);
-          toast.info('Delivery fees have been updated by the vendor.');
         }
       } catch (err) {
         console.error('Failed to revalidate vendor data:', err);

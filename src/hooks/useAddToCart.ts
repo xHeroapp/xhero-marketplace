@@ -22,6 +22,8 @@ export const useAddToCart = (quantity?: number, order_type?: string) => {
         vendor_id: item.vendor_id,
         vendor_img: item.vendor_avatar_url || item.avatar_url || "/assets/img/vendor/vendor-avatar.png",
         delivery_fee: item.delivery_fee,
+        delivery_fee_type: item.delivery_fee_type,
+        delivery_areas: item.delivery_areas,
       },
       user && user.id,
       quantity && quantity,
