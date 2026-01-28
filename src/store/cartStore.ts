@@ -3,18 +3,58 @@ import { calculateCartDiscount } from "@/utils/calculateCartDiscount";
 import { toast } from "sonner";
 import { create } from "zustand";
 
+// Type for delivery area
+interface DeliveryArea {
+  id: string;
+  location: string;
+  fee: number | string;
+}
+
 const useCartStore = create((set, get) => ({
   cart: {},
+  // Stores the selected delivery location per vendor (keyed by vendorId)
+  selectedDeliveryLocation: {} as Record<string, DeliveryArea | null>,
 
   /* ---------------- LOAD & SAVE ---------------- */
 
   loadCart: (userId) => {
     const storedCart = localStorage.getItem(`${userId}-cart`);
-    set({ cart: storedCart ? JSON.parse(storedCart) : {} });
+    const storedLocations = localStorage.getItem(`${userId}-delivery-locations`);
+    set({
+      cart: storedCart ? JSON.parse(storedCart) : {},
+      selectedDeliveryLocation: storedLocations ? JSON.parse(storedLocations) : {}
+    });
   },
 
   persistCart: (userId) => {
     localStorage.setItem(`${userId}-cart`, JSON.stringify(get().cart));
+    localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(get().selectedDeliveryLocation));
+  },
+
+  /* ---------------- DELIVERY LOCATION ---------------- */
+
+  setDeliveryLocation: (vendorId: string, location: DeliveryArea | null, userId?: string) => {
+    const current = { ...get().selectedDeliveryLocation };
+    current[vendorId] = location;
+    set({ selectedDeliveryLocation: current });
+    if (userId) {
+      localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(current));
+    }
+  },
+
+  // Used during revalidation to update vendor data in cart without losing items
+  updateVendorInCart: (vendorId: string, freshVendorData: any, userId?: string) => {
+    const cart = { ...get().cart };
+    if (cart[vendorId]) {
+      cart[vendorId] = {
+        ...cart[vendorId],
+        vendor: { ...cart[vendorId].vendor, ...freshVendorData }
+      };
+      set({ cart });
+      if (userId) {
+        get().persistCart(userId);
+      }
+    }
   },
 
   /* ---------------- ADD PRODUCT ---------------- */
@@ -57,6 +97,10 @@ const useCartStore = create((set, get) => ({
     // If vendor has no items left, remove vendor
     if (Object.keys(cart[vendorId].items).length === 0) {
       delete cart[vendorId];
+      // Also clear selected location for this vendor
+      const locations = { ...get().selectedDeliveryLocation };
+      delete locations[vendorId];
+      set({ selectedDeliveryLocation: locations });
     }
 
     set({ cart });
@@ -86,6 +130,10 @@ const useCartStore = create((set, get) => ({
 
     if (Object.keys(cart[vendorId].items).length === 0) {
       delete cart[vendorId];
+      // Also clear selected location for this vendor
+      const locations = { ...get().selectedDeliveryLocation };
+      delete locations[vendorId];
+      set({ selectedDeliveryLocation: locations });
     }
 
     set({ cart });
@@ -97,13 +145,17 @@ const useCartStore = create((set, get) => ({
   clearVendorCart: (vendorId, userId) => {
     const cart = { ...get().cart };
     delete cart[vendorId];
-    set({ cart });
+    // Also clear selected location
+    const locations = { ...get().selectedDeliveryLocation };
+    delete locations[vendorId];
+    set({ cart, selectedDeliveryLocation: locations });
     get().persistCart(userId);
   },
 
   clearCart: (userId) => {
-    set({ cart: {} });
+    set({ cart: {}, selectedDeliveryLocation: {} });
     localStorage.removeItem(`${userId}-cart`);
+    localStorage.removeItem(`${userId}-delivery-locations`);
   },
 
   /* ---------------- TOTALS ---------------- */
@@ -115,6 +167,7 @@ const useCartStore = create((set, get) => ({
     }
 
     const items = Object.values(vendorCart.items);
+    const vendor = vendorCart.vendor;
 
     const subtotal = items.reduce(
       (acc, item) => acc + item.price * item.quantity,
@@ -122,7 +175,20 @@ const useCartStore = create((set, get) => ({
     );
 
     const discount = calculateCartDiscount(items);
-    const deliveryFee = vendorCart.vendor.delivery_fee ?? 0;
+
+    // Determine delivery fee based on fee type
+    let deliveryFee = 0;
+    if (vendor.delivery_fee_type === "location") {
+      // Use selected location's fee if available
+      const selectedLocation = get().selectedDeliveryLocation[vendorId];
+      if (selectedLocation) {
+        deliveryFee = Number(selectedLocation.fee) || 0;
+      }
+      // If no location selected, fee stays 0 (checkout should be blocked)
+    } else {
+      // Fixed fee or null/undefined (legacy behavior)
+      deliveryFee = vendor.delivery_fee ?? 0;
+    }
 
     const total = Math.max(0, subtotal - discount + deliveryFee);
 
@@ -131,3 +197,4 @@ const useCartStore = create((set, get) => ({
 }));
 
 export default useCartStore;
+

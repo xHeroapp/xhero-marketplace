@@ -2,7 +2,7 @@
 
 import Footer from "@/layouts/Footer";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import useCartStore from "@/store/cartStore";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -10,6 +10,8 @@ import { useAuthStore } from "@/store/authStore";
 import { useClientReady } from "@/hooks/useClientReady";
 import useCheckoutStore from "@/store/checkoutStore";
 import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
+import { supabase } from "@/supabase-client";
+import { toast } from "sonner";
 
 const Checkout = () => {
   const ready = useClientReady();
@@ -23,6 +25,9 @@ const Checkout = () => {
     decrementQuantity,
     incrementQuantity,
     removeProductFromCart,
+    selectedDeliveryLocation,
+    setDeliveryLocation,
+    updateVendorInCart,
   } = useCartStore();
 
   const { startCheckout } = useCheckoutStore();
@@ -45,7 +50,55 @@ const Checkout = () => {
     }
   }, [vendorCart]);
 
+  // Revalidate vendor data on mount to fix stale cart problem
+  useEffect(() => {
+    const revalidateVendorData = async () => {
+      if (!vendorId || !vendor) return;
+
+      try {
+        const { data: freshVendor, error } = await supabase
+          .from('vendors')
+          .select('delivery_fee, delivery_fee_type, delivery_areas')
+          .eq('id', vendor.vendor_id)
+          .single();
+
+        if (error || !freshVendor) return;
+
+        // Check if delivery data has changed
+        const hasChanged =
+          freshVendor.delivery_fee !== vendor.delivery_fee ||
+          freshVendor.delivery_fee_type !== vendor.delivery_fee_type ||
+          JSON.stringify(freshVendor.delivery_areas) !== JSON.stringify(vendor.delivery_areas);
+
+        if (hasChanged) {
+          updateVendorInCart(vendorId, freshVendor, user?.id);
+          toast.info('Delivery fees have been updated by the vendor.');
+        }
+      } catch (err) {
+        console.error('Failed to revalidate vendor data:', err);
+      }
+    };
+
+    revalidateVendorData();
+  }, [vendorId]);
+
+  // Check if location selection is required
+  const isLocationBased = vendor?.delivery_fee_type === 'location';
+  const deliveryAreas = vendor?.delivery_areas || [];
+  const selectedLocation = vendorId ? selectedDeliveryLocation[vendorId] : null;
+  const canProceedToPayment = !isLocationBased || (isLocationBased && selectedLocation);
+
+  const handleLocationSelect = (area: any) => {
+    if (vendorId) {
+      setDeliveryLocation(vendorId, area, user?.id);
+    }
+  };
+
   const handleCheckOut = () => {
+    if (!canProceedToPayment) {
+      toast.error('Please select a delivery location to proceed.');
+      return;
+    }
     startCheckout(vendorId);
     router.push("/checkout-payment");
   };
@@ -198,10 +251,48 @@ const Checkout = () => {
                   <span>-{formatCurrency(discount)}</span>
                 </div>
               )}
-              <div className="summary-row">
-                <span>Delivery</span>
-                <span>{formatCurrency(vendor_delivery_fee)}</span>
-              </div>
+
+              {/* Delivery Fee - Conditional based on fee type */}
+              {isLocationBased ? (
+                <>
+                  {/* Location-Based Delivery Section */}
+                  <div className="delivery-location-section">
+                    <div className="location-header">
+                      <span>Delivery Location</span>
+                      <span className="required-badge">Required</span>
+                    </div>
+                    <div className="location-list">
+                      {deliveryAreas.map((area: any) => (
+                        <div
+                          key={area.id}
+                          className={`location-item ${selectedLocation?.id === area.id ? 'selected' : ''}`}
+                          onClick={() => handleLocationSelect(area)}
+                        >
+                          <div className="location-radio">
+                            {selectedLocation?.id === area.id ? (
+                              <i className="ti ti-circle-check-filled"></i>
+                            ) : (
+                              <i className="ti ti-circle"></i>
+                            )}
+                          </div>
+                          <span className="location-name">{area.location}</span>
+                          <span className="location-fee">{formatCurrency(Number(area.fee))}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="summary-row">
+                    <span>Delivery</span>
+                    <span>{selectedLocation ? formatCurrency(deliveryFee) : '—'}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="summary-row">
+                  <span>Delivery</span>
+                  <span>{formatCurrency(deliveryFee)}</span>
+                </div>
+              )}
+
               <div className="summary-row total">
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
@@ -213,8 +304,12 @@ const Checkout = () => {
               <p className="terms-text">
                 By proceeding, you agree to our <Link href="/terms">Terms of Use</Link> and <Link href="/privacy">Privacy Policy</Link>
               </p>
-              <button className="payment-btn" onClick={handleCheckOut}>
-                Make Payment
+              <button
+                className={`payment-btn ${!canProceedToPayment ? 'disabled' : ''}`}
+                onClick={handleCheckOut}
+                disabled={!canProceedToPayment}
+              >
+                {canProceedToPayment ? 'Make Payment' : 'Select Delivery Location'}
               </button>
             </div>
           </>
@@ -545,6 +640,99 @@ const Checkout = () => {
           font-size: 16px;
         }
 
+        /* Location Selector Styles */
+        .delivery-location-section {
+          margin: 12px 0;
+          padding-top: 12px;
+          border-top: 1px solid #f5f5f7;
+        }
+
+        .location-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+          font-size: 14px;
+          color: #1d1d1f;
+          font-weight: 500;
+        }
+
+        .required-badge {
+          font-size: 11px;
+          font-weight: 600;
+          color: #0071e3;
+          background: #e8f4fd;
+          padding: 4px 8px;
+          border-radius: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .location-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .location-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          background: #f5f5f7;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: 2px solid transparent;
+        }
+
+        .location-item:hover {
+          background: #ebebed;
+        }
+
+        .location-item.selected {
+          background: #e8f4fd;
+          border-color: #0071e3;
+        }
+
+        .location-radio {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .location-radio i {
+          font-size: 20px;
+          color: #86868b;
+        }
+
+        .location-item.selected .location-radio i {
+          color: #0071e3;
+        }
+
+        .location-name {
+          flex: 1;
+          font-size: 15px;
+          font-weight: 500;
+          color: #1d1d1f;
+        }
+
+        .location-fee {
+          font-size: 14px;
+          font-weight: 600;
+          color: #1d1d1f;
+        }
+
+        .payment-btn.disabled {
+          background: #86868b;
+          cursor: not-allowed;
+        }
+
+        .payment-btn.disabled:hover {
+          background: #86868b;
+        }
+
         /* Footer */
         .checkout-footer {
           position: fixed;
@@ -739,6 +927,49 @@ const Checkout = () => {
         :global([theme-color="dark"]) .spinner {
           border-color: #38383a;
           border-top-color: #0a84ff;
+        }
+
+        /* Dark Mode - Location Selector */
+        :global([theme-color="dark"]) .delivery-location-section {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .location-header {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .required-badge {
+          background: #1c3a5e;
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-item {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .location-item:hover {
+          background: #3c3c3e;
+        }
+
+        :global([theme-color="dark"]) .location-item.selected {
+          background: #1c3a5e;
+          border-color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-radio i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .location-item.selected .location-radio i {
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-name {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .location-fee {
+          color: #ffffff;
         }
       `}</style>
     </>
