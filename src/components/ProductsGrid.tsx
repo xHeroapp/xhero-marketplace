@@ -2,14 +2,11 @@ import Link from "next/link";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "./reuseable/WishlistButton";
 
 export const ProductsGrid = ({ productItems, GetProductsQuery }) => {
   // handle add to cart
   const { handleAddToCart } = useAddToCart();
-
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
 
   return (
     <>
@@ -35,12 +32,7 @@ export const ProductsGrid = ({ productItems, GetProductsQuery }) => {
                   )}
 
                   {/* Wishlist */}
-                  <div
-                    onClick={() => addToWishList(product.vendor_product_id)}
-                    className="wishlist-btn"
-                  >
-                    <i className="ti ti-heart"></i>
-                  </div>
+                  <WishlistButton vendorProductId={product.vendor_product_id} />
 
                   {/* Thumbnail */}
                   <Link

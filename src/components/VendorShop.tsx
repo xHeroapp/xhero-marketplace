@@ -17,7 +17,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import { useAddToCart } from "@/hooks/useAddToCart";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "./reuseable/WishlistButton";
 
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
@@ -31,9 +31,8 @@ const VendorShop = ({ initialData }) => {
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
 
-  // Cart and wishlist hooks
+  // Cart hook
   const { handleAddToCart } = useAddToCart();
-  const { addToWishList } = useAddToWishList();
 
   const Filters = useFilters();
 
@@ -379,14 +378,7 @@ const VendorShop = ({ initialData }) => {
                             )}
 
                             {/* Wishlist Button */}
-                            <div
-                              onClick={() =>
-                                addToWishList(item.vendor_product_id)
-                              }
-                              className="wishlist-btn"
-                            >
-                              <i className="ti ti-heart"></i>
-                            </div>
+                            <WishlistButton vendorProductId={item.vendor_product_id} />
 
                             <Link
                               className="product-thumbnail d-block"

@@ -12,6 +12,34 @@ export const useAddToWishListQuery = () => {
   });
 };
 
+// Bulk fetch wishlist items for efficient local lookup
+export const useWishlistMap = (user_id: string | undefined) => {
+  return useQuery({
+    queryKey: ["user-wishlist-map", user_id],
+    queryFn: async () => {
+      if (!user_id) return new Map<string, string>();
+
+      const { data, error } = await supabase
+        .from("wishlists")
+        .select("id, vendor_product_id")
+        .eq("user_id", user_id);
+
+      if (error) throw error;
+
+      // Create a map of vendor_product_id -> wishlist_id for O(1) lookup
+      const map = new Map<string, string>();
+      data?.forEach((item) => {
+        if (item.vendor_product_id) {
+          map.set(item.vendor_product_id, item.id);
+        }
+      });
+      return map;
+    },
+    enabled: !!user_id,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+};
+
 export const useGetUserWishlist = (user_id: string, limit = PRODUCT_LIMIT) => {
   return useInfiniteQuery({
     queryKey: ["user-wishlist", user_id],

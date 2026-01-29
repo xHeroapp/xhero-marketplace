@@ -2,6 +2,7 @@ import { FLASH_SALE_ORDER_TYPE } from "@/constant/constant";
 import { useGetUser } from "@/queries/auth.queries";
 import { processOrder } from "@/services/processOrder.service";
 import { useAuthStore } from "@/store/authStore";
+import useCartStore from "@/store/cartStore";
 import { generateTxRef } from "@/utils/generateTxRef";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,6 +23,7 @@ export const useHandlePayment = ({
   const router = useRouter();
 
   const { user } = useAuthStore();
+  const { selectedDeliveryLocation } = useCartStore();
 
   const useGetUserQuery = useGetUser();
 
@@ -41,12 +43,31 @@ export const useHandlePayment = ({
     }
 
     try {
-      const promise = processOrder({
-        p_vendor_id: vendorCart.vendor.vendor_id,
+      // Determine delivery location ID for location-based fees
+      const vendor = vendorCart.vendor;
+      const vendorId = vendor.vendor_id;
+      let deliveryLocationId: string | undefined = undefined;
+
+      if (vendor.delivery_fee_type === "location") {
+        const selectedLocation = selectedDeliveryLocation[vendorId];
+        if (selectedLocation) {
+          deliveryLocationId = selectedLocation.id;
+        }
+      }
+
+      const orderPayload: any = {
+        p_vendor_id: vendorId,
         p_items: Object.values(vendorCart.items),
         p_payment_method: payment_method,
         p_reference: txRef ?? TX_REF,
-      });
+      };
+
+      // Add delivery location ID if applicable
+      if (deliveryLocationId) {
+        orderPayload.p_delivery_location_id = deliveryLocationId;
+      }
+
+      const promise = processOrder(orderPayload);
 
       toast.promise(promise, {
         loading:
@@ -68,9 +89,8 @@ export const useHandlePayment = ({
         error: () => {
           setIsLoading(false);
           setIsSuccess(false);
-          return `There was an error while trying to process your ${
-            payment_method === "wallet" ? "payment" : "order"
-          }. Please try again later`;
+          return `There was an error while trying to process your ${payment_method === "wallet" ? "payment" : "order"
+            }. Please try again later`;
         },
       });
     } catch (err) {
@@ -81,3 +101,4 @@ export const useHandlePayment = ({
 
   return { handlePayment };
 };
+

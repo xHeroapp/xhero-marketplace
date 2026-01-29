@@ -192,4 +192,43 @@ Stores individual messages.
 - Logic: `UPDATE employees SET user_id = auth.uid() WHERE email = auth.email()`
 - Trigger: Called by frontend hook if employee verification fails initially.
 
+---
 
+## 2026-01-28: Location-Based Delivery Fees
+
+### Overview
+Implemented support for location-based delivery fees in the checkout flow. Vendors can now set variable delivery fees based on delivery areas, and employees select their location during checkout.
+
+### Backend Context (Pre-existing)
+The backend already supports this feature via:
+- `vendors.delivery_fee_type`: Enum (`fixed` or `location`)
+- `vendors.delivery_areas`: JSONB array of `{ id, location, fee }`
+- RPCs `process_vendor_order` and `process_flash_sale_order` accept optional `p_delivery_location_id`
+
+### Frontend Changes
+
+**Modified File: `src/store/cartStore.ts`**
+| Change | Description |
+|--------|-------------|
+| `selectedDeliveryLocation` | New state to track selected location per vendor |
+| `setDeliveryLocation()` | Action to set/persist selected location |
+| `updateVendorInCart()` | Action for revalidation updates |
+| `getVendorTotal()` | Modified to use location fee when `delivery_fee_type === 'location'` |
+
+**Modified File: `src/components/Checkout.tsx`**
+| Change | Description |
+|--------|-------------|
+| Revalidation on mount | Fetches fresh vendor data to fix stale cart problem |
+| Location list UI | Radio-style list for selecting delivery location |
+| Disabled button | Payment blocked until location selected (when required) |
+| Dark mode styles | Full dark mode support for location selector |
+
+**Modified File: `src/hooks/useHandlePayment.ts`**
+| Change | Description |
+|--------|-------------|
+| `p_delivery_location_id` | Added to order payload when vendor uses location-based fees |
+
+### Technical Notes
+- Frontend fee calculation is for **display only** - backend recalculates during RPC
+- Selected location persisted to localStorage alongside cart data
+- Toast notification shown if vendor fees change between cart add and checkout

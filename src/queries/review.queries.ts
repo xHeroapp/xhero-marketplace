@@ -9,7 +9,7 @@ export const useGetProductReviews = (productId: string) => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from("reviews")
-                .select("*, user:users(first_name, last_name, avatar_url)")
+                .select("*, user:users(full_name, avatar_url)")
                 .eq("product_id", productId)
                 .order("created_at", { ascending: false });
 

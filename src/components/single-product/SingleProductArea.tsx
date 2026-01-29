@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, decrease_quantity } from "@/redux/features/cartSlice";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useAddToCart } from "@/hooks/useAddToCart";
-import { useAddToWishList } from "@/hooks/useAddToWishList";
+import WishlistButton from "@/components/reuseable/WishlistButton";
 import { useForm } from "react-hook-form";
 import useServiceStore from "@/store/serviceStore";
 import { useAuthStore } from "@/store/authStore";
@@ -15,14 +15,17 @@ import { SERVICE_ORDER_TYPE } from "@/constant/constant";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
-import reviews_data from "@/data/reviews_data";
 import { useGetTopProducts } from "@/queries/products.queries";
 import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
+import {
+  useGetProductReviews,
+  useAddProductReview,
+  useCheckVerifiedPurchase,
+} from "@/queries/review.queries";
 
 // Related Products Section Component
 const RelatedProductsSection = ({ product }: { product: any }) => {
   const { data: relatedProducts, isLoading } = useGetTopProducts();
-  const { addToWishList } = useAddToWishList();
   const { handleAddToCart } = useAddToCart();
 
   if (isLoading || !relatedProducts || relatedProducts.length === 0) {
@@ -59,12 +62,7 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
             <SwiperSlide key={item.vendor_products_view?.vendor_product_id || i}>
               <div className="card product-card">
                 <div className="card-body">
-                  <div
-                    onClick={() => addToWishList(item.vendor_products_view?.vendor_product_id)}
-                    className="wishlist-btn"
-                  >
-                    <i className="ti ti-heart"></i>
-                  </div>
+                  <WishlistButton vendorProductId={item.vendor_products_view?.vendor_product_id} />
                   <Link
                     className="product-thumbnail d-block"
                     href={`/product/${item.vendor_products_view?.vendor_product_id}`}
@@ -104,10 +102,144 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
   );
 };
 
+// Reviews Section Component
+const ReviewsSection = ({ productId }: { productId: string }) => {
+  const [rating, setRating] = useState<number>(0);
+  const [comment, setComment] = useState<string>("");
+  const { data: reviews, isLoading } = useGetProductReviews(productId);
+  const { data: canReview } = useCheckVerifiedPurchase(productId);
+  const addReviewMutation = useAddProductReview();
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const handleSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (rating === 0) {
+      alert("Please select a rating");
+      return;
+    }
+    addReviewMutation.mutate(
+      { productId, rating, comment },
+      {
+        onSuccess: () => {
+          setRating(0);
+          setComment("");
+        },
+      }
+    );
+  };
+
+  const renderStars = (starRating: number) => {
+    return [...Array(5)].map((_, index) => (
+      <i
+        key={index}
+        className={`ti ti-star${index < starRating ? "-filled" : ""}`}
+      ></i>
+    ));
+  };
+
+  return (
+    <>
+      {/* Ratings & Reviews Section */}
+      <div className="rating-and-review-wrapper bg-white py-3 mb-3">
+        <div className="container">
+          <h6>Ratings & Reviews</h6>
+          <div className="rating-review-content">
+            {isLoading ? (
+              <p className="text-muted">Loading reviews...</p>
+            ) : reviews && reviews.length > 0 ? (
+              <ul className="ps-0">
+                {reviews.map((review: any) => (
+                  <li key={review.id} className="single-user-review d-flex">
+                    <div className="user-thumbnail">
+                      <img
+                        src={review.user?.avatar_url || "/assets/img/bg-img/7.jpg"}
+                        alt=""
+                      />
+                    </div>
+                    <div className="rating-comment">
+                      <p className="reviewer-name mb-1 fw-semibold">
+                        {review.user?.full_name || "Anonymous"}
+                      </p>
+                      <div className="d-flex align-items-center gap-2 mb-1">
+                        <div className="rating">{renderStars(review.rating)}</div>
+                        <span className="review-date text-muted small">
+                          {formatDate(review.created_at)}
+                        </span>
+                      </div>
+                      <p className="comment mb-0">{review.comment}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted">No reviews yet. Be the first to review!</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Submit a Review Section */}
+      <div className="ratings-submit-form bg-white py-3">
+        <div className="container">
+          <h6>Submit A Review</h6>
+          {canReview ? (
+            <form onSubmit={handleSubmitReview}>
+              <div className="stars mb-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <React.Fragment key={star}>
+                    <input
+                      className={`star-${star}`}
+                      type="radio"
+                      name="star"
+                      id={`star${star}`}
+                      checked={rating === star}
+                      onChange={() => setRating(star)}
+                    />
+                    <label className={`star-${star}`} htmlFor={`star${star}`}></label>
+                  </React.Fragment>
+                ))}
+                <span></span>
+              </div>
+              <textarea
+                className="form-control mb-3"
+                id="comments"
+                name="comment"
+                cols={30}
+                rows={5}
+                placeholder="Write your review..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              ></textarea>
+              <button
+                className="btn btn-primary"
+                type="submit"
+                disabled={addReviewMutation.isPending}
+              >
+                {addReviewMutation.isPending ? "Submitting..." : "Save Review"}
+              </button>
+            </form>
+          ) : (
+            <p className="text-muted">
+              You must purchase this product before leaving a review.
+            </p>
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
+
 const SingleProductArea = ({ product }: any) => {
   const [quantity, setQuantity] = useState<number>(1);
   const { addBooking } = useServiceStore();
-  const userId = useAuthStore((state) => state.user?.id);
+  const userId = useAuthStore((state) => state.user?.user_id);
   const router = useRouter();
 
   const {
@@ -115,6 +247,7 @@ const SingleProductArea = ({ product }: any) => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
 
   const onSubmitBooking = (data: any) => {
     if (!userId) {
@@ -153,8 +286,7 @@ const SingleProductArea = ({ product }: any) => {
   // handleAdd to cart
   const { handleAddToCart } = useAddToCart(quantity);
 
-  // handle add to wishlist
-  const { addToWishList } = useAddToWishList();
+  // handle add to wishlist is now destructured above
 
   //   console.log(totalItems?.quantity);
 
@@ -164,21 +296,17 @@ const SingleProductArea = ({ product }: any) => {
         <div className="product-title-meta-data bg-white mb-3 py-3">
           <div className="container d-flex justify-content-between rtl-flex-d-row-r">
             <div className="p-title-price">
-              <h5 className="mb-1"> {product.product_name}</h5>
-              <p className="sale-price mb-0 lh-1">
+              <h5 className="mb-2"> {product.product_name}</h5>
+              <p className="sale-price mb-2 lh-1">
                 {formatCurrency(product?.price)}
                 {/* <span> $ {product?.old_price ? product.old_price : "67"}</span> */}
               </p>
-              <p className="">{product.product_description}</p>
+              <p className="">{product.short_description || product.product_description}</p>
             </div>
-            <div
-              onClick={() => addToWishList(product.vendor_product_id)}
+            <WishlistButton
+              vendorProductId={product.vendor_product_id}
               className="p-wishlist-share"
-            >
-              <div>
-                <i className="ti ti-heart"></i>
-              </div>
-            </div>
+            />
           </div>
           {/* Removed product rating for now */}
           {/* <div className="product-ratings">
@@ -356,24 +484,9 @@ const SingleProductArea = ({ product }: any) => {
           <div className="container">
             <h6>Description</h6>
             <div className="product-description-content">
-              <p>{product.product_description}</p>
+              <p>{product.long_description || "No description available"}</p>
             </div>
-            <ul className="mb-3 ps-3">
-              <li>
-                <i className="ti ti-check me-1"></i> 100% Good Reviews
-              </li>
-              <li>
-                <i className="ti ti-check me-1"></i> 7 Days Returns
-              </li>
-              <li>
-                {" "}
-                <i className="ti ti-check me-1"></i> Warranty not Aplicable
-              </li>
-              <li>
-                {" "}
-                <i className="ti ti-check me-1"></i> 100% Brand New Product
-              </li>
-            </ul>
+
           </div>
         </div>
 
@@ -558,79 +671,7 @@ const SingleProductArea = ({ product }: any) => {
             </form>
           </div>
         {/* Ratings & Reviews Section */}
-        <div className="rating-and-review-wrapper bg-white py-3 mb-3">
-          <div className="container">
-            <h6>Ratings & Reviews</h6>
-            <div className="rating-review-content">
-              <ul className="ps-0">
-                {reviews_data.map((item, i) => (
-                  <li key={i} className="single-user-review d-flex">
-                    <div className="user-thumbnail">
-                      <img src={item.img} alt="" />
-                    </div>
-                    <div className="rating-comment">
-                      <div className="rating">
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                        <i className="ti ti-star-filled"></i>
-                      </div>
-                      <p className="comment mb-0">{item.title}</p>
-                      <span className="name-date">{item.date}</span>
-                      {item.images.map((image, index) => (
-                        <a
-                          key={index}
-                          className="review-image mt-2 border rounded"
-                          style={{ cursor: "pointer" }}
-                        >
-                          <img
-                            className="rounded-3"
-                            src={image.img}
-                            alt=""
-                          />
-                        </a>
-                      ))}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Submit a Review Section */}
-        <div className="ratings-submit-form bg-white py-3">
-          <div className="container">
-            <h6>Submit A Review</h6>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="stars mb-3">
-                <input className="star-1" type="radio" name="star" id="star1" />
-                <label className="star-1" htmlFor="star1"></label>
-                <input className="star-2" type="radio" name="star" id="star2" />
-                <label className="star-2" htmlFor="star2"></label>
-                <input className="star-3" type="radio" name="star" id="star3" />
-                <label className="star-3" htmlFor="star3"></label>
-                <input className="star-4" type="radio" name="star" id="star4" />
-                <label className="star-4" htmlFor="star4"></label>
-                <input className="star-5" type="radio" name="star" id="star5" />
-                <label className="star-5" htmlFor="star5"></label>
-                <span></span>
-              </div>
-              <textarea
-                className="form-control mb-3"
-                id="comments"
-                name="comment"
-                cols={30}
-                rows={5}
-                placeholder="Write your review..."
-              ></textarea>
-              <button className="btn btn-primary" type="submit">
-                Save Review
-              </button>
-            </form>
-          </div>
-        </div>
+        <ReviewsSection productId={product.vendor_product_id} />
       </div>
     </>
   );

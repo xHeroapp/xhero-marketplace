@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ImageWithFallback from "@/components/reuseable/ImageWithFallback";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -11,6 +11,14 @@ import useRewardCartStore from "@/store/rewardCartStore";
 import { generateTxRef } from "@/utils/generateTxRef";
 import { toast } from "sonner";
 import { processRewardOrder } from "@/services/processRewardOrder.service";
+import { supabase } from "@/supabase-client";
+
+// Type for delivery area
+interface DeliveryArea {
+  id: string;
+  location: string;
+  fee: number | string;
+}
 
 const CheckoutReward = () => {
   const ready = useClientReady();
@@ -22,10 +30,61 @@ const CheckoutReward = () => {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [showItems, setShowItems] = useState(true);
 
+  // Vendor delivery configuration fetched from DB
+  const [vendorDeliveryData, setVendorDeliveryData] = useState<{
+    delivery_fee_type: string | null;
+    delivery_fee: number | null;
+    delivery_areas: DeliveryArea[] | null;
+  } | null>(null);
+
+  // User's selected delivery location
+  const [selectedLocation, setSelectedLocation] = useState<DeliveryArea | null>(null);
+
   const items = getItems();
   const vendor = rewardCart?.vendor;
 
+  // Fetch vendor delivery data on mount
+  useEffect(() => {
+    const fetchVendorDeliveryData = async () => {
+      if (!rewardCart?.vendor?.vendor_id) return;
+      try {
+        const { data, error } = await supabase
+          .from('vendors')
+          .select('delivery_fee, delivery_fee_type, delivery_areas')
+          .eq('id', rewardCart.vendor.vendor_id)
+          .single();
+        if (!error && data) {
+          setVendorDeliveryData(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch vendor delivery data:', err);
+      }
+    };
+    fetchVendorDeliveryData();
+  }, [rewardCart?.vendor?.vendor_id]);
+
+  // Derived values
+  const isLocationBased = vendorDeliveryData?.delivery_fee_type === 'location';
+  const deliveryAreas = vendorDeliveryData?.delivery_areas || [];
+  const canProceed = user?.delivery_address && (!isLocationBased || (isLocationBased && selectedLocation));
+
+  // Determine display delivery fee
+  const displayDeliveryFee = isLocationBased
+    ? (selectedLocation ? Number(selectedLocation.fee) : null)
+    : (vendorDeliveryData?.delivery_fee ?? 0);
+
+  const handleLocationSelect = (area: DeliveryArea) => {
+    setSelectedLocation(area);
+  };
+
   const handleCheckOutReward = () => {
+    if (!canProceed) {
+      if (isLocationBased && !selectedLocation) {
+        toast.error('Please select a delivery location to proceed.');
+      }
+      return;
+    }
+
     try {
       const promise = processRewardOrder({
         p_reward_recognition_id: rewardCart.recognition_id,
@@ -171,10 +230,69 @@ const CheckoutReward = () => {
                 <span>Gift Discount</span>
                 <span>-{formatCurrency(getTotal().discount)}</span>
               </div>
-              <div className="summary-row">
-                <span>Delivery</span>
-                <span>Free</span>
-              </div>
+
+              {/* Delivery Fee - Conditional based on fee type */}
+              {isLocationBased ? (
+                <>
+                  {/* Location-Based Delivery Section */}
+                  <div className="delivery-location-section">
+                    <div className="location-header">
+                      <span>Delivery Location</span>
+                      <span className="required-badge">Required</span>
+                    </div>
+                    <div className="location-list">
+                      {deliveryAreas.map((area: DeliveryArea) => (
+                        <div
+                          key={area.id}
+                          className={`location-item ${selectedLocation?.id === area.id ? 'selected' : ''}`}
+                          onClick={() => handleLocationSelect(area)}
+                        >
+                          <div className="location-radio">
+                            {selectedLocation?.id === area.id ? (
+                              <i className="ti ti-circle-check-filled"></i>
+                            ) : (
+                              <i className="ti ti-circle"></i>
+                            )}
+                          </div>
+                          <span className="location-name">{area.location}</span>
+                          <span className="location-fee">
+                            <span className="strikethrough">{formatCurrency(Number(area.fee))}</span>
+                            <span className="free-tag">Free</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="summary-row">
+                    <span>Delivery</span>
+                    <span>
+                      {selectedLocation ? (
+                        <>
+                          <span className="strikethrough-small">{formatCurrency(Number(selectedLocation.fee))}</span>
+                          {' '}
+                          <span className="text-success">Free</span>
+                        </>
+                      ) : '—'}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="summary-row">
+                  <span>Delivery</span>
+                  <span>
+                    {displayDeliveryFee && displayDeliveryFee > 0 ? (
+                      <>
+                        <span className="strikethrough-small">{formatCurrency(displayDeliveryFee)}</span>
+                        {' '}
+                        <span className="text-success">Free</span>
+                      </>
+                    ) : (
+                      <span className="text-success">Free</span>
+                    )}
+                  </span>
+                </div>
+              )}
+
               <div className="summary-row total">
                 <span>Total</span>
                 <span className="text-success">₦0 (Gift)</span>
@@ -183,16 +301,7 @@ const CheckoutReward = () => {
 
             {/* Confirm Button */}
             <div className="checkout-footer">
-              {user?.delivery_address ? (
-                <>
-                  <p className="terms-text">
-                    By proceeding, you agree to our <Link href="/terms">Terms of Use</Link> and <Link href="/privacy">Privacy Policy</Link>
-                  </p>
-                  <button className="payment-btn confirm-btn" onClick={handleCheckOutReward}>
-                    Confirm & Redeem Reward
-                  </button>
-                </>
-              ) : (
+              {!user?.delivery_address ? (
                 <>
                   <p className="terms-text warning">
                     Please add a delivery address to continue
@@ -200,6 +309,24 @@ const CheckoutReward = () => {
                   <Link href="/edit-profile" className="payment-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
                     Add Delivery Address
                   </Link>
+                </>
+              ) : isLocationBased && !selectedLocation ? (
+                <>
+                  <p className="terms-text warning">
+                    Please select a delivery location to continue
+                  </p>
+                  <button className="payment-btn disabled" disabled>
+                    Select Delivery Location
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="terms-text">
+                    By proceeding, you agree to our <Link href="/terms">Terms of Use</Link> and <Link href="/privacy">Privacy Policy</Link>
+                  </p>
+                  <button className="payment-btn confirm-btn" onClick={handleCheckOutReward}>
+                    Confirm & Redeem Reward
+                  </button>
                 </>
               )}
             </div>
@@ -513,6 +640,109 @@ const CheckoutReward = () => {
           color: #22c55e;
         }
 
+        /* Strikethrough styles */
+        .strikethrough {
+          text-decoration: line-through;
+          color: #86868b;
+          margin-right: 8px;
+        }
+
+        .strikethrough-small {
+          text-decoration: line-through;
+          color: #86868b;
+          font-size: 13px;
+        }
+
+        .free-tag {
+          color: #22c55e;
+          font-weight: 600;
+        }
+
+        /* Location Selector Styles - Copied from Checkout.tsx */
+        .delivery-location-section {
+          margin: 12px 0;
+          padding-top: 12px;
+          border-top: 1px solid #f5f5f7;
+        }
+
+        .location-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+          font-size: 14px;
+          color: #1d1d1f;
+          font-weight: 500;
+        }
+
+        .required-badge {
+          font-size: 11px;
+          font-weight: 600;
+          color: #0071e3;
+          background: #e8f4fd;
+          padding: 4px 8px;
+          border-radius: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .location-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .location-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          background: #f5f5f7;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: 2px solid transparent;
+        }
+
+        .location-item:hover {
+          background: #ebebed;
+        }
+
+        .location-item.selected {
+          background: #e8f4fd;
+          border-color: #0071e3;
+        }
+
+        .location-radio {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .location-radio i {
+          font-size: 20px;
+          color: #86868b;
+        }
+
+        .location-item.selected .location-radio i {
+          color: #0071e3;
+        }
+
+        .location-name {
+          flex: 1;
+          font-size: 15px;
+          font-weight: 500;
+          color: #1d1d1f;
+        }
+
+        .location-fee {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 14px;
+        }
+
         /* Footer */
         .checkout-footer {
           position: fixed;
@@ -554,6 +784,15 @@ const CheckoutReward = () => {
 
         .payment-btn:hover {
           background: #005bb5;
+        }
+
+        .payment-btn.disabled {
+          background: #86868b;
+          cursor: not-allowed;
+        }
+
+        .payment-btn.disabled:hover {
+          background: #86868b;
         }
 
         .confirm-btn {
@@ -682,9 +921,53 @@ const CheckoutReward = () => {
         :global([theme-color="dark"]) .terms-text {
           color: #8e8e93;
         }
+
+        :global([theme-color="dark"]) .delivery-location-section {
+          border-color: #38383a;
+        }
+
+        :global([theme-color="dark"]) .location-header {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .required-badge {
+          background: rgba(10, 132, 255, 0.2);
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-item {
+          background: #2c2c2e;
+        }
+
+        :global([theme-color="dark"]) .location-item:hover {
+          background: #38383a;
+        }
+
+        :global([theme-color="dark"]) .location-item.selected {
+          background: rgba(10, 132, 255, 0.15);
+          border-color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-radio i {
+          color: #8e8e93;
+        }
+
+        :global([theme-color="dark"]) .location-item.selected .location-radio i {
+          color: #0a84ff;
+        }
+
+        :global([theme-color="dark"]) .location-name {
+          color: #ffffff;
+        }
+
+        :global([theme-color="dark"]) .strikethrough,
+        :global([theme-color="dark"]) .strikethrough-small {
+          color: #8e8e93;
+        }
       `}</style>
     </>
   );
 };
 
 export default CheckoutReward;
+

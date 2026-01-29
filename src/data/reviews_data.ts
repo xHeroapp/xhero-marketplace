@@ -1,43 +1,34 @@
 
-
 interface DataType {
   id: number;
   img: string;
+  name: string;
   title: string;
   date: string;
-  images: {
-    id: number;
-    img: string;
-}[];
-} 
+}
 
 const reviews_data: DataType[] = [
   {
     id: 1,
     img: '/assets/img/bg-img/7.jpg',
+    name: 'John Doe',
     title: 'Very good product. It is just amazing!',
-    date: 'Designing World 12 Dec 2024',
-    images: [
-      {id: 1, img: '/assets/img/product/3.png'}
-    ]
+    date: '12 Dec 2024',
   },
   {
     id: 2,
     img: '/assets/img/bg-img/8.jpg',
+    name: 'Jane Smith',
     title: 'Very excellent product. Love it.',
-    date: 'Designing World 8 Dec 2024',
-    images: [
-      {id: 1, img: '/assets/img/product/4.png'},
-      {id: 2, img: '/assets/img/product/6.png'},      
-    ]
+    date: '8 Dec 2024',
   },
   {
     id: 3,
     img: '/assets/img/bg-img/9.jpg',
+    name: 'Michael Brown',
     title: 'What a nice product it is. I am looking it is.',
-    date: 'Designing World 28 Nov 2024',
-    images: []
+    date: '28 Nov 2024',
   },
-]
+];
 
-export default reviews_data
+export default reviews_data;
