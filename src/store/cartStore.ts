@@ -10,7 +10,57 @@ interface DeliveryArea {
   fee: number | string;
 }
 
-const useCartStore = create((set, get) => ({
+interface CartItem {
+  product_id: string;
+  product_name: string;
+  price: number;
+  quantity: number;
+  [key: string]: any; // Allow other properties
+}
+
+interface VendorData {
+  vendor_id: string;
+  vendor_name: string;
+  vendor_img?: string;
+  delivery_fee?: number;
+  delivery_fee_type?: string;
+  delivery_areas?: DeliveryArea[];
+  [key: string]: any;
+}
+
+interface VendorCart {
+  vendor: VendorData;
+  items: Record<string, CartItem>;
+}
+
+interface VendorTotal {
+  subtotal: number;
+  discount: number;
+  deliveryFee: number;
+  total: number;
+}
+
+interface CartState {
+  cart: Record<string, VendorCart>;
+  selectedDeliveryLocation: Record<string, DeliveryArea | null>;
+
+  // Load & Save
+  loadCart: (userId: string) => void;
+  persistCart: (userId?: string) => void;
+
+  // Actions
+  setDeliveryLocation: (vendorId: string, location: DeliveryArea | null, userId?: string) => void;
+  updateVendorInCart: (vendorId: string, freshVendorData: any, userId?: string) => void;
+  addProductToCart: (product: any, vendor: any, userId?: string, quantity?: number) => void;
+  removeProductFromCart: (vendorId: string, productId: string, userId?: string) => void;
+  incrementQuantity: (vendorId: string, productId: string, userId?: string) => void;
+  decrementQuantity: (vendorId: string, productId: string, userId?: string) => void;
+  clearVendorCart: (vendorId: string, userId?: string) => void;
+  clearCart: (userId: string) => void;
+  getVendorTotal: (vendorId: string) => VendorTotal;
+}
+
+const useCartStore = create<CartState>((set, get) => ({
   cart: {},
   // Stores the selected delivery location per vendor (keyed by vendorId)
   selectedDeliveryLocation: {} as Record<string, DeliveryArea | null>,
@@ -27,6 +77,7 @@ const useCartStore = create((set, get) => ({
   },
 
   persistCart: (userId) => {
+    if (!userId) return;
     localStorage.setItem(`${userId}-cart`, JSON.stringify(get().cart));
     localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(get().selectedDeliveryLocation));
   },
@@ -38,7 +89,7 @@ const useCartStore = create((set, get) => ({
     current[vendorId] = location;
     set({ selectedDeliveryLocation: current });
     if (userId) {
-      localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(current));
+      get().persistCart(userId);
     }
   },
 
@@ -101,6 +152,10 @@ const useCartStore = create((set, get) => ({
       const locations = { ...get().selectedDeliveryLocation };
       delete locations[vendorId];
       set({ selectedDeliveryLocation: locations });
+      // We must persist the location removal as well
+      if (userId) {
+        localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(locations));
+      }
     }
 
     set({ cart });
@@ -112,6 +167,9 @@ const useCartStore = create((set, get) => ({
   incrementQuantity: (vendorId, productId, userId) => {
     const cart = { ...get().cart };
 
+    // Safety check
+    if (!cart[vendorId] || !cart[vendorId].items[productId]) return;
+
     cart[vendorId].items[productId].quantity += 1;
 
     set({ cart });
@@ -120,6 +178,10 @@ const useCartStore = create((set, get) => ({
 
   decrementQuantity: (vendorId, productId, userId) => {
     const cart = { ...get().cart };
+
+    // Safety check
+    if (!cart[vendorId] || !cart[vendorId].items[productId]) return;
+
     const item = cart[vendorId].items[productId];
 
     if (item.quantity > 1) {
@@ -134,6 +196,9 @@ const useCartStore = create((set, get) => ({
       const locations = { ...get().selectedDeliveryLocation };
       delete locations[vendorId];
       set({ selectedDeliveryLocation: locations });
+      if (userId) {
+        localStorage.setItem(`${userId}-delivery-locations`, JSON.stringify(locations));
+      }
     }
 
     set({ cart });
