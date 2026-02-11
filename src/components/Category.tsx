@@ -16,6 +16,10 @@ import { useGetProductItems } from "@/queries/products.queries";
 import { useFilters } from "@/hooks/useFilters";
 const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 
+import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useGetMarketingBanners } from "@/queries/marketing_banners.queries";
+
 const Category = () => {
   const searchParams = useSearchParams();
   const activeCategory_id = searchParams.get("category_id");
@@ -25,10 +29,13 @@ const Category = () => {
   const { sortedCategories } = useSortedCategories(categories);
 
   const Filters = useFilters();
+  const { data: banners } = useGetMarketingBanners("category_header");
 
   const [active, setActive] = useState(
     activeCategory_id ? activeCategory_id : sortedCategories[0].id
   );
+
+  // ... existing useEffects ...
 
   // filter the product by the active category
   useEffect(() => {
@@ -86,10 +93,36 @@ const Category = () => {
       <div className="page-content-wrapper">
         <div className="pt-3">
           <div className="container">
-            <div
-              className="catagory-single-img"
-              style={{ backgroundImage: `url(/assets/img/bg-img/5.jpg)` }}
-            ></div>
+            {banners && banners.length > 0 ? (
+              <Swiper
+                loop={true}
+                pagination={{ clickable: true }}
+                modules={[Pagination]}
+                className="category-slider rounded"
+              >
+                {banners.map(banner => (
+                  <SwiperSlide key={banner.id}>
+                    <div
+                      className="catagory-single-img"
+                      style={{
+                        backgroundImage: `url(${banner.image_url})`,
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        if (banner.target_link) {
+                          window.location.href = banner.target_link;
+                        }
+                      }}
+                    ></div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            ) : (
+              <div
+                className="catagory-single-img"
+                style={{ backgroundImage: `url(/assets/img/bg-img/5.jpg)` }}
+              ></div>
+            )}
           </div>
         </div>
 

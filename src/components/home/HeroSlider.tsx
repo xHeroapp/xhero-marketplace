@@ -43,6 +43,12 @@ const HeroSlider = () => {
 									style={{
 										backgroundImage: `url(${banner.image_url})`,
 										backgroundColor: banner.meta_data?.bg_color,
+										cursor: 'pointer'
+									}}
+									onClick={() => {
+										if (banner.target_link) {
+											window.location.href = banner.target_link;
+										}
 									}}
 								>
 									<div className="slide-content h-100 d-flex align-items-center">
@@ -64,17 +70,6 @@ const HeroSlider = () => {
 												>
 													{banner.subtitle}
 												</p>
-											)}
-											{banner.button_text && (
-												<a
-													className="btn btn-primary"
-													href={banner.target_link || "#"}
-													data-animation="fadeInUp"
-													data-delay="800ms"
-													data-duration="1000ms"
-												>
-													{banner.button_text}
-												</a>
 											)}
 										</div>
 									</div>
