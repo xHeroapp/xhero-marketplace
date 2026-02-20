@@ -106,7 +106,11 @@ const Category = () => {
                       className="catagory-single-img"
                       style={{
                         backgroundImage: `url(${banner.image_url})`,
-                        cursor: 'pointer'
+                        backgroundPosition: 'center center',
+                        backgroundSize: 'cover',
+                        cursor: 'pointer',
+                        width: '100%',
+                        height: '150px' // unified height
                       }}
                       onClick={() => {
                         if (banner.target_link) {
@@ -120,7 +124,13 @@ const Category = () => {
             ) : (
               <div
                 className="catagory-single-img"
-                style={{ backgroundImage: `url(/assets/img/bg-img/5.jpg)` }}
+                style={{
+                  backgroundImage: `url(/assets/img/bg-img/5.jpg)`,
+                  backgroundPosition: 'center center',
+                  backgroundSize: 'cover',
+                  width: '100%',
+                  height: '150px' // unified height
+                }}
               ></div>
             )}
           </div>
