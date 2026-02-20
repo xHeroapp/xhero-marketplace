@@ -3,14 +3,13 @@
 import { useClientReady } from "@/hooks/useClientReady";
 import Footer from "@/layouts/Footer";
 import HeaderTwo from "@/layouts/HeaderTwo";
-import { useGetUser } from "@/queries/auth.queries";
 import { processFlashSaleOrder } from "@/services/processFlashSaleOrder.service";
 import { useAuthStore } from "@/store/authStore";
 import useFlashSaleStore from "@/store/flashSaleStore";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { generateTxRef } from "@/utils/generateTxRef";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 const CheckoutFlashSaleWallet = () => {
@@ -24,13 +23,7 @@ const CheckoutFlashSaleWallet = () => {
 
   // Stores
   const { user } = useAuthStore();
-  const useGetUserQuery = useGetUser();
   const { item, paymentMethod, clear, getTotal } = useFlashSaleStore();
-
-  // update the user store to get the up to date user information
-  useEffect(() => {
-    useGetUserQuery.refetch();
-  }, [useGetUserQuery.data]);
 
   const orderAmount = getTotal();
 
@@ -127,11 +120,10 @@ const CheckoutFlashSaleWallet = () => {
                   <div className="d-flex justify-content-between">
                     <span className="fw-bold">Balance After Payment</span>
                     <span
-                      className={`fw-bold ${
-                        user?.points_balance - orderAmount >= 0
+                      className={`fw-bold ${user?.points_balance - orderAmount >= 0
                           ? "text-success"
                           : "text-danger"
-                      }`}
+                        }`}
                     >
                       {formatCurrency(user?.points_balance - orderAmount)}
                     </span>

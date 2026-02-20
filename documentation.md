@@ -113,3 +113,18 @@ exception when others then raise;
 end;
 $function$;
 ```
+
+## 2026-02-20 - Realtime Wallet Balance Sync (Supabase Realtime)
+
+**Feature:** Live wallet balance updates via Supabase Realtime
+
+**Description:**
+Wallet balance in the sidebar (`Offcanvas.tsx`) was stale after backend-only changes (e.g., order cancellations by Superadmin, HR sending cash rewards). This was because `useGetUser` cached employee data for 5 minutes (`staleTime`). Fix: created a `RealtimeBalanceSync` component (`src/hooks/useRealtimeBalance.ts`) that subscribes to Supabase Realtime `postgres_changes` on the `employees` table, filtered to the current user's row. When `points_balance` changes on the backend, the Zustand auth store is patched instantly. Mounted globally in `Provider.tsx`. Also removed redundant `useGetUser().refetch()` calls from `CheckoutWallet.tsx`, `CheckoutServiceWallet.tsx`, and `CheckoutFlashSaleWallet.tsx`.
+
+**SQL / Backup Codes:**
+```sql
+-- No database changes needed. The `employees` table was already in the
+-- supabase_realtime publication alongside `notifications` and `chat_messages`.
+-- Verification query:
+-- SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+```

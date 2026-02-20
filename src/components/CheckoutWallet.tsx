@@ -2,13 +2,12 @@
 
 import { useClientReady } from "@/hooks/useClientReady";
 import { useHandlePayment } from "@/hooks/useHandlePayment";
-import { useGetUser } from "@/queries/auth.queries";
 import { useAuthStore } from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 import useCheckoutStore from "@/store/checkoutStore";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const CheckoutWallet = () => {
   const ready = useClientReady();
@@ -21,14 +20,8 @@ const CheckoutWallet = () => {
   // Stores
   const { user } = useAuthStore();
   const { getVendorTotal } = useCartStore();
-  const useGetUserQuery = useGetUser();
   const { getVendorCart } = useCheckoutStore();
   const vendorCart = getVendorCart();
-
-  // update the user store to get the up to date user information
-  useEffect(() => {
-    useGetUserQuery.refetch();
-  }, [useGetUserQuery.data]);
 
   const orderAmount = getVendorTotal(vendorCart && vendorCart.vendor.vendor_id);
 
