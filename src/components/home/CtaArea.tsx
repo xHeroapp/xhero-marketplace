@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useGetMarketingBanners } from "@/queries/marketing_banners.queries";
+import { optimizeImageUrl } from "@/utils/optimizeImageUrl";
 
 const CtaArea = () => {
 	const { data: banners } = useGetMarketingBanners("home_mid_cta");
@@ -15,7 +16,7 @@ const CtaArea = () => {
 				<div
 					className="cta-text dir-rtl p-0"
 					style={{
-						backgroundImage: `url(${banner.image_url})`,
+						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
 						backgroundPosition: 'center center',
 						backgroundSize: 'cover',
 						cursor: 'pointer',

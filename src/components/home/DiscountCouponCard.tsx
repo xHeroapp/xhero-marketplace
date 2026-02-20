@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useGetMarketingBanners } from "@/queries/marketing_banners.queries";
+import { optimizeImageUrl } from "@/utils/optimizeImageUrl";
 
 const DiscountCouponCard = () => {
 	const { data: banners } = useGetMarketingBanners("home_bottom_coupon");
@@ -15,7 +16,7 @@ const DiscountCouponCard = () => {
 				<div
 					className="discount-coupon-card p-0 dir-rtl"
 					style={{
-						backgroundImage: `url(${banner.image_url})`,
+						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
 						backgroundPosition: 'center center',
 						backgroundSize: 'cover',
 						cursor: 'pointer',

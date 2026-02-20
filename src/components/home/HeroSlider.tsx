@@ -4,6 +4,7 @@ import React from "react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGetMarketingBanners } from "@/queries/marketing_banners.queries";
+import { optimizeImageUrl } from "@/utils/optimizeImageUrl";
 
 const HeroSlider = () => {
 	const { data: banners, isLoading } = useGetMarketingBanners("home_hero");
@@ -41,7 +42,7 @@ const HeroSlider = () => {
 									key={banner.id}
 									className="single-hero-slide"
 									style={{
-										backgroundImage: `url(${banner.image_url})`,
+										backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
 										backgroundColor: banner.meta_data?.bg_color,
 										cursor: 'pointer'
 									}}

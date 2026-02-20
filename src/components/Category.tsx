@@ -19,6 +19,7 @@ const MyTimer = dynamic(() => import("./common/Timer"), { ssr: false });
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGetMarketingBanners } from "@/queries/marketing_banners.queries";
+import { optimizeImageUrl } from "@/utils/optimizeImageUrl";
 
 const Category = () => {
   const searchParams = useSearchParams();
@@ -105,7 +106,7 @@ const Category = () => {
                     <div
                       className="catagory-single-img"
                       style={{
-                        backgroundImage: `url(${banner.image_url})`,
+                        backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
                         backgroundPosition: 'center center',
                         backgroundSize: 'cover',
                         cursor: 'pointer',

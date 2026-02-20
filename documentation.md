@@ -128,3 +128,21 @@ Wallet balance in the sidebar (`Offcanvas.tsx`) was stale after backend-only cha
 -- Verification query:
 -- SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
 ```
+
+## 2026-02-20 - Image Optimization (3-Phase)
+
+**Feature:** Marketplace-wide Image Optimization
+
+**Description:**
+Phase 1: Refactored `ImageWithFallback` component from raw `<img>` to Next.js `<Image>` with `fill` mode. Removed the eager `useEffect` pre-load that defeated lazy loading. All 20+ consumer components now automatically get WebP/AVIF conversion, responsive `srcSet`, and proper lazy loading via Next.js image optimizer. `next.config.mjs` already had Supabase remote patterns configured.
+
+Phase 2: Created `src/utils/optimizeImageUrl.ts` utility that appends Supabase image transformation parameters (`?width=1200&quality=75`) to storage URLs. Applied to all 4 banner components (`HeroSlider.tsx`, `CtaArea.tsx`, `DiscountCouponCard.tsx`, `Category.tsx`). Non-Supabase URLs pass through unchanged.
+
+Phase 3: Added `browser-image-compression` to the avatar upload flow in `UseUploadProfileImage` (`auth.queries.ts`). Compresses images to max 200KB / 500×500 / WebP before uploading to Supabase. Updated `EditProfile.tsx` pre-compression size guard from 5MB to 10MB.
+
+**SQL / Backup Codes:**
+```sql
+-- No database changes needed. This was a frontend-only optimization.
+-- No schema changes, no RPC changes, no table modifications.
+```
+
