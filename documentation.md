@@ -146,3 +146,15 @@ Phase 3: Added `browser-image-compression` to the avatar upload flow in `UseUplo
 -- No schema changes, no RPC changes, no table modifications.
 ```
 
+## 2026-02-20 - Home Post-Featured Banner
+
+**Feature:** New Marketing Banner Location (`home_post_featured`)
+
+**Description:**
+Added a new promotional banner location to the home page, specifically situated below the "Featured Products" section. Displayed using a new `PostFeaturedBanner` component that matches the styling of other banners (full width, clickable background image, leveraging the custom `optimizeImageUrl` utility).
+
+**SQL / Backup Codes:**
+```sql
+ALTER TYPE banner_location ADD VALUE IF NOT EXISTS 'home_post_featured';
+```
+
