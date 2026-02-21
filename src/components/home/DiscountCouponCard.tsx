@@ -17,6 +17,8 @@ const DiscountCouponCard = () => {
 					className="discount-coupon-card p-0 dir-rtl single-hero-slide"
 					style={{
 						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
+						backgroundPosition: 'center center',
+						backgroundSize: 'cover',
 						cursor: 'pointer',
 						borderRadius: '12px'
 					}}

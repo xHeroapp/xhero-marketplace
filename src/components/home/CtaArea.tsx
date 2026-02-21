@@ -17,6 +17,8 @@ const CtaArea = () => {
 					className="cta-text dir-rtl p-0 single-hero-slide"
 					style={{
 						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
+						backgroundPosition: 'center center',
+						backgroundSize: 'cover',
 						cursor: 'pointer',
 						borderRadius: '12px'
 					}}

@@ -107,6 +107,8 @@ const Category = () => {
                       className="catagory-single-img single-hero-slide"
                       style={{
                         backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
+                        backgroundPosition: 'center center',
+                        backgroundSize: 'cover',
                         cursor: 'pointer',
                         width: '100%',
                         borderRadius: '12px'
@@ -125,6 +127,8 @@ const Category = () => {
                 className="catagory-single-img single-hero-slide"
                 style={{
                   backgroundImage: `url(/assets/img/bg-img/5.jpg)`,
+                  backgroundPosition: 'center center',
+                  backgroundSize: 'cover',
                   width: '100%',
                   borderRadius: '12px'
                 }}
