@@ -21,6 +21,8 @@ export default function ImageWithFallback({
 }) {
   const [imgSrc, setImgSrc] = useState(src || fallback);
 
+  const isExternal = imgSrc.startsWith("http") && !imgSrc.includes("fhvjjbnjecwbdslvemsa.supabase.co");
+
   const handleError = () => {
     if (imgSrc !== fallback) {
       setImgSrc(fallback);
@@ -37,6 +39,7 @@ export default function ImageWithFallback({
         height={typeof height === "string" ? parseInt(height, 10) : height}
         className={className}
         onError={handleError}
+        unoptimized={isExternal}
         style={{ ...style, borderRadius: "12px", objectFit: "cover" }}
         sizes="(max-width: 768px) 50vw, 33vw"
       />
@@ -58,6 +61,7 @@ export default function ImageWithFallback({
         fill
         className={className}
         onError={handleError}
+        unoptimized={isExternal}
         style={{ ...style, borderRadius: "12px", objectFit: "cover" }}
         sizes="(max-width: 768px) 50vw, 33vw"
       />
