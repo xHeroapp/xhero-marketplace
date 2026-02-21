@@ -158,3 +158,16 @@ Added a new promotional banner location to the home page, specifically situated 
 ALTER TYPE banner_location ADD VALUE IF NOT EXISTS 'home_post_featured';
 ```
 
+## 2026-02-21 - Realtime Banner Sync (Supabase Realtime)
+
+**Feature:** Live marketing banner updates via Supabase Realtime
+
+**Description:**
+Deleted or updated marketing banners were briefly flashing ("ghost banner") on the marketplace before fresh data loaded. This was caused by React Query's stale-while-revalidate cache strategy — the browser showed cached banners instantly, then swapped them in the background. Fix: added `marketing_banners` to the `supabase_realtime` Postgres publication and created a `RealtimeBannerSync` component (`src/hooks/useRealtimeBanners.ts`) that subscribes to all `postgres_changes` events (INSERT, UPDATE, DELETE) on the `marketing_banners` table. When a superadmin changes any banner, the React Query cache is instantly invalidated. Mounted globally in `Provider.tsx` alongside `RealtimeBalanceSync`.
+
+**SQL / Backup Codes:**
+```sql
+ALTER PUBLICATION supabase_realtime ADD TABLE marketing_banners;
+-- Verification query:
+-- SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+```

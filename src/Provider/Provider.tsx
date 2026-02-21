@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import CategoryProvider from "./CategoryProvider";
 import LastSeenProvider from "./LastSeenProvider";
 import { RealtimeBalanceSync } from "@/hooks/useRealtimeBalance";
+import { RealtimeBannerSync } from "@/hooks/useRealtimeBanners";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <CategoryProvider />
       <LastSeenProvider />
       <RealtimeBalanceSync />
+      <RealtimeBannerSync />
       {/* <ThemeProvider
         attribute="class"
         defaultTheme="light"
