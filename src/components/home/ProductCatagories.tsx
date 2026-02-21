@@ -148,7 +148,7 @@ const ProductCatagories = () => {
                   >
                     <div className="card-body px-1">
                       <Link
-                        href={`/category?category_id=${item.id}&category_name=${item.name}`}
+                        href={`/category?category_id=${item.id}&category_name=${encodeURIComponent(item.name)}`}
                       >
                         <img src={item.img} alt={item.name} />
                         <span>{item.name}</span>
