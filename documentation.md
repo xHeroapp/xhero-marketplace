@@ -168,6 +168,17 @@ Deleted or updated marketing banners were briefly flashing ("ghost banner") on t
 **SQL / Backup Codes:**
 ```sql
 ALTER PUBLICATION supabase_realtime ADD TABLE marketing_banners;
--- Verification query:
 -- SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+```
+
+## 2026-02-21 - Category Selection Glitch Fix
+
+**Feature:** Category selection stability in the Product Category slider
+
+**Description:**
+Fixed a bug where clicking a category in the `Category.tsx` image slider caused the active filter to briefly glitch and display products for the first category in the array (e.g., Beauty & Wellness). This occurred because the slider's `Link` only passed `category_id` to the URL. When the URL updated, local state read a `null` `category_name`, hitting a fallback condition (`else if (sortedCategories.length > 0)`) that forcibly selected the first category. Fixed by appending `&category_name=${item.name}` to the slider's `<Link>`, perfectly matching the URL format used by the Home page.
+
+**SQL / Backup Codes:**
+```sql
+-- No SQL changes required. Frontend bug only.
 ```
