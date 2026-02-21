@@ -1,7 +1,8 @@
 /**
  * Get the display status label for an order
  */
-export const getOrderStatusLabel = (status: string): string => {
+export const getOrderStatusLabel = (status: string | null | undefined): string => {
+  if (!status) return "Unknown";
   const statusMap: Record<string, string> = {
     pending: "Pending",
     processing: "Processing",
@@ -14,6 +15,8 @@ export const getOrderStatusLabel = (status: string): string => {
     cancelled: "Cancelled",
     refunded: "Refunded",
     failed: "Failed",
+    confirmed: "Confirmed",
+    completed: "Completed",
   };
 
   return statusMap[status.toLowerCase()] || status;
@@ -22,7 +25,8 @@ export const getOrderStatusLabel = (status: string): string => {
 /**
  * Get the status color class for styling
  */
-export const getOrderStatusColor = (status: string): string => {
+export const getOrderStatusColor = (status: string | null | undefined): string => {
+  if (!status) return "secondary";
   const colorMap: Record<string, string> = {
     pending: "warning",
     processing: "info",
@@ -35,6 +39,8 @@ export const getOrderStatusColor = (status: string): string => {
     cancelled: "danger",
     refunded: "secondary",
     failed: "danger",
+    confirmed: "info",
+    completed: "success",
   };
 
   return colorMap[status.toLowerCase()] || "secondary";
