@@ -32,8 +32,8 @@ const Category = () => {
   const Filters = useFilters();
   const { data: banners } = useGetMarketingBanners("category_header");
 
-  const [active, setActive] = useState(
-    activeCategory_id ? activeCategory_id : sortedCategories[0].id
+  const [active, setActive] = useState<string | undefined>(
+    activeCategory_id ? activeCategory_id : sortedCategories?.[0]?.id
   );
 
   // ... existing useEffects ...
@@ -42,7 +42,7 @@ const Category = () => {
   useEffect(() => {
     if (activeCategory_name) {
       Filters.setCategory(activeCategory_name);
-    } else {
+    } else if (sortedCategories?.length > 0) {
       // this would sort by the first category on the list
       Filters.setCategory(sortedCategories[0].name);
     }
