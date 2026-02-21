@@ -30,7 +30,7 @@ const Category = () => {
   const { sortedCategories } = useSortedCategories(categories);
 
   const Filters = useFilters();
-  const { data: banners } = useGetMarketingBanners("category_header");
+  const { data: banners, isLoading: isBannersLoading } = useGetMarketingBanners("category_header");
 
   const [active, setActive] = useState<string | undefined>(
     activeCategory_id ? activeCategory_id : sortedCategories?.[0]?.id
@@ -94,7 +94,16 @@ const Category = () => {
       <div className="page-content-wrapper">
         <div className="pt-3">
           <div className="container">
-            {banners && banners.length > 0 ? (
+            {isBannersLoading ? (
+              <div
+                className="catagory-single-img single-hero-slide placeholder-glow"
+                style={{
+                  width: '100%',
+                  borderRadius: '12px',
+                  backgroundColor: '#e9ecef'
+                }}
+              ></div>
+            ) : banners && banners.length > 0 ? (
               <Swiper
                 loop={true}
                 pagination={{ clickable: true }}
@@ -122,18 +131,7 @@ const Category = () => {
                   </SwiperSlide>
                 ))}
               </Swiper>
-            ) : (
-              <div
-                className="catagory-single-img single-hero-slide"
-                style={{
-                  backgroundImage: `url(/assets/img/bg-img/5.jpg)`,
-                  backgroundPosition: 'center center',
-                  backgroundSize: 'cover',
-                  width: '100%',
-                  borderRadius: '12px'
-                }}
-              ></div>
-            )}
+            ) : null}
           </div>
         </div>
 
