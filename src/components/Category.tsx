@@ -104,14 +104,12 @@ const Category = () => {
                 {banners.map(banner => (
                   <SwiperSlide key={banner.id}>
                     <div
-                      className="catagory-single-img"
+                      className="catagory-single-img single-hero-slide"
                       style={{
                         backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
-                        backgroundPosition: 'center center',
-                        backgroundSize: 'cover',
                         cursor: 'pointer',
                         width: '100%',
-                        height: '150px' // unified height
+                        borderRadius: '12px'
                       }}
                       onClick={() => {
                         if (banner.target_link) {
@@ -124,13 +122,11 @@ const Category = () => {
               </Swiper>
             ) : (
               <div
-                className="catagory-single-img"
+                className="catagory-single-img single-hero-slide"
                 style={{
                   backgroundImage: `url(/assets/img/bg-img/5.jpg)`,
-                  backgroundPosition: 'center center',
-                  backgroundSize: 'cover',
                   width: '100%',
-                  height: '150px' // unified height
+                  borderRadius: '12px'
                 }}
               ></div>
             )}

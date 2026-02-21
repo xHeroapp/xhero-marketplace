@@ -14,13 +14,11 @@ const CtaArea = () => {
 		<>
 			<div className="container">
 				<div
-					className="cta-text dir-rtl p-0"
+					className="cta-text dir-rtl p-0 single-hero-slide"
 					style={{
 						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
-						backgroundPosition: 'center center',
-						backgroundSize: 'cover',
 						cursor: 'pointer',
-						height: '200px' // giving it a fixed height similar to hero slider
+						borderRadius: '12px'
 					}}
 					onClick={() => {
 						if (banner.target_link) {

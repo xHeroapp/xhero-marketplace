@@ -14,13 +14,11 @@ const DiscountCouponCard = () => {
 		<>
 			<div className="container">
 				<div
-					className="discount-coupon-card p-0 dir-rtl"
+					className="discount-coupon-card p-0 dir-rtl single-hero-slide"
 					style={{
 						backgroundImage: `url(${optimizeImageUrl(banner.image_url)})`,
-						backgroundPosition: 'center center',
-						backgroundSize: 'cover',
 						cursor: 'pointer',
-						height: '150px' // fixed height for coupon banner
+						borderRadius: '12px'
 					}}
 					onClick={() => {
 						if (banner.target_link) {
