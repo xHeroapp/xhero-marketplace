@@ -50,6 +50,7 @@ export const useGetUserWishlist = (user_id: string, limit = PRODUCT_LIMIT) => {
       const { data, error } = await supabase
         .from("user_wishlist_view")
         .select("*", { count: "exact" })
+        .eq("vendor_is_disabled", false)
         .order("wishlist_created_at", { ascending: false })
         .range(from, to);
 

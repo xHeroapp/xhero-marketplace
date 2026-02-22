@@ -15,6 +15,7 @@ export const useGetVendors = (filters = {}) => {
       let query = supabase
         .from("vendors_view")
         .select("*", { count: "exact" })
+        .eq("status", "active")
         .neq("vendor_id", "10988314-40e7-4b56-8010-49218fcd0933") // not returning the xhero vendor (we only return cash)
         .range(from, to);
 
@@ -51,6 +52,7 @@ export const useGetVendor = (id) => {
         .from("vendors_view")
         .select()
         .eq("vendor_id", id)
+        .eq("status", "active")
         .single();
 
       if (error) throw error;
@@ -85,6 +87,7 @@ export const useGetVendorProductItems = (
         .from("vendor_products_view")
         .select("*", { count: "exact" })
         .eq("vendor_id", vendor_id)
+        .eq("vendor_is_disabled", false)
         .range(from, to);
 
       // Search filter

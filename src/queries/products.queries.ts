@@ -23,7 +23,8 @@ export const useGetFeatureProducts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("featured_products")
-        .select("*, vendor_products_view(*)");
+        .select("*, vendor_products_view!inner(*)")
+        .eq("vendor_products_view.vendor_is_disabled", false);
 
       if (error) throw error;
       return data;
@@ -38,7 +39,8 @@ export const useGetTopProducts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("top_products")
-        .select("*, vendor_products_view(*)");
+        .select("*, vendor_products_view!inner(*)")
+        .eq("vendor_products_view.vendor_is_disabled", false);
 
       if (error) throw error;
       return data;
@@ -53,7 +55,8 @@ export const useGetWeeklyProducts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("weekly_products")
-        .select("*, vendor_products_view(*)");
+        .select("*, vendor_products_view!inner(*)")
+        .eq("vendor_products_view.vendor_is_disabled", false);
 
       if (error) throw error;
       return data;
@@ -80,6 +83,7 @@ export const useGetProductItems = (filters = {}, limit: number) => {
       let query = supabase
         .from("vendor_products_view")
         .select("*", { count: "exact" })
+        .eq("vendor_is_disabled", false)
         .neq("product_id", "7177584c-8ea8-4cb8-9758-ae1b7edf51d2") // avoid returning cash product
         .range(from, to);
 
@@ -123,6 +127,7 @@ export const useGetRelatedProducts = (categoryId: string, excludeProductId: stri
         .from("vendor_products_view")
         .select("*")
         .eq("category_id", categoryId)
+        .eq("vendor_is_disabled", false)
         .neq("product_id", excludeProductId)
         .limit(4);
 
