@@ -13,7 +13,9 @@ export const useGetNotifications = () => {
 
       const { data, error, count } = await supabase
         .from("notifications")
-        .select("*", { count: "exact" })
+        .select("id, user_id, title, message, data, is_read, created_at", {
+          count: "exact",
+        })
         .order("created_at", { ascending: false })
         .range(from, to);
 

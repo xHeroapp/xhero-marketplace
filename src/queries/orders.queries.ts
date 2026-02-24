@@ -115,7 +115,10 @@ export const useGetUserOrders = (user_id: string, limit = PRODUCT_LIMIT) => {
 
       const { data, error, count } = await supabase
         .from("order_items_view")
-        .select("*", { count: "exact" })
+        .select(
+          "idx,order_id,user_id,order_total,order_status,order_reference,order_created_at,order_updated_at,vendor_order_id,vendor_id,vendor_total,vendor_status,order_item_id,quantity,price_at_order,item_total,vendor_product_id,product_id,product_name,product_description,product_img_url",
+          { count: "exact" }
+        )
         // .eq("user_id", user_id)
         .order("order_created_at", { ascending: false })
         .range(from, to);
@@ -172,7 +175,10 @@ export const useGetUserServiceOrders = (
 
       const { data, error, count } = await supabase
         .from("service_orders_view")
-        .select("*", { count: "exact" })
+        .select(
+          "idx,service_order_id,user_id,vendor_id,vendor_name,vendor_product_id,service_name,image_url,total_amount,status,reference,created_at,service_mode,start_date,end_date,start_time,duration_minutes,note",
+          { count: "exact" }
+        )
         // .eq("user_id", user_id)
         .order("created_at", { ascending: false })
         .range(from, to);
@@ -323,34 +329,29 @@ export const useGetUnifiedUserOrders = (user_id: string, limit = PRODUCT_LIMIT) 
       // Ensure we sort by latest orders correctly
       const { data, error, count } = await supabase
         .from("all_orders_unified_view")
-        .select("*", { count: "exact" })
+        .select(
+          "unique_track_id,order_id,type,reference,total_amount,status,created_at,user_id,employee_name,employee_email,employee_avatar,employee_phone,delivery_address,vendor_name,vendor_logo,vendor_address,item_name,item_image,quantity,price,payment_status,service_start_date,voucher_recipient,service_mode,order_note,delivery_fee,vendor_order_id,readable_id",
+          { count: "exact" }
+        )
         .order("created_at", { ascending: false })
         .range(from, to);
 
       if (error) throw error;
 
       // Group the flattened items into orders
-      const groupedOrders = groupUnifiedOrders(data as unknown as UnifiedOrderView[] ?? []);
+      const rawRows = (data as unknown as UnifiedOrderView[]) ?? [];
+      const groupedOrders = groupUnifiedOrders(rawRows);
 
       return {
         items: groupedOrders,
+        rawCount: rawRows.length,
         page: pageParam,
         totalCount: count ?? 0,
       };
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) =>
-      // We check if we got the limit items from the db mapping. 
-      // Because we fetch flat rows, if the raw row count is less than our limit, we are at the end.
-      // Easiest is to check if we need to fetch more based on raw row count, but react query page params are simpler
-      // actually, since we group, lastPage.items length might be less than limit. Let's just assume we continue fetching if the mapped result has items?
-      // Wait, limit on the raw view might split grouped items unless we limit distinct orders. 
-      // Since `useGetUserOrders` also did `limit` on the view directly, we'll keep the same logic.
-      // the existing logic used lastPage.items.length === limit, but it mapped it, which is buggy if limit splits a group.
-      // But we will keep it the same for now, or use `pages.length`
-      pages.length, // simple infinite fetch until no more data? Actually, let's fix the pagination.
-    // To properly paginate, it's better to check if data length < limit
-    // but we don't return raw data. Let's return raw data length in the response.
+      lastPage.rawCount === limit ? pages.length : undefined,
     enabled: !!user_id,
   });
 };

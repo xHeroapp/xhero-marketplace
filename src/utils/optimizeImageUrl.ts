@@ -2,7 +2,7 @@
  * Appends Supabase image transformation parameters to storage URLs.
  * Non-Supabase URLs are returned unchanged.
  */
-const SUPABASE_STORAGE_HOST = "fhvjjbnjecwbdslvemsa.supabase.co";
+const SUPABASE_STORAGE_HOST = process.env.NEXT_PUBLIC_SUPABASE_API_URL?.replace(/^https?:\/\//, "") ?? "";
 
 type ImageOptions = {
     width?: number;

@@ -18,9 +18,7 @@ export async function POST(request: Request) {
                     },
                     setAll(cookiesToSet) {
                         try {
-                            console.log("Magic Link Route: Setting cookies count:", cookiesToSet.length);
                             cookiesToSet.forEach(({ name, value, options }) => {
-                                console.log(`Setting cookie: ${name}, options:`, options);
                                 cookieStore.set(name, value, options);
                             });
                         } catch (err) {
@@ -33,6 +31,18 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const { email, redirect_to } = body;
+
+        const allowedRedirects = (process.env.ALLOWED_MAGIC_LINK_REDIRECTS ?? "")
+            .split(",")
+            .map((url) => url.trim())
+            .filter(Boolean);
+
+        if (!redirect_to || !allowedRedirects.includes(redirect_to)) {
+            return NextResponse.json(
+                { message: "Invalid redirect URL" },
+                { status: 400 }
+            );
+        }
 
         const { data, error } = await supabase.auth.signInWithOtp({
             email,

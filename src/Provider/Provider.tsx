@@ -2,7 +2,7 @@
 // import { ThemeProvider } from "@/components/Theme/Themeprovider";
 // import ProgressBar from "@/components/ui/ProgressBar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 // import ProgressBar from "./ProgressBar";
 import { Toaster } from "sonner";
 import CategoryProvider from "./CategoryProvider";
@@ -11,7 +11,7 @@ import { RealtimeBalanceSync } from "@/hooks/useRealtimeBalance";
 import { RealtimeBannerSync } from "@/hooks/useRealtimeBanners";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>

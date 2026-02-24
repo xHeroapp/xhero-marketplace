@@ -7,7 +7,7 @@ export const useGetProductCategories = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("categories")
-        .select("*")
+        .select("id, name")
         .neq("name", "Cash");
 
       if (error) throw error;
@@ -82,7 +82,7 @@ export const useGetProductItems = (filters = {}, limit: number) => {
 
       let query = supabase
         .from("vendor_products_view")
-        .select("*", { count: "exact" })
+        .select("*")
         .eq("vendor_is_disabled", false)
         .neq("product_id", "7177584c-8ea8-4cb8-9758-ae1b7edf51d2") // avoid returning cash product
         .range(from, to);
@@ -104,10 +104,10 @@ export const useGetProductItems = (filters = {}, limit: number) => {
         if (priceTo != null) query = query.lte("price", priceTo);
       }
 
-      const { data, count, error } = await query;
+      const { data, error } = await query;
       if (error) throw error;
 
-      return { items: data ?? [], total: count ?? 0, currentPage }; // or whatever shape you prefer
+      return { items: data ?? [], total: data?.length ?? 0, currentPage };
     },
     initialPageParam: 0, // <--- important
     getNextPageParam: (lastPage, allPages) => {
@@ -125,7 +125,7 @@ export const useGetRelatedProducts = (categoryId: string, excludeProductId: stri
     queryFn: async () => {
       const { data, error } = await supabase
         .from("vendor_products_view")
-        .select("*")
+        .select("vendor_product_id, product_id, product_name, image_url, price")
         .eq("category_id", categoryId)
         .eq("vendor_is_disabled", false)
         .neq("product_id", excludeProductId)
