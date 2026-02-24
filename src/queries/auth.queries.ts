@@ -10,7 +10,6 @@ export const useLogin = () => {
       const { data } = await supabase.rpc("check_employee_email", {
         p_email: email,
       });
-      console.log(data);
 
       if (data !== true) {
         throw new Error("Employee not found");
@@ -18,7 +17,6 @@ export const useLogin = () => {
 
       // send magic link / otp
       const { data: authData, error } = await SignInWithMagicLink(email);
-      console.log(authData);
 
       if (error) throw error;
       return authData;
@@ -42,8 +40,6 @@ export const UpdateProfile = () => {
   return useMutation({
     mutationFn: async (user_data) => {
       const { user_id, ...rest } = user_data;
-      console.log(rest);
-      console.log(user_id);
 
       const { data, error } = await supabase
         .from("employees")
@@ -79,7 +75,7 @@ export const useGetUser = () => {
       return employee;
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
-    // enabled: !!user?.id, // only fetch if userId exists
+    enabled: !!user?.id,
   });
 };
 
@@ -100,13 +96,21 @@ export const UseUpdateLastSeen = () => {
 export const UseUploadProfileImage = () => {
   return useMutation({
     mutationFn: async ({ file, userId }: { file: File; userId: string }) => {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userId}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      // Compress image before upload
+      const imageCompression = (await import("browser-image-compression")).default;
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 0.2,
+        maxWidthOrHeight: 500,
+        useWebWorker: true,
+        fileType: "image/webp",
+      });
+
+      const fileName = `${userId}-${Math.random().toString(36).substring(7)}.webp`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("users_avatar")
-        .upload(filePath, file, { upsert: true });
+        .upload(filePath, compressedFile, { upsert: true, contentType: "image/webp" });
 
       if (uploadError) throw uploadError;
 

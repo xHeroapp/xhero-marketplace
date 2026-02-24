@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // reactStrictMode: false,
-  /* config options here */
-  // ignoring lint and type errors for now
-  // just to help with faster build process
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -27,6 +24,11 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "another.cdn.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.allrecipes.com",
         pathname: "/**",
       },
     ],

@@ -140,15 +140,15 @@ const ProductCatagories = () => {
           <div className="row g-2 rtl-flex-d-row-r">
             {sortedCategories.map((item) => (
               <div key={item.id} className="col-3">
-                <div className="category-item-wrapper h-100">
+                <div className={`category-item-wrapper h-100 category-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
                   <div
                     onClick={() => setActive(item.id)}
                     className={`card catagory-card ${active === item.id ? "active" : ""
                       } h-100`}
                   >
-                    <div className="card-body px-2">
+                    <div className="card-body px-1">
                       <Link
-                        href={`/category?category_id=${item.id}&category_name=${item.name}`}
+                        href={`/category?category_id=${item.id}&category_name=${encodeURIComponent(item.name)}`}
                       >
                         <img src={item.img} alt={item.name} />
                         <span>{item.name}</span>
@@ -205,6 +205,13 @@ const ProductCatagories = () => {
           overflow-wrap: break-word;
           max-width: 100%;
           white-space: normal;
+        }
+
+        /* Independent category overrides */
+        .category-restaurant span,
+        .category-technology span {
+          white-space: nowrap;
+          overflow: visible;
         }
       `}</style>
     </>
