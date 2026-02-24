@@ -48,7 +48,6 @@ export default function AuthCallback() {
           }
 
           if (data.session) {
-            console.log("Session established:", data.session);
             router.replace("/home");
             return;
           }
@@ -91,7 +90,6 @@ export default function AuthCallback() {
           }
 
           if (data.session) {
-            console.log(data);
             await storeUserData(data.user?.email);
             router.replace("/home");
             return;
@@ -101,7 +99,6 @@ export default function AuthCallback() {
         // Fallback: check if session already exists
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session) {
-          console.log(sessionData);
           router.replace("/home");
           return;
         }

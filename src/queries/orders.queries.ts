@@ -115,7 +115,10 @@ export const useGetUserOrders = (user_id: string, limit = PRODUCT_LIMIT) => {
 
       const { data, error, count } = await supabase
         .from("order_items_view")
-        .select("*", { count: "exact" })
+        .select(
+          "idx,order_id,user_id,order_total,order_status,order_reference,order_created_at,order_updated_at,vendor_order_id,vendor_id,vendor_total,vendor_status,order_item_id,quantity,price_at_order,item_total,vendor_product_id,product_id,product_name,product_description,product_img_url",
+          { count: "exact" }
+        )
         // .eq("user_id", user_id)
         .order("order_created_at", { ascending: false })
         .range(from, to);
@@ -172,7 +175,10 @@ export const useGetUserServiceOrders = (
 
       const { data, error, count } = await supabase
         .from("service_orders_view")
-        .select("*", { count: "exact" })
+        .select(
+          "idx,service_order_id,user_id,vendor_id,vendor_name,vendor_product_id,service_name,image_url,total_amount,status,reference,created_at,service_mode,start_date,end_date,start_time,duration_minutes,note",
+          { count: "exact" }
+        )
         // .eq("user_id", user_id)
         .order("created_at", { ascending: false })
         .range(from, to);
@@ -224,5 +230,128 @@ export const useGetServiceOrderStatus = (
       return data;
     },
     ...options,
+  });
+};
+
+// --- UNIFIED ORDERS ---
+
+export interface UnifiedOrderView {
+  unique_track_id: string;
+  order_id: string;
+  type: "goods" | "service" | "voucher";
+  reference: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  user_id: string;
+  employee_name: string | null;
+  employee_email: string | null;
+  employee_avatar: string | null;
+  employee_phone: string | null;
+  delivery_address: string | null;
+  vendor_name: string | null;
+  vendor_logo: string | null;
+  vendor_address: string | null;
+  item_name: string;
+  item_image: string | null;
+  quantity: number | null;
+  price: number | null;
+  payment_status: string | null;
+  service_start_date: string | null;
+  voucher_recipient: string | null;
+  service_mode: string | null;
+  order_note: string | null;
+  delivery_fee: number;
+  vendor_order_id: string | null;
+  readable_id: number;
+}
+
+export interface UnifiedOrder {
+  order_id: string;
+  type: "goods" | "service" | "voucher";
+  reference: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  user_id: string;
+  readable_id: number;
+  items: {
+    item_name: string;
+    item_image: string | null;
+    quantity: number | null;
+    price: number | null;
+  }[];
+}
+
+const groupUnifiedOrders = (items: UnifiedOrderView[]): UnifiedOrder[] => {
+  const ordersMap = new Map<string, UnifiedOrder>();
+
+  items.forEach((item) => {
+    const orderId = item.order_id;
+
+    if (!ordersMap.has(orderId)) {
+      ordersMap.set(orderId, {
+        order_id: item.order_id,
+        type: item.type,
+        reference: item.reference,
+        total_amount: item.total_amount,
+        status: item.status,
+        created_at: item.created_at,
+        user_id: item.user_id,
+        readable_id: item.readable_id,
+        items: [],
+      });
+    }
+
+    const order = ordersMap.get(orderId)!;
+
+    // Only add item if it exists (handles cases where there are no line items returning yet)
+    if (item.item_name) {
+      order.items.push({
+        item_name: item.item_name,
+        item_image: item.item_image,
+        quantity: item.quantity,
+        price: item.price,
+      });
+    }
+  });
+
+  return Array.from(ordersMap.values());
+};
+
+export const useGetUnifiedUserOrders = (user_id: string, limit = PRODUCT_LIMIT) => {
+  return useInfiniteQuery({
+    queryKey: ["unified-user-orders", user_id],
+    queryFn: async ({ pageParam = 0 }) => {
+      const from = pageParam * limit;
+      const to = from + limit - 1;
+
+      // Ensure we sort by latest orders correctly
+      const { data, error, count } = await supabase
+        .from("all_orders_unified_view")
+        .select(
+          "unique_track_id,order_id,type,reference,total_amount,status,created_at,user_id,employee_name,employee_email,employee_avatar,employee_phone,delivery_address,vendor_name,vendor_logo,vendor_address,item_name,item_image,quantity,price,payment_status,service_start_date,voucher_recipient,service_mode,order_note,delivery_fee,vendor_order_id,readable_id",
+          { count: "exact" }
+        )
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      // Group the flattened items into orders
+      const rawRows = (data as unknown as UnifiedOrderView[]) ?? [];
+      const groupedOrders = groupUnifiedOrders(rawRows);
+
+      return {
+        items: groupedOrders,
+        rawCount: rawRows.length,
+        page: pageParam,
+        totalCount: count ?? 0,
+      };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.rawCount === limit ? pages.length : undefined,
+    enabled: !!user_id,
   });
 };

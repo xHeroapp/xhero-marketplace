@@ -12,6 +12,7 @@ import ProductCatagories from "./home/ProductCatagories";
 import WeeklyBestSellers from "./home/WeeklyBestSellers";
 import DiscountCouponCard from "./home/DiscountCouponCard";
 import FeaturedProducts from "./home/FeaturedProducts";
+import PostFeaturedBanner from "./home/PostFeaturedBanner";
 import Collections from "./home/Collections";
 import { ToastContainer } from "react-toastify";
 
@@ -31,6 +32,7 @@ const Home = () => {
         <WeeklyBestSellers />
         <DiscountCouponCard />
         <FeaturedProducts />
+        <PostFeaturedBanner />
         {/* Removed collections for now as it is not needed */}
         {/* <Collections /> */}
       </div>

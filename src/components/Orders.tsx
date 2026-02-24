@@ -7,31 +7,28 @@ import Footer from "@/layouts/Footer";
 import {
   formatOrderAmount,
   formatOrderDate,
-  getFirstProductName,
   getOrderStatusColor,
   getOrderStatusLabel,
-  getTotalItemsCount,
 } from "@/utils/ordersUtils";
-import { ParsedOrder, useGetUserOrders } from "@/queries/orders.queries";
+import { UnifiedOrder, useGetUnifiedUserOrders } from "@/queries/orders.queries";
 import { useAuthStore } from "@/store/authStore";
 import ImageWithFallback from "./reuseable/ImageWithFallback";
-import Services from "./Services";
 
 interface OrderCardProps {
-  order: ParsedOrder;
+  order: UnifiedOrder;
   onClick: () => void;
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, onClick }) => {
-  const firstProductName = getFirstProductName(order.vendors);
-  const totalItems = getTotalItemsCount(order.vendors);
+  const firstProductName = order.items[0]?.item_name || "Unknown Item";
+  const totalItems = order.items.reduce((acc, item) => acc + (item.quantity || 1), 0);
   const statusColor = getOrderStatusColor(order.status);
   const statusLabel = getOrderStatusLabel(order.status);
   const formattedDate = formatOrderDate(order.created_at);
-  const formattedAmount = formatOrderAmount(order.total_amount);
+  const formattedAmount = formatOrderAmount(order.total_amount.toString());
 
   // Get the first product image if available
-  const firstProductImage = order.vendors[0]?.items[0]?.image || null;
+  const firstProductImage = order.items[0]?.item_image || null;
 
   return (
     <div
@@ -123,12 +120,12 @@ const Orders: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetUserOrders(user?.id ?? "");
+  } = useGetUnifiedUserOrders(user?.id ?? "");
 
   // Debug log
   useEffect(() => {
     if (data) {
-      console.log("Orders data:", data);
+      console.log("Unified Orders data:", data);
     }
   }, [data]);
 
@@ -150,15 +147,18 @@ const Orders: React.FC = () => {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, data]);
 
-  const handleOrderClick = (orderId: string) => {
-    router.push(`/order/${orderId}`);
+  const handleOrderClick = (orderId: string, type: string) => {
+    if (type === "service") {
+      router.push(`/service-order/${orderId}`);
+    } else {
+      router.push(`/order/${orderId}`);
+    }
   };
 
   if (!ready) return null;
 
   // Flatten all orders from pages
   const allOrders = data?.pages.flatMap((page) => page.items) ?? [];
-  const totalCount = data?.pages[0]?.totalCount ?? 0;
 
   return (
     <>
@@ -166,126 +166,69 @@ const Orders: React.FC = () => {
 
       <div className="page-content-wrapper py-3">
         <div className="container">
-          {/* Main Tabs for Products and Services */}
-          <div className="order-tabs mb-3">
-            <ul className="nav nav-tabs border-0" role="tablist">
-              <li className="nav-item flex-fill" role="presentation">
-                <button
-                  className="nav-link active w-100 text-center"
-                  data-bs-toggle="tab"
-                  data-bs-target="#products"
-                  type="button"
-                  role="tab"
-                  aria-controls="products"
-                  aria-selected="true"
-                >
-                  Products
-                </button>
-              </li>
-              <li className="nav-item flex-fill" role="presentation">
-                <button
-                  className="nav-link w-100 text-center"
-                  data-bs-toggle="tab"
-                  data-bs-target="#services"
-                  type="button"
-                  role="tab"
-                  aria-controls="services"
-                  aria-selected="false"
-                >
-                  Services
-                </button>
-              </li>
-            </ul>
-          </div>
+          <div className="tab-content border-0 p-0 m-0">
+            {isLoading ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2 text-muted">Loading your orders...</p>
+              </div>
+            ) : isError ? (
+              <div className="card">
+                <div className="card-body text-center py-5">
+                  <i className="ti ti-alert-circle fs-1 text-danger mb-3"></i>
+                  <h5>Error Loading Orders</h5>
+                  <p className="text-muted">
+                    {error instanceof Error
+                      ? error.message
+                      : "Something went wrong"}
+                  </p>
+                </div>
+              </div>
+            ) : allOrders.length === 0 ? (
+              <div className="card">
+                <div className="card-body text-center py-5">
+                  <i className="ti ti-shopping-bag fs-1 text-muted mb-3"></i>
+                  <h5>No Orders Yet</h5>
+                  <p className="text-muted">
+                    You haven't placed any orders yet. Start shopping to see
+                    your orders here!
+                  </p>
+                  <button
+                    className="btn btn-primary mt-3"
+                    onClick={() => router.push("/shop")}
+                  >
+                    Start Shopping
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                {allOrders.map((order) => (
+                  <OrderCard
+                    key={order.order_id}
+                    order={order}
+                    onClick={() => handleOrderClick(order.order_id, order.type)}
+                  />
+                ))}
 
-          {/* Tab Content */}
-          <div className="tab-content">
-            {/* Products Tab */}
-            <div
-              className="tab-pane fade show active"
-              id="products"
-              role="tabpanel"
-            >
-              {isLoading ? (
-                <div className="text-center py-5">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                  <p className="mt-2 text-muted">Loading your orders...</p>
-                </div>
-              ) : isError ? (
-                <div className="card">
-                  <div className="card-body text-center py-5">
-                    <i className="ti ti-alert-circle fs-1 text-danger mb-3"></i>
-                    <h5>Error Loading Orders</h5>
-                    <p className="text-muted">
-                      {error instanceof Error
-                        ? error.message
-                        : "Something went wrong"}
-                    </p>
-                  </div>
-                </div>
-              ) : allOrders.length === 0 ? (
-                <div className="card">
-                  <div className="card-body text-center py-5">
-                    <i className="ti ti-shopping-bag fs-1 text-muted mb-3"></i>
-                    <h5>No Orders Yet</h5>
-                    <p className="text-muted">
-                      You haven't placed any orders yet. Start shopping to see
-                      your orders here!
-                    </p>
-                    <button
-                      className="btn btn-primary mt-3"
-                      onClick={() => router.push("/shop")}
+                {/* Loading indicator for next page */}
+                {isFetchingNextPage && (
+                  <div className="text-center py-3">
+                    <div
+                      className="spinner-border spinner-border-sm text-primary"
+                      role="status"
                     >
-                      Start Shopping
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* Filter orders for ongoing/delivered */}
-                  {allOrders
-                    // .filter((order) =>
-                    //   [
-                    //     "pending",
-                    //     "shipment_ready",
-                    //     "in",
-                    //     "paid",
-                    //     "shipped",
-                    //     "delivered",
-                    //   ].includes(order.status.toLowerCase())
-                    // )  removed the filter for now because we want to show all the orders (the status wil do the filtering)
-                    .map((order) => (
-                      <OrderCard
-                        key={order.order_id}
-                        order={order}
-                        onClick={() => handleOrderClick(order.order_id)}
-                      />
-                    ))}
-
-                  {/* Loading indicator for next page */}
-                  {isFetchingNextPage && (
-                    <div className="text-center py-3">
-                      <div
-                        className="spinner-border spinner-border-sm text-primary"
-                        role="status"
-                      >
-                        <span className="visually-hidden">Loading more...</span>
-                      </div>
+                      <span className="visually-hidden">Loading more...</span>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* Intersection observer target */}
-                  <div ref={observerRef} style={{ height: "20px" }} />
-                </>
-              )}
-            </div>
-
-            {/* Services Tab */}
-            <div className="tab-pane fade" id="services" role="tabpanel">
-              <Services />
-            </div>
+                {/* Intersection observer target */}
+                <div ref={observerRef} style={{ height: "20px" }} />
+              </>
+            )}
           </div>
         </div>
       </div>

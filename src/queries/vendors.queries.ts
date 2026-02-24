@@ -14,7 +14,10 @@ export const useGetVendors = (filters = {}) => {
 
       let query = supabase
         .from("vendors_view")
-        .select("*", { count: "exact" })
+        .select(
+          "vendor_id,vendor_name,banner_url,address,avatar_url,status,category_name"
+        )
+        .eq("status", "active")
         .neq("vendor_id", "10988314-40e7-4b56-8010-49218fcd0933") // not returning the xhero vendor (we only return cash)
         .range(from, to);
 
@@ -28,10 +31,10 @@ export const useGetVendors = (filters = {}) => {
         query = query.eq("category_name", category);
       }
 
-      const { data, count, error } = await query;
+      const { data, error } = await query;
       if (error) throw error;
 
-      return { items: data ?? [], total: count ?? 0, currentPage }; // or whatever shape you prefer
+      return { items: data ?? [], total: data?.length ?? 0, currentPage };
     },
     initialPageParam: 0, // <--- important
     getNextPageParam: (lastPage, allPages) => {
@@ -45,18 +48,20 @@ export const useGetVendors = (filters = {}) => {
 // get Vendor
 export const useGetVendor = (id) => {
   return useQuery({
-    queryKey: ["get-vendor"],
+    queryKey: ["get-vendor", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("vendors_view")
         .select()
         .eq("vendor_id", id)
+        .eq("status", "active")
         .single();
 
       if (error) throw error;
 
       return data;
     },
+    enabled: !!id,
   });
 };
 
@@ -83,8 +88,9 @@ export const useGetVendorProductItems = (
 
       let query = supabase
         .from("vendor_products_view")
-        .select("*", { count: "exact" })
+        .select("*")
         .eq("vendor_id", vendor_id)
+        .eq("vendor_is_disabled", false)
         .range(from, to);
 
       // Search filter
@@ -102,10 +108,10 @@ export const useGetVendorProductItems = (
         if (priceTo != null) query = query.lte("price", priceTo);
       }
 
-      const { data, count, error } = await query;
+      const { data, error } = await query;
       if (error) throw error;
 
-      return { items: data ?? [], total: count ?? 0, currentPage }; // or whatever shape you prefer
+      return { items: data ?? [], total: data?.length ?? 0, currentPage };
     },
     initialPageParam: 0, // <--- important
     getNextPageParam: (lastPage, allPages) => {

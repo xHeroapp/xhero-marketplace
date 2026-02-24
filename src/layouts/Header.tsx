@@ -61,9 +61,9 @@ const Header = () => {
 
   useEffect(() => {
     if (user?.id) {
-      loadCart(user?.id);
+      loadCart(user.id);
     }
-  }, [user]);
+  }, [user?.id]);
 
   return (
     <>

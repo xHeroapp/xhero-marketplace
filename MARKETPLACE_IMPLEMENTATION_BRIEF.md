@@ -34,12 +34,14 @@ interface ProcessOrderParams {
 
 ## 2. Frontend Implementation Checklist
 
-### Step 1: Update Vendor Fetching
-Ensure your query for fetching vendor details includes the new columns:
-- `delivery_fee_type`
-- `delivery_areas`
+> **Legend:** ✅ Done · ❌ Not Implemented · 📁 = relevant file
 
-### Step 2: Checkout UI Logic
+### Step 1: Update Vendor Fetching ✅
+Ensure your query for fetching vendor details includes the new columns:
+- `delivery_fee_type` ✅ — `src/hooks/useAddToCart.ts:25`
+- `delivery_areas` ✅ — `src/hooks/useAddToCart.ts:26`
+
+### Step 2: Checkout UI Logic ✅
 In the Checkout/Cart component, check the vendor's `delivery_fee_type`.
 
 **Scenario A: Type is 'fixed' (or null)**
@@ -48,11 +50,11 @@ In the Checkout/Cart component, check the vendor's `delivery_fee_type`.
 
 **Scenario B: Type is 'location'**
 - *Behavior*:
-  1. **Hide** the default fixed delivery fee.
-  2. **Show** a dropdown/selector populated from `vendor.delivery_areas`.
-  3. **Required**: User MUST select a location to proceed.
-  4. **Display**: When a location is selected, show its specific `fee` as the delivery cost.
-  5. **Total**: Update cart total to include this specific location's fee.
+  1. **Hide** the default fixed delivery fee. ✅ — `src/components/Checkout.tsx:85`
+  2. **Show** a dropdown/selector populated from `vendor.delivery_areas`. ✅ — `src/components/Checkout.tsx:264-280`
+  3. **Required**: User MUST select a location to proceed. ✅ — `src/components/Checkout.tsx:88, 96-100`
+  4. **Display**: When a location is selected, show its specific `fee` as the delivery cost. ✅ — `src/components/Checkout.tsx:278, 285`
+  5. **Total**: Update cart total to include this specific location's fee. ✅ — `src/store/cartStore.ts:246-256`
 
 ### Step 3: Order Submission
 When calling the backend to place the order:
@@ -61,8 +63,8 @@ When calling the backend to place the order:
 ```typescript
 // Conceptual Implementation
 const submitOrder = async () => {
-  const deliveryLocationId = vendor.delivery_fee_type === 'location' 
-    ? selectedArea.id 
+  const deliveryLocationId = vendor.delivery_fee_type === 'location'
+    ? selectedArea.id
     : null;
 
   await supabase.rpc('process_vendor_order', {
@@ -71,6 +73,12 @@ const submitOrder = async () => {
   });
 }
 ```
+
+- `process_vendor_order` — passes `p_delivery_location_id` ✅ — `src/hooks/useHandlePayment.ts:46-68`
+- `process_flash_sale_order` — passes `p_delivery_location_id` ❌ **NOT IMPLEMENTED**
+  - Files to update: `src/components/CheckoutFlashSaleBank.tsx`, `src/components/CheckoutFlashSaleWallet.tsx`
+  - These currently only pass `p_flash_sale_item_id`, `p_payment_method`, and `p_reference`.
+  - Need to: check flash sale vendor's `delivery_fee_type`, read `selectedDeliveryLocation` from cart store, and pass `p_delivery_location_id` when type is `'location'`.
 
 ---
 
@@ -84,9 +92,10 @@ To match the Admin Panel's immediate updates, the Marketplace **MUST** validate 
 
 1.  **On Checkout Page Mount:**
     *   Do NOT rely solely on the price stored in the local cart state/context.
-    *   **Action:** Trigger a background fetch for the vendor's *current* `delivery_fee_type` `delivery_fee`, and `delivery_areas`.
-    *   **Comparison:** Compare the fetched values with what is currently applied in the cart.
-    *   **Auto-Correction:** If they differ, update the cart's delivery fee immediately and display a toast: *"Delivery fees have been updated by the vendor."*
+    *   **Action:** Trigger a background fetch for the vendor's *current* `delivery_fee_type` `delivery_fee`, and `delivery_areas`. ✅ — `src/components/Checkout.tsx:53-82`
+    *   **Comparison:** Compare the fetched values with what is currently applied in the cart. ✅ — `src/components/Checkout.tsx:68-71`
+    *   **Auto-Correction:** If they differ, update the cart's delivery fee immediately ✅ — `src/components/Checkout.tsx:73-75` and display a toast: *"Delivery fees have been updated by the vendor."* ❌ **NOT IMPLEMENTED**
+      - The cart update happens silently. A `toast.info(...)` call must be added inside the `if (hasChanged)` block in `src/components/Checkout.tsx`.
 
 2.  **Why this is non-negotiable:**
     *   The Admin Panel and Marketplace share the **same database**. There is no sync delay.

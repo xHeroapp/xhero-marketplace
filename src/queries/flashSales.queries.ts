@@ -12,6 +12,7 @@ export const useGetFlashSale = () => {
       const { data, error, count } = await supabase
         .from("active_flash_sale_products")
         .select("*", { count: "exact" })
+        .eq("vendor_is_disabled", false)
         .order("created_at", { ascending: false })
         .range(from, to);
 

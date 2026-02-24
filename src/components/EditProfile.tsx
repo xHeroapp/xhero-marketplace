@@ -52,9 +52,9 @@ const EditProfile = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size (e.g., 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
+    // Validate size (generous pre-compression guard)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size must be less than 10MB");
       return;
     }
 
