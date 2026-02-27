@@ -150,7 +150,7 @@ const FeaturedProducts = () => {
                           <ImageWithFallback
                             src={item.vendor_products_view.image_url}
                             alt={item.vendor_products_view.product_name}
-                            // className="w-full h-[500px] object-cover"
+                          // className="w-full h-[500px] object-cover"
                           />
                           {/* <img src={item.img} alt={item.title} /> */}
                         </Link>
@@ -163,7 +163,7 @@ const FeaturedProducts = () => {
                           {item.vendor_products_view.product_name}
                         </Link>
                         <p className="sale-price">
-                          {formatCurrency(item.vendor_products_view.price)}
+                          {formatCurrency(item.vendor_products_view.display_price ?? item.vendor_products_view.price)}
                           {/* <span>${item.old_price}</span> */}
                         </p>
                       </div>

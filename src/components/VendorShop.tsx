@@ -399,7 +399,7 @@ const VendorShop = ({ initialData }) => {
 
                             <div className="mt-auto">
                               <p className="sale-price mb-1">
-                                {formatCurrency(item.price)}
+                                {formatCurrency(item.display_price ?? item.price)}
                               </p>
 
                               {/* Star Ratings */}

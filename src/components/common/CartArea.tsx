@@ -91,7 +91,7 @@ const CartArea = () => {
                       </div>
                       <div className="item-info">
                         <h4>{product.product_name}</h4>
-                        <span className="item-price">{formatCurrency(product.price)}</span>
+                        <span className="item-price">{formatCurrency(product.display_price ?? product.price)}</span>
                       </div>
                       <div className="item-controls">
                         <div className="qty-stepper">

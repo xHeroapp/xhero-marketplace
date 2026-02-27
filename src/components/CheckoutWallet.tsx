@@ -38,7 +38,6 @@ const CheckoutWallet = () => {
 
   const hasSufficientBalance =
     Number(user?.points_balance) >= orderAmount.total;
-  const balanceAfterPayment = (user?.points_balance || 0) - orderAmount.total;
 
   if (!ready) return null;
 
@@ -112,26 +111,23 @@ const CheckoutWallet = () => {
               <div className="summary-row">
                 <span className="row-label">Order Amount</span>
                 <span className="row-value">
-                  {formatCurrency(orderAmount.total)}
+                  {formatCurrency(orderAmount.subtotal - orderAmount.discount)}
                 </span>
               </div>
 
               <div className="summary-row">
-                <span className="row-label">Wallet Balance</span>
+                <span className="row-label">Delivery Fee</span>
                 <span className="row-value">
-                  {formatCurrency(user?.points_balance)}
+                  {formatCurrency(orderAmount.deliveryFee)}
                 </span>
               </div>
 
               <div className="summary-divider"></div>
 
               <div className="summary-row total-row">
-                <span className="row-label">Balance After Payment</span>
-                <span
-                  className={`row-value ${balanceAfterPayment >= 0 ? "positive" : "negative"
-                    }`}
-                >
-                  {formatCurrency(balanceAfterPayment)}
+                <span className="row-label">Total</span>
+                <span className="row-value">
+                  {formatCurrency(orderAmount.total)}
                 </span>
               </div>
             </div>
@@ -493,14 +489,6 @@ const CheckoutWallet = () => {
         .total-row .row-label {
           font-weight: 600;
           color: #1d1d1f;
-        }
-
-        .total-row .row-value.positive {
-          color: #34c759;
-        }
-
-        .total-row .row-value.negative {
-          color: #ff3b30;
         }
 
         /* ========== Security Badge ========== */

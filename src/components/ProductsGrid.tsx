@@ -56,7 +56,7 @@ export const ProductsGrid = ({ productItems, GetProductsQuery }) => {
                   {/* Price/Ratings/Button wrapper */}
                   <div className="mt-auto">
                     <p className="sale-price mb-1">
-                      {formatCurrency(product.price)}
+                      {formatCurrency(product.display_price ?? product.price)}
                     </p>
 
                     <div className="product-rating mb-2">

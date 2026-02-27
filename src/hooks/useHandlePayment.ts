@@ -60,6 +60,7 @@ export const useHandlePayment = ({
         p_items: Object.values(vendorCart.items),
         p_payment_method: payment_method,
         p_reference: txRef ?? TX_REF,
+        p_expected_total: orderAmount.total,
       };
 
       // Add delivery location ID if applicable
@@ -86,9 +87,16 @@ export const useHandlePayment = ({
             : "Order Successful";
         },
 
-        error: () => {
+        error: (err) => {
           setIsLoading(false);
           setIsSuccess(false);
+
+          const msg = err?.message || "";
+          if (msg.toLowerCase().includes("prices have been updated")) {
+            router.push("/cart");
+            return msg;
+          }
+
           return `There was an error while trying to process your ${payment_method === "wallet" ? "payment" : "order"
             }. Please try again later`;
         },

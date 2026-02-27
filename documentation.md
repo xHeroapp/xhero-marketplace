@@ -281,3 +281,24 @@ FROM orders o
   LEFT JOIN products p_vch ON vp_vch.product_id = p_vch.id
   LEFT JOIN vendors vendor_v ON v.vendor_id = vendor_v.id;
 ```
+
+## 2026-02-27 - Markup Display Price Integration
+
+**Feature:** Markup Display Price — Marketplace Frontend Integration
+
+**Description:**
+The backend `vendor_products_view` now exposes a computed `display_price` column that applies the vendor's markup fee. For markup vendors, `display_price = price × (1 + fee_percentage/100)`. For all other vendors, `display_price = price`. Both checkout RPCs (`process_vendor_order`, `process_service_order`) now accept an optional `p_expected_total` parameter for price-drift protection.
+
+Frontend changes:
+1. **Query layer** — Added `display_price` to the explicit `select()` in `useGetRelatedProducts` (`products.queries.ts`). All other queries use `select("*")` and pick it up automatically.
+2. **Cart store** — `getVendorTotal()` in `cartStore.ts` now uses `item.display_price ?? item.price` for subtotal calculation (fallback covers items persisted in localStorage before this deploy).
+3. **UI components (9 files)** — All product price rendering swapped from `price` to `display_price ?? price`: `ProductsGrid.tsx`, `VendorShop.tsx`, `SingleProductArea.tsx`, `TopProducts.tsx`, `WeeklyBestSellers.tsx`, `FeaturedProducts.tsx`, `CartArea.tsx`, `Checkout.tsx`, `WishList.tsx`.
+4. **Checkout summary** — `CheckoutWallet.tsx` payment summary redesigned: shows Order Amount + Delivery Fee + Total (removed redundant Wallet Balance / Balance After Payment rows since the wallet card above already displays the balance).
+5. **RPC protection** — `useHandlePayment.ts` now passes `p_expected_total: orderAmount.total` in the RPC payload. If the server detects a price mismatch, the error handler shows the toast and redirects the employee to `/cart` to see updated prices.
+
+**SQL / Backup Codes:**
+```sql
+-- No database changes needed. The display_price column and p_expected_total
+-- parameter were already added to the backend prior to this frontend integration.
+-- Verification: SELECT display_price FROM vendor_products_view LIMIT 1;
+```

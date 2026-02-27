@@ -125,7 +125,7 @@ export const useGetRelatedProducts = (categoryId: string, excludeProductId: stri
     queryFn: async () => {
       const { data, error } = await supabase
         .from("vendor_products_view")
-        .select("vendor_product_id, product_id, product_name, image_url, price")
+        .select("vendor_product_id, product_id, product_name, image_url, price, display_price")
         .eq("category_id", categoryId)
         .eq("vendor_is_disabled", false)
         .neq("product_id", excludeProductId)

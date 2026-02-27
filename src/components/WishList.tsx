@@ -129,7 +129,7 @@ const Wishlist = () => {
                         </Link>
 
                         <p className="sale-price">
-                          {formatCurrency(item.price)}
+                          {formatCurrency(item.display_price ?? item.price)}
                         </p>
 
                         <button
@@ -196,7 +196,7 @@ const Wishlist = () => {
                           </Link>
 
                           <p className="sale-price">
-                            {formatCurrency(item.price)}
+                            {formatCurrency(item.display_price ?? item.price)}
                           </p>
 
                           <button

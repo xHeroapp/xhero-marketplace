@@ -235,7 +235,7 @@ const useCartStore = create<CartState>((set, get) => ({
     const vendor = vendorCart.vendor;
 
     const subtotal = items.reduce(
-      (acc, item) => acc + item.price * item.quantity,
+      (acc, item) => acc + (item.display_price ?? item.price) * item.quantity,
       0
     );
 

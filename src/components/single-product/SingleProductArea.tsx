@@ -79,7 +79,7 @@ const RelatedProductsSection = ({ product }: { product: any }) => {
                     {item.vendor_products_view?.product_name}
                   </Link>
                   <p className="sale-price">
-                    {formatCurrency(item.vendor_products_view?.price)}
+                    {formatCurrency(item.vendor_products_view?.display_price ?? item.vendor_products_view?.price)}
                   </p>
                   <div className="product-rating">
                     {[...Array(5)].map((_, starIndex) => (
@@ -298,7 +298,7 @@ const SingleProductArea = ({ product }: any) => {
             <div className="p-title-price">
               <h5 className="mb-2"> {product.product_name}</h5>
               <p className="sale-price mb-2 lh-1">
-                {formatCurrency(product?.price)}
+                {formatCurrency(product?.display_price ?? product?.price)}
                 {/* <span> $ {product?.old_price ? product.old_price : "67"}</span> */}
               </p>
               <p className="">{product.short_description || product.product_description}</p>

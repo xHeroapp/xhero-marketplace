@@ -187,7 +187,7 @@ const WeeklyBestSellers = () => {
                         </Link>
 
                         <p className="sale-price">
-                          {formatCurrency(item.vendor_products_view.price)}
+                          {formatCurrency(item.vendor_products_view.display_price ?? item.vendor_products_view.price)}
                         </p>
 
                         <div className="product-rating">

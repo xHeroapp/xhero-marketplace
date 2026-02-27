@@ -206,7 +206,7 @@ const TopProducts = () => {
 
                       <div className="mt-auto">
                         <p className="sale-price mb-1">
-                          {formatCurrency(item.vendor_products_view.price)}
+                          {formatCurrency(item.vendor_products_view.display_price ?? item.vendor_products_view.price)}
                         </p>
 
                         <div className="product-rating mb-2">
